@@ -1,19 +1,20 @@
-#include <stdint.h>
-#include <string.h>
+#include <interrupts.h>
 #include <keyboard_driver.h>
 #include <moduleLoader.h>
-#include <video_driver.h>
-#include <interrupts.h>
+#include <stdint.h>
+#include <string.h>
 #include <systemcalls.h>
+#include <video_driver.h>
 
-extern byte text;
-extern byte rodata;
-extern byte data;
 extern byte bss;
+extern byte data;
+extern byte rodata;
+extern byte text;
 extern byte endOfKernelBinary;
 extern byte endOfKernel;
 
 static const qword PageSize = 0x1000;
+
 extern unsigned int read();
 
 static void * const shell = (void *)0x400000;
@@ -41,40 +42,45 @@ void * initializeKernelBinary() {
 	return getStackBase();
 }
 
+void readFromBuff(){
+	int i = 0;
+	char opcion = '0';
+
+	while((opcion = get_buffer()) == EOF || i < 1){
+		i++;
+	}
+
+	switch(opcion){
+		case '1':
+			((EntryPoint)shell)();
+			break;
+
+		case '2':
+			((EntryPoint)linearGraph)();
+			break;
+
+		case '3':
+			((EntryPoint)parabolicGraph)();
+			break;
+	}
+}
+
+void start(){
+	while(1){
+		clear_screen();
+		print_menu();
+		readFromBuff();
+	}
+}
+
 int main(){
-	
 	_cli();		
 	load_idt();
 	load_systemcalls();
 	start_video_mode();
 	_sti();
 	
-	char opcion = '0';
-	
-	while(1){
-		clear_screen();
-		print_menu();
-		int i = 0;
-		
-		while((opcion = get_buffer()) == EOF || i < 1){
-			i++;
-		}
-
-		switch(opcion){
-			case '1':
-				((EntryPoint)shell)();
-				break;
-
-			case '2':
-				((EntryPoint)linearGraph)();
-				break;
-
-			case '3':
-				((EntryPoint)parabolicGraph)();
-				break;
-		}
-	}
+	start();
 
 	return 0;
 }
-

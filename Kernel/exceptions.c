@@ -1,9 +1,8 @@
-#include <video_driver.h>
 #include <converter.h>
 #include <exceptions.h>
+#include <video_driver.h>
 
 #define ZERO_EXCEPTION_ID 0
-#define OVERFLOW_EXCEPTION 4
 #define INVALID_OPCODE 6
 
 static char* registers[] = {" R15: ", " R14: ", " R13: ", " R12: ", " R11: ", " R10: ", " R9:  ", " R8:  "
@@ -15,9 +14,6 @@ void exceptionDispatcher(int exception, qword* rsp) {
 		case ZERO_EXCEPTION_ID:
 			zero_division(rsp);
 			break;
-		case OVERFLOW_EXCEPTION:
-			overflow(rsp);
-			break;
 		case INVALID_OPCODE:
 			invalid_opcode(rsp);
 			break;
@@ -27,13 +23,6 @@ void exceptionDispatcher(int exception, qword* rsp) {
 static void zero_division(qword* rsp) {
 	clear_screen();
 	print_string("EXCEPTION 00: DIVIDE ERROR");
-	nextLine();	
-	showRegisters(rsp);
-}
-
-static void overflow(qword* rsp) {
-	clear_screen();
-	print_string("EXCEPTION 04: OVERFLOW");
 	nextLine();	
 	showRegisters(rsp);
 }
@@ -52,7 +41,9 @@ void cycle(){
 }
 
 void showRegisters(qword* rsp){
-	for(int i = 0 ; i < 16 ; i++){
+	int i;
+
+	for(i = 0; i < 16; i++){
 		print_string(registers[i]);
 		printHex(rsp[i]);
 		nextLine();	

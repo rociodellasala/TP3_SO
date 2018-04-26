@@ -1,22 +1,21 @@
-#include <types.h>
 #include <font.h>
+#include <types.h>
 #include <video_driver.h>
+
 #define FONT_WIDTH     10
 #define FONT_HEIGHT    16
-//http://wiki.osdev.org/VESA_Video_Modes
 
 #pragma pack(push)
 #pragma pack(1)
 
 typedef struct {
-
 	  word attributes;
 	  byte winA,winB;
 	  word granularity;
 	  word winsize;
 	  word segmentA, segmentB;
 	  dword farptr;
-	  word pitch; // bpp 
+	  word pitch; 
 
 	  word Xres, Yres;
 	  byte Wchar, Ychar, planes, bpp, banks;
@@ -29,18 +28,18 @@ typedef struct {
 	  byte rsv_mask, rsv_position;
 	  byte directcolor_attributes;
 
-	  dword physbase;  // Linear Framebuffer
+	  dword physbase; 
 	  dword reserved1;
 	  word reserved2;
 
 } ModeInfoBlock;
+
 #pragma pack(pop)
 
-
-//http://wiki.osdev.org/ing_In_Protected_Mode
 /* Start of table */
 static ModeInfoBlock * screen_info = (ModeInfoBlock *) 0x5C00; 
 static byte * screen;
+
 static int pitch;
 static int pixel_width;
 static int xres, yres;
@@ -49,10 +48,7 @@ static int buffer_max_per_line;
 static int buffer_max_per_column;
 static int currColor;
 
-
-void
-start_video_mode(){
-
+void start_video_mode(){
 	screen = (byte *) (qword) screen_info -> physbase;
 
 	pitch = screen_info -> pitch;
@@ -64,8 +60,7 @@ start_video_mode(){
  	currColor = 0xFFFFFF;
 }
 
-void
-draw_pixel(int x, int y){
+void draw_pixel(int x, int y){
 	unsigned pos = x * pixel_width + y * pitch;
     	screen[pos] = currColor & 255;              // BLUE
     	screen[pos + 1] = (currColor >> 8) & 255;   // GREEN
@@ -73,8 +68,7 @@ draw_pixel(int x, int y){
 }
 
 
-void
-draw_char(unsigned char c, int x, int y){
+void draw_char(unsigned char c, int x, int y){
 	int cx, cy;
 	int mask[8] = {1, 2, 4, 8, 16, 32, 64, 128};
 	unsigned char * glyph = font[c - 32];
@@ -88,8 +82,7 @@ draw_char(unsigned char c, int x, int y){
 	}
 }
 
-void
-draw_string(char * str, int x, int y){
+void draw_string(char * str, int x, int y){
 	int i = 0;
 
 	while(str[i] != '\0'){
@@ -98,8 +91,7 @@ draw_string(char * str, int x, int y){
 	}
 }
 
-void
-draw_filled_rectangle(int x1, int y1, int x2, int y2, int color){
+void draw_filled_rectangle(int x1, int y1, int x2, int y2, int color){
 	int i, j;
 	byte blue = color & 255;
 	byte green = (color >> 8 ) & 255;
@@ -117,8 +109,7 @@ draw_filled_rectangle(int x1, int y1, int x2, int y2, int color){
 	}
 }
 
-void
-clear_screen(){
+void clear_screen(){
   	int i, j;
  	byte * draw = screen;
   	buffer_position = 0;
@@ -133,14 +124,14 @@ clear_screen(){
 	}
 }
 
-void
-print_char(unsigned char c){
+void print_char(unsigned char c){
   	if(c == '\n'){
     	nextLine();
     	return;
   	}
   
-	draw_char(c, (buffer_position % buffer_max_per_line) * FONT_WIDTH, (buffer_position / buffer_max_per_line) * FONT_HEIGHT);
+	draw_char(c, (buffer_position % buffer_max_per_line) * FONT_WIDTH, 
+		(buffer_position / buffer_max_per_line) * FONT_HEIGHT);
   
 	if ( buffer_position / buffer_max_per_line == (buffer_max_per_column) ){
    		move_screen();
@@ -150,8 +141,7 @@ print_char(unsigned char c){
 	buffer_position++;
 }
 
-void
-print_string(const char * str){
+void print_string(const char * str){
   	int i = 0;
  	
 	while(str[i] != '\0'){
@@ -160,8 +150,7 @@ print_string(const char * str){
   	}
 }
 
-void
-print_string_by_length(const char * str, int length){
+void print_string_by_length(const char * str, int length){
   	int i = 0;
   
 	while( i < length){
@@ -170,8 +159,7 @@ print_string_by_length(const char * str, int length){
   	}
 }
 
-void
-delete(){
+void delete(){
   	if ( buffer_position > 0){
 		int x = ((buffer_position - 1) % buffer_max_per_line) * FONT_WIDTH;
 	   	int y = ((buffer_position - 1) / buffer_max_per_line) * FONT_HEIGHT;
@@ -180,14 +168,12 @@ delete(){
   	}
 }
 
-void
-deleteLine(int line){
+void deleteLine(int line){
   	draw_filled_rectangle(0, line * FONT_HEIGHT + 1, xres, line * (1 + FONT_HEIGHT) + 1, 0x000000);
   	buffer_position -= (buffer_position % buffer_max_per_line);
 }
 
-void
-nextLine(){
+void nextLine(){
 	if ( buffer_position / buffer_max_per_line == (buffer_max_per_column - 3) ){
 		move_screen();
   	} else {
@@ -195,8 +181,7 @@ nextLine(){
 	}
 }
 
-void
-move_screen(){
+void move_screen(){
 	int i;
 	int pos1 = 0;
  	int pos2 = FONT_HEIGHT * pitch;
@@ -213,8 +198,7 @@ move_screen(){
 }
 
 
-void
-print_line(int x1, int y1, int x2, int y2){
+void print_line(int x1, int y1, int x2, int y2){
 	double dx = x2 - x1;
 	double dy = y2 - y1;
 	int x, y;
@@ -225,13 +209,11 @@ print_line(int x1, int y1, int x2, int y2){
 	}
 }
 
-void
-changeFontColor(int color){
+void changeFontColor(int color){
   	currColor = color;
 }
 
-void
-print_int(qword n){
+void print_int(qword n){
 	char s[16] = {0};
 	int digits = countDigits(n) - 1;
 
@@ -246,8 +228,7 @@ print_int(qword n){
 	print_string(s);
 }
 
-int
-countDigits(qword n){
+int countDigits(qword n){
 	int i = 1;
 
 	while(n >= 10){
@@ -258,8 +239,7 @@ countDigits(qword n){
 	return i;
 }
 
-void
-print_menu(){
+void print_menu(){
 	clear_screen();
 	print_string("1: SHELL");
 	nextLine();

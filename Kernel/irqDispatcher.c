@@ -1,6 +1,6 @@
-#include <time.h>
 #include <keyboard_driver.h>
 #include <stdint.h>
+#include <time.h>
 #include <types.h>
 
 typedef void (*handler_t)(void);

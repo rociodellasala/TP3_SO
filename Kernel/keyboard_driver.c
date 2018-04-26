@@ -1,6 +1,7 @@
 #include <ascii_keyboard.h>
 #include <keyboard_driver.h>
 #include <types.h>
+
 #define BUFFER_SIZE 2000 /* 2000 = 80 * 25 */
 
 static byte buffer[BUFFER_SIZE];
@@ -18,60 +19,61 @@ extern byte _read_keyboard();
 
 void keyboard_handler() {
 	byte key = _read_keyboard();	
+	checkKeyPressed(key);
+}
+
+void checkKeyPressed(unsigned char key){
+	checkSpecialKeyPressed(key);
+    
+	if(key & 0X80)
+	    return;
+	
+   	if(ctrlPressed || altPressed)
+   		return;
+    
+    	getCharacterFromKeyboard(&key);
 	update_buffer(key);
 }
 
-void update_buffer(unsigned char key){
-	
-	if (key == 0x1D || key == 0X9D) {
+void checkSpecialKeyPressed(unsigned char key){
+	if (key == 0x1D || key == 0X9D) 
 		ctrlPressed = !ctrlPressed; 
-		return;
-	}else if(key == 0x36 || key == 0xB6){
+	else if(key == 0x36 || key == 0xB6)
 		shiftRPressed =  !shiftRPressed;
-		return;
-   	}else if(key == 0x2A || key == 0XAA){
+   	else if(key == 0x2A || key == 0XAA)
 		shiftLPressed = !shiftLPressed;
-		return;
-   	}else if(key == 0x38 || key == 0xB8){
+   	else if(key == 0x38 || key == 0xB8)
 		altPressed = !altPressed;
-		return;
-    }else if(key == 0x3A){
+    	else if(key == 0x3A)
 		bloqMayusPressed = !bloqMayusPressed;
-		return;
-    }
-    
-	if(key & 0X80){
-	    return;
-	}
+}
 
-   	if(ctrlPressed || altPressed){
-   		return;
-   	}
-    
-    if(!bloqMayusPressed && !shiftLPressed && !shiftRPressed){
-		key = KEY_VALUE[key];
-   	}else{
+void getCharacterFromKeyboard(unsigned char * key){
+	if(!bloqMayusPressed && !shiftLPressed && !shiftRPressed){
+		*key = KEY_VALUE[*key];
+   	} else {
 		if(bloqMayusPressed && !shiftLPressed && !shiftRPressed){
-			key=KEY_VALUE[key];
-			if(key >= 'a'&& key <= 'z'){
-				key = key - 'a' + 'A';
+			*key=KEY_VALUE[*key];
+			if(*key >= 'a'&& *key <= 'z'){
+				*key = *key - 'a' + 'A';
 			}
-		}else{	
+		} else {	
 			if((shiftLPressed || shiftRPressed) && !bloqMayusPressed){
-				key = SHIFT_KEY_VALUE[key];
-			}else{
-				unsigned char aux = KEY_VALUE[key];
-				if(aux < 'a' || aux > 'z'){
-					key = SHIFT_KEY_VALUE[key];
-				}else{
-					key = KEY_VALUE[key];
-				}
+				*key = SHIFT_KEY_VALUE[*key];
+			} else {
+				unsigned char aux = KEY_VALUE[*key];
+				if(aux < 'a' || aux > 'z')
+					*key = SHIFT_KEY_VALUE[*key];
+				else 
+					*key = KEY_VALUE[*key];
 			}
 		}
 	}
-	
+}
+
+void update_buffer(unsigned char key){
 	buffer[bufferIndex] = key;
-	bufferIndex = (bufferIndex + 1) % BUFFER_SIZE;	
+	bufferIndex = (bufferIndex + 1) % BUFFER_SIZE;
 }
 
 char get_buffer(){
@@ -85,16 +87,15 @@ char get_buffer(){
 }
 
 void read_buffer(char * buff, int size){
-    int i = 0;
-    char c;
+        int i = 0;
+	char c;
 
-    while (i < (size - 1) && (c = get_buffer()) != EOF) {
-        buff[i] = (char) c;
-        i++;
-    }
+    	while (i < (size - 1) && (c = get_buffer()) != EOF) {
+		buff[i] = (char) c;
+		i++;
+    	}
 
-    buff[i] = 0;
-    
+    	buff[i] = 0;
 }
 
 

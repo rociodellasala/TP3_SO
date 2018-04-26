@@ -54,7 +54,7 @@ void putchar(unsigned char c) {
 
 char getchar() {
 	unsigned char c[2];
-	int80(3, 0, c, 2, 0, 0);
+	int80(3, 0, (qword)c, 2, 0, 0);
 	if(c[0] == 0 ) 
 		return EOF;
 	return c[0];

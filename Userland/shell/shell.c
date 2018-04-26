@@ -1,3 +1,4 @@
+#include <exception.h>
 #include <types.h>
 #include <shell.h>
 #include <stdio.h>

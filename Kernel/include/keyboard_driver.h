@@ -4,7 +4,16 @@
 /* Reads keyboard and updates buffer */
 void keyboard_handler();
 
-/* Determines which key was pressed and if it's printable adds it to buffer */
+/* Determines which key was pressed */
+void checkKeyPressed(unsigned char key);
+
+/* Determines if a special key was pressed like BloqMayus or Shift */
+void checkSpecialKeyPressed(unsigned char key);
+
+/* Gets the correct ASCII from keyborad according to the key code */
+void getCharacterFromKeyboard(unsigned char * key);
+
+/* Adds character to buffer if it's printable */
 void update_buffer(unsigned char key);
 
 /* Returns last character that was saved on buffer */

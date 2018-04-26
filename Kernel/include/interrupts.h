@@ -25,7 +25,7 @@ void _sti(void);
 void _hlt(void);
 
 void picMasterMask(word);
-void picSlaveMask(char*);
+void picSlaveMask(int*);
 
 void load_idt();
 

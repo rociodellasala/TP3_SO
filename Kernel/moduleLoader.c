@@ -1,8 +1,7 @@
-#include <stdint.h>
 #include <lib.h>
 #include <moduleLoader.h>
+#include <stdint.h>
 #include <types.h>
-
 
 static void loadModule(byte ** module, void * targetModuleAddress);
 static dword readUint32(byte ** address);
@@ -21,7 +20,6 @@ static void loadModule(byte ** module, void * targetModuleAddress){
 
 	memcpy(targetModuleAddress, *module, moduleSize);
 	*module += moduleSize;
-
 }
 
 static dword readUint32(byte ** address){

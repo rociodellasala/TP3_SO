@@ -12,9 +12,9 @@ COBJECTS=$(SOURCES:.c=.o)
 %.o: %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
 
-all: $(USER)
+all: $(MODULE)
 
-$(USER): $(ASMOBJECTS) $(COBJECTS)
+$(MODULE): $(ASMOBJECTS) $(COBJECTS)
 	$(LD) -T linearGraph.ld _loader.o $(COBJECTS) $(ASMOBJECTS) -o ../$(MODULE)
 
 clean:

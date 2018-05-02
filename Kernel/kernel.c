@@ -5,6 +5,7 @@
 #include <string.h>
 #include <systemcalls.h>
 #include <video_driver.h>
+#include <converter.h>
 
 extern byte bss;
 extern byte data;
@@ -17,9 +18,19 @@ static const qword PageSize = 0x1000;
 
 extern unsigned int read();
 
-static void * const shell = (void *)0x400000;
-static void * const linearGraph = (void *)0x700000;
-static void * const parabolicGraph = (void *)0x900000;
+static void * shell = (void *)0x400000;
+static void * linearGraph = (void *)0x700000;
+static void * parabolicGraph = (void *)0x900000;
+
+static int pageByte;
+
+void * map(void * fisica, void * module){
+	memcpy(fisica,module,8192);
+	return fisica;
+	//print_string("asd");
+	//printHex(module);
+	//*((uint64_t *)entry) = fisica;
+}
 
 typedef int (*EntryPoint)();
 
@@ -52,14 +63,18 @@ void readFromBuff(){
 
 	switch(opcion){
 		case '1':
+			shell = map((void *)0x6000,shell);
 			((EntryPoint)shell)();
 			break;
 
 		case '2':
+			linearGraph = map((void *)0x8000,linearGraph);
+			//printHex(linearGraph);
 			((EntryPoint)linearGraph)();
 			break;
 
 		case '3':
+			parabolicGraph = map((void *)0xA000,parabolicGraph);
 			((EntryPoint)parabolicGraph)();
 			break;
 	}
@@ -67,8 +82,8 @@ void readFromBuff(){
 
 void start(){
 	while(1){
-		clear_screen();
-		print_menu();
+		//clear_screen();
+		//print_menu();
 		readFromBuff();
 	}
 }

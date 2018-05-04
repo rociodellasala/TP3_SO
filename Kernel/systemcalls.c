@@ -3,10 +3,13 @@
 #include <time.h>
 #include <types.h>
 #include <video_driver.h>
+#include <scheduler.h>
+#include <heap.h>
+#include <converter.h>
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
-static sys sysCalls[10]; 
+static sys sysCalls[12]; 
 
 void sys_write(qword buffer, qword size, qword rcx, qword r8, qword r9) {
 	print_char(buffer);
@@ -44,6 +47,24 @@ void sys_time(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
 	printTime();
 }
 
+qword sys_malloc(qword size, qword rdx, qword rcx, qword r8, qword r9){
+	print_string("Me piden reservar:");
+	print_int(size);
+	nextLine();
+	Process currentProcess = getCurrentProcess();
+	char * processName = currentProcess.processName;
+	void * pointer = malloc_heap(size,processName); 
+	print_string("El pointer a retornar es: ");
+	printHex(pointer);
+	nextLine();
+	return (qword) pointer;
+}
+
+void sys_printHex(qword pointer, qword rdx, qword rcx, qword r8, qword r9){
+	printHex(pointer);
+}
+
+
 void load_systemcalls(){
 	sysCalls[1] = (sys)&sys_write;
 	sysCalls[2] = (sys)&sys_clear;
@@ -54,14 +75,16 @@ void load_systemcalls(){
 	sysCalls[7] = (sys)&sys_delete;
 	sysCalls[8] = (sys)&sys_pixel;
 	sysCalls[9] = (sys)&sys_time;
+	sysCalls[10] = (sys)&sys_malloc;
+	sysCalls[11] = (sys)&sys_printHex;
 
 	setup_IDT_entry(0x80, (qword)&_irq80Handler); 
 }
 
 
-void syscall_handler(qword rdi,qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
-	if(rdi < 0 || rdi >= 10)
-		return;
+qword syscall_handler(qword rdi,qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
+	if(rdi < 0 || rdi >= 12)
+		return 0;
 	
-	sysCalls[rdi](rsi,rdx,rcx,r8,r9);
+	return sysCalls[rdi](rsi,rdx,rcx,r8,r9);
 }

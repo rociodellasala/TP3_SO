@@ -4,7 +4,6 @@
 #define false 0
 #define true 1
 #define EOF -1
-#define NULL 0
 
 /* A boolean type */
 typedef unsigned char boolean;

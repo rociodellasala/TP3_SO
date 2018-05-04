@@ -1,11 +1,15 @@
-#include <interrupts.h>
-#include <keyboard_driver.h>
-#include <moduleLoader.h>
 #include <stdint.h>
 #include <string.h>
-#include <systemcalls.h>
+#include <keyboard_driver.h>
+#include <moduleLoader.h>
 #include <video_driver.h>
+#include <interrupts.h>
+#include <systemcalls.h>
+#include <scheduler.h>
 #include <converter.h>
+#include <heap.h>
+#include <memoryManager.h>
+#include <lib.h>
 
 extern byte bss;
 extern byte data;
@@ -21,15 +25,11 @@ extern unsigned int read();
 static void * shell = (void *)0x400000;
 static void * linearGraph = (void *)0x700000;
 static void * parabolicGraph = (void *)0x900000;
-
-static int pageByte;
+static void * needMemory = (void *)0xB00000;
 
 void * map(void * fisica, void * module){
 	memcpy(fisica,module,8192);
 	return fisica;
-	//print_string("asd");
-	//printHex(module);
-	//*((uint64_t *)entry) = fisica;
 }
 
 typedef int (*EntryPoint)();
@@ -47,11 +47,12 @@ void * getStackBase() {
 }
 
 void * initializeKernelBinary() {
-	void * moduleAddresses[] = {shell, linearGraph, parabolicGraph,};
+	void * moduleAddresses[] = {shell, linearGraph, parabolicGraph,needMemory,};
 	loadModules(&endOfKernelBinary, moduleAddresses);
 	clearBSS(&bss, &endOfKernel - &bss);
 	return getStackBase();
 }
+
 
 void readFromBuff(){
 	int i = 0;
@@ -63,27 +64,32 @@ void readFromBuff(){
 
 	switch(opcion){
 		case '1':
-			shell = map((void *)0x6000,shell);
+			createProcess(shell, "shell");
 			((EntryPoint)shell)();
 			break;
 
 		case '2':
-			linearGraph = map((void *)0x8000,linearGraph);
-			//printHex(linearGraph);
+			createProcess(linearGraph, "linearGraph");
 			((EntryPoint)linearGraph)();
 			break;
 
 		case '3':
-			parabolicGraph = map((void *)0xA000,parabolicGraph);
+			createProcess(parabolicGraph, "parabolicGraph");
 			((EntryPoint)parabolicGraph)();
+			break;
+
+		case '4':
+			createProcess(needMemory, "needMemory");
+			((EntryPoint)needMemory)();
 			break;
 	}
 }
 
 void start(){
 	while(1){
-		//clear_screen();
-		//print_menu();
+		clear_screen();
+		print_menu();
+		printAllCurrentProcess();
 		readFromBuff();
 	}
 }
@@ -94,7 +100,9 @@ int main(){
 	load_systemcalls();
 	start_video_mode();
 	_sti();
-	
+	initializeMemoryManager();
+	initializeKernelHeap();
+	//printKernelHeap();
 	start();
 
 	return 0;

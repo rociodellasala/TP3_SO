@@ -247,5 +247,7 @@ void print_menu(){
 	nextLine();
 	print_string("3: PARABOLIC GRAPH");
 	nextLine();
+	print_string("4: NEED MEMORY");
+	nextLine();
 }
 

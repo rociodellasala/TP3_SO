@@ -168,11 +168,9 @@ _exception6Handler:
 ;	Syscall
 ; -----------------------------------------------------------------------------
 _irq80Handler:
+	pushaq
 	call syscall_handler
-
-	mov al, 20h
-	out 20h, al
-
+	popaq
 	iretq
 
 

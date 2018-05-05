@@ -57,6 +57,7 @@ void * initializeKernelBinary() {
 void readFromBuff(){
 	int i = 0;
 	char opcion = '0';
+	int PID;
 
 	while((opcion = get_buffer()) == EOF || i < 1){
 		i++;
@@ -64,23 +65,27 @@ void readFromBuff(){
 
 	switch(opcion){
 		case '1':
-			createProcess(shell, "shell");
+			PID = createProcess(shell, "shell");
 			((EntryPoint)shell)();
+			terminateProcess(PID);
 			break;
 
 		case '2':
-			createProcess(linearGraph, "linearGraph");
+			PID = createProcess(linearGraph, "linearGraph");
 			((EntryPoint)linearGraph)();
+			terminateProcess(PID);
 			break;
 
 		case '3':
-			createProcess(parabolicGraph, "parabolicGraph");
+			PID = createProcess(parabolicGraph, "parabolicGraph");
 			((EntryPoint)parabolicGraph)();
+			terminateProcess(PID);
 			break;
 
 		case '4':
-			createProcess(needMemory, "needMemory");
+			PID = createProcess(needMemory, "needMemory");
 			((EntryPoint)needMemory)();
+			terminateProcess(PID);
 			break;
 	}
 }

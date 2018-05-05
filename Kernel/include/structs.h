@@ -5,12 +5,15 @@
 #define MAX_PROCESS_NAME 50
 #define PAGES_KERNEL_HEAP 96
 
+#define RUNNING 1
+#define READY 2
+#define FINISHED 3
+
 typedef struct kernelHeapPage{
 	int occupiedBytes;
 	int freeBytes;
 	void * pageAddress;
 }kernelHeapPage;
-
 
 typedef struct kernelHeapHeader{
 	int nextPage;
@@ -31,6 +34,13 @@ typedef struct Process{
   	char processName[MAX_PROCESS_NAME];
   	p_heapPage heap;
   	void * pages[MAX_PAGES];
+    int status;
 }Process;
+
+typedef struct ProcessSlot{
+    struct ProcessSlot * next;
+    Process process;
+}ProcessSlot;
+
 
 #endif

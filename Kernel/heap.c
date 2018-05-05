@@ -6,9 +6,8 @@
 #include <converter.h>
 #include <lib.h>
 
-extern Process tableProcess[PROCESS_SLOTS];
+extern ProcessSlot * tableProcess;
 kernelHeapHeader kernelHeader;
-
 
 void initializeKernelHeap(){
 	int i;
@@ -61,9 +60,8 @@ void * findAvaiableHeapKernelPage(int size){
 }
 
 void * malloc_heap(int size, char * processName){
-	int numberProcess = searchProcessStruct(processName);
-	Process currentProcess = tableProcess[numberProcess];
-	p_heapPage heap = findAvaiableHeapPage(currentProcess.heap, size,numberProcess);
+	Process currentProcess = searchRunningProcess();
+	p_heapPage heap = findAvaiableHeapPage(currentProcess.heap, size);
 	void * freePointer = findFreePointer(heap);
 	heap->freeBytes -= size;
 	heap->occupiedBytes += size;
@@ -82,23 +80,21 @@ void * malloc_heap(int size, char * processName){
 
 }	
 
-int searchProcessStruct(char * processName){
-	int i;
-	struct Process searchedProcess;
-	for(i = 0; i < PROCESS_SLOTS; i++){
-		if(strcmp(tableProcess[i].processName, processName)){
-			return i;
-		}
+Process searchRunningProcess(){
+	ProcessSlot * aux = tableProcess;
+
+	while(aux != NULL && aux->process.status != RUNNING){
+		aux = aux->next;
 	}
-	return i;
+
+	return aux->process;
 }
 
-
-
-p_heapPage findAvaiableHeapPage(p_heapPage firstPage, int size, int numberProcess){
+p_heapPage findAvaiableHeapPage(p_heapPage firstPage, int size){
 	if(firstPage == NULL){
 		firstPage = createHeapPage();
-		tableProcess[numberProcess].heap = firstPage;
+		Process currentProcess = searchRunningProcess();
+		currentProcess.heap = firstPage;
 		return firstPage;
 	}
 	if(firstPage->freeBytes >= size)

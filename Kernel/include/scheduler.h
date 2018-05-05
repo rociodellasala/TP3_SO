@@ -3,10 +3,6 @@
 
 #include "structs.h"
 
-
-#define PROCESS_SLOTS 300
-
-
 /*Creates a pointer to an struct Process with all needed to run a process*/
 void createProcess(void * entryPoint, char * nameProcess);
 

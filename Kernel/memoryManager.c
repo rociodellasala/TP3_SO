@@ -11,7 +11,6 @@ void initializeMemoryManager(){
 	freePages.size = 0;
 	markOccupiedPages();
 	//printMemoryPages();
-
 }
 
 void splitMemory(){

@@ -16,11 +16,11 @@ p_heapPage startEmptyHeap();
 
 void * malloc_heap(int size, char * processName);
 
-int searchProcessStruct(char * processName);
+Process searchRunningProcess();
 
 void * findAvaiableHeapKernelPage(int size);
 
-p_heapPage findAvaiableHeapPage(p_heapPage firstPage, int size, int numberProcess);
+p_heapPage findAvaiableHeapPage(p_heapPage firstPage, int size);
 
 void * findFreePointer(p_heapPage heapPage);
 

@@ -48,15 +48,7 @@ void sys_time(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
 }
 
 qword sys_malloc(qword size, qword rdx, qword rcx, qword r8, qword r9){
-	print_string("Me piden reservar:");
-	print_int(size);
-	nextLine();
-	Process currentProcess = getCurrentProcess();
-	char * processName = currentProcess.processName;
-	void * pointer = malloc_heap(size,processName); 
-	print_string("El pointer a retornar es: ");
-	printHex(pointer);
-	nextLine();
+	void * pointer = malloc_heap(size); 
 	return (qword) pointer;
 }
 

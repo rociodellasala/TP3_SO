@@ -2,23 +2,15 @@
 #include <string.h>
 #include <video_driver.h>
 #include <heap.h>
+#include <converter.h>
+#include <memoryManager.h>
 
 int currentProcessId = 0; //esto es para tener constancia de los PID de cada programa
-int smallestSlotFree = 0; //este numero es para manejar cuando un proceso termina, ese slot queda libre y seguro es el mas chico en la tabla
 int allProcess = 0;
 
 ProcessSlot * tableProcess;
 
-void createProcess(void * entryPoint, char * nameProcess){
-	Process newProcess;
-	newProcess.PID = currentProcessId++;
-	memcpy(newProcess.processName,nameProcess,20);
-	newProcess.heap = NULL;
-	newProcess.status = RUNNING;
-	addProcess(newProcess);
-}
 
-/* NO FUNCA
 ProcessSlot * createSlot(Process newProcess){
 	ProcessSlot newSlotStruct;
 	ProcessSlot * newSlot;
@@ -29,30 +21,41 @@ ProcessSlot * createSlot(Process newProcess){
 	void * destination = findAvaiableHeapKernelPage(sizeNewProcessSlotStruct);
 	newSlot = memcpy(destination, newSlot, sizeNewProcessSlotStruct);
 	return newSlot;
-} */
+}
+
+int createProcess(void * entryPoint, char * nameProcess){
+	Process newProcess;
+	newProcess.PID = currentProcessId++;
+	memcpy(newProcess.processName,nameProcess,20); //deberia ser strlen de nameProcess
+	newProcess.heap = NULL;
+	newProcess.status = RUNNING;
+	addProcess(newProcess);
+	return newProcess.PID;
+}
 
 void addProcess(Process newProcess){
 	//ProcessSlot * newSlot = createSlot(newProcess);
-	ProcessSlot * newSlot = (ProcessSlot *) allocPage();
-	newSlot->process = newProcess;
-
+	ProcessSlot * newSlot = createSlot(newProcess);
 	if(tableProcess == NULL){
 		tableProcess = newSlot;
-		newSlot->next = NULL;
+		print_string("La tabla de procesos era NULL");
+		printHex(newSlot);
+		nextLine();
 	} else {
 		ProcessSlot * aux = tableProcess;
 		while(aux->next != NULL){
 			aux->process.status = FINISHED;
 			aux = aux->next;
 		}
-
+		print_string("La tabla de procesos no era NULL");
+		printHex(newSlot);
+		nextLine();
 		aux->next = newSlot;
 		aux->process.status = FINISHED;
+		//printHex(newSlot->next);
 		newSlot->next = NULL;
 	}
-
 	allProcess++;
-	smallestSlotFree++;
 }
 
 void printAllCurrentProcess(){
@@ -74,6 +77,34 @@ void printAllCurrentProcess(){
 	}
 }
 
-Process getCurrentProcess(){
-	return tableProcess->process;
+ProcessSlot * searchRunningProcess(){
+	ProcessSlot * aux = tableProcess;
+
+	while(aux != NULL && aux->process.status != RUNNING){
+		aux = aux->next;
+	}
+
+	return aux;
+}
+
+void terminateProcess(int PID){
+	ProcessSlot * aux = tableProcess;
+
+	if(tableProcess->process.PID == PID){
+		releasePage(tableProcess->process);
+		tableProcess = tableProcess->next;
+		return;
+	}
+
+	ProcessSlot * previous = tableProcess;
+	aux = tableProcess->next;
+
+	while(aux->process.PID != PID && aux != NULL){
+		previous = aux;
+		aux = aux->next;
+	}
+	//Deberia manejarse el caso que haya terminado y aux == NULL
+	releasePage(aux->process);
+	previous->next = aux->next;
+	return;
 }

@@ -2,6 +2,7 @@
 #include <string.h>
 #include <video_driver.h>
 #include <converter.h>
+#include <structs.h>
 
 struct memoryPage memoryPages[PAGEQUANTITY];
 struct memoryFreeStack freePages;
@@ -11,6 +12,7 @@ void initializeMemoryManager(){
 	freePages.size = 0;
 	markOccupiedPages();
 	//printMemoryPages();
+
 }
 
 void splitMemory(){
@@ -38,6 +40,18 @@ void printMemoryPages(){
 	}	
 }
 
+void printFreePages(){
+	int i = 0;
+	print_string("Imprimiendo paginas libres: ");
+	nextLine();
+	while(i != freePages.size){
+		print_string("Pagina libre: ");
+		printHex(freePages.memoryFree[i]);
+		nextLine();
+		i++;
+	}
+}
+
 void * allocPage(){
 	void * page;
 	if(freePages.size != 0){
@@ -45,11 +59,8 @@ void * allocPage(){
 		freePages.size--;
 	}else{
 		page = searchForFreePage(memoryPages);
-		//if(page == NULL); //lanzaria una excepcion
 	}
-	//print_string("La posicion de memoria retornada fue: ");
-	//printHex(page);
-	//nextLine();
+	//if(page == NULL); //lanzaria una excepcion
 	return page;
 }
 
@@ -72,7 +83,15 @@ void * searchForFreePage(){
 	return page;
 }
 
-//void releasePage(struct Process * process){
-//	freePages.memoryFree[freePages.size] = process->startingProcessMemory;
-//	freePages.size++;
-//}
+void releasePage(Process process){
+	recursiveRealeseHeap(process.heap);
+	printFreePages();
+}
+
+void recursiveRealeseHeap(p_heapPage heap){
+	if(heap == NULL)
+		return;
+	recursiveRealeseHeap(heap->nextHeapPage);
+	freePages.memoryFree[freePages.size] = heap->currentPage;
+	freePages.size++;
+}

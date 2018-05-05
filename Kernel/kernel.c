@@ -22,10 +22,10 @@ static const qword PageSize = 0x1000;
 
 extern unsigned int read();
 
-static void * shell = (void *)0x400000;
-static void * linearGraph = (void *)0x700000;
-static void * parabolicGraph = (void *)0x900000;
-static void * needMemory = (void *)0xB00000;
+static void * shell = (void *)0x600000;
+static void * linearGraph = (void *)0x900000;
+static void * parabolicGraph = (void *)0xB00000;
+static void * needMemory = (void *)0xD00000;
 
 void * map(void * fisica, void * module){
 	memcpy(fisica,module,8192);

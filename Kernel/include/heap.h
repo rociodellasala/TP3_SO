@@ -14,9 +14,7 @@ p_heapPage createHeapPage();
 
 p_heapPage startEmptyHeap();
 
-void * malloc_heap(int size, char * processName);
-
-Process searchRunningProcess();
+void * malloc_heap(int size);
 
 void * findAvaiableHeapKernelPage(int size);
 

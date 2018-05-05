@@ -2,7 +2,7 @@ include Makefile.inc
 
 SAMPLE_DATA=shell.bin
 
-all: terminal linearFDisp parabDisp needMem
+all: terminal linearFDisp parabDisp needMem testMem
 
 terminal:
 	cd shell; make all
@@ -16,11 +16,15 @@ parabDisp:
 needMem:
 	cd needMemory; make all
 
+testMem:
+	cd testMemoryManager; make all
+
 clean:
 	cd shell; make clean
 	cd linearGraph; make clean
 	cd parabolicGraph; make clean
 	cd needMemory; make clean
+	cd testMemoryManager; make clean
 	rm -rf *.bin
 
 

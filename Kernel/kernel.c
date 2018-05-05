@@ -26,6 +26,7 @@ static void * shell = (void *)0x600000;
 static void * linearGraph = (void *)0x900000;
 static void * parabolicGraph = (void *)0xB00000;
 static void * needMemory = (void *)0xD00000;
+static void * testMemoryManager = (void *)0xE00000;
 
 void * map(void * fisica, void * module){
 	memcpy(fisica,module,8192);
@@ -47,7 +48,7 @@ void * getStackBase() {
 }
 
 void * initializeKernelBinary() {
-	void * moduleAddresses[] = {shell, linearGraph, parabolicGraph,needMemory,};
+	void * moduleAddresses[] = {shell, linearGraph, parabolicGraph,needMemory,testMemoryManager,};
 	loadModules(&endOfKernelBinary, moduleAddresses);
 	clearBSS(&bss, &endOfKernel - &bss);
 	return getStackBase();
@@ -87,6 +88,10 @@ void readFromBuff(){
 			((EntryPoint)needMemory)();
 			terminateProcess(PID);
 			break;
+		case '5':
+			PID = createProcess(needMemory, "testMemoryManager");
+			((EntryPoint)testMemoryManager)();
+			terminateProcess(PID); 
 	}
 }
 

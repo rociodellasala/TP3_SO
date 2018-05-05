@@ -78,9 +78,9 @@ void * malloc_heap(int size){
 	//print_string("El inicio del heap del proceso es:");
 	//printHex((qword)tableProcess[numberProcess].heap->currentPage);
 	//nextLine();
-	print_string("El puntero que reservo el usuario esta en la posicion:");
-	printHex((qword)freePointer);
-	nextLine();
+	//print_string("El puntero que reservo el usuario esta en la posicion:");
+	//printHex((qword)freePointer);
+	//nextLine();
 	return freePointer;
 
 }	

@@ -249,5 +249,7 @@ void print_menu(){
 	nextLine();
 	print_string("4: NEED MEMORY");
 	nextLine();
+	print_string("5: TEST MEMORY");
+	nextLine();
 }
 

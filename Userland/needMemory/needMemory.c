@@ -4,19 +4,16 @@
 #include <stdlib.h>
 #include "./include/stdio.h"
 
-static void * somewhere = (void *)0x64000;
-static void * another = (void *)0x64020;
-
 int main (void){
 	clear_screen();
 	int a;
-	int b;
-	printf("Bueno dias!\n");
+	printf("Buenos dias!\n");
 	printf("Deme el numero que quiera:");
 	getNum(&a);
-	char * memory = (char *) malloc(301);
-	char * memory2 = (char *) malloc(600);
-	char * memory3 = (char *) malloc(100);
+	char * memory = (char *) malloc(3000);
+	char * memory2 = (char *) malloc(2000);
+	char * memory3 = (char *) malloc(2500);
+	char * palabra = "Hola Mundo";
 	printf("\nEl puntero reservado es:\n");
 	printHexadecimal(memory);
 	printf("\n");
@@ -26,13 +23,13 @@ int main (void){
 	printf("El puntero reservado es:\n");
 	printHexadecimal(memory3);
 	printf("\n");
-	printf("%d\n",b);
-	printf("\n");
+	strcpy(memory,palabra);
+	strcpy(memory2,"Fortnite > PUBG");
+	strcpy(memory3,"Rubia aprobameee");
+	printf("%s\n",memory);
+	printf("%s\n",memory2);
+	printf("%s\n",memory3);
 	printf("Deme otro numero que quiera:");
-	if(somewhere == memory)
-		printf("jaja");
-	else if(another == memory)
-		printf("jeje");
 	getNum(&a);
 	return 0;
 }

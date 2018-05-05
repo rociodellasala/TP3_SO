@@ -51,17 +51,22 @@ void * findAvaiableHeapKernelPage(int size){
 	int nextPage = kernelHeader.nextPage;
 	kernelHeapPage heapPageK = kernelHeader.kernelHeapPages[nextPage];
 	if(heapPageK.freeBytes >= size){
-		return (heapPageK.pageAddress) + (heapPageK.occupiedBytes);
+		void * address = (heapPageK.pageAddress) + (heapPageK.occupiedBytes);
+		kernelHeader.kernelHeapPages[nextPage].occupiedBytes += size;
+		kernelHeader.kernelHeapPages[nextPage].freeBytes -= size;
+		return address;
 	}else{
 		heapPageK = kernelHeader.kernelHeapPages[nextPage + 1];
 		kernelHeader.nextPage++;
+		kernelHeader.kernelHeapPages[nextPage + 1].occupiedBytes += size;
+		kernelHeader.kernelHeapPages[nextPage + 1].freeBytes -= size;
 		return heapPageK.pageAddress;
 	}
 }
 
-void * malloc_heap(int size, char * processName){
-	Process currentProcess = searchRunningProcess();
-	p_heapPage heap = findAvaiableHeapPage(currentProcess.heap, size);
+void * malloc_heap(int size){
+	ProcessSlot * currentProcessSlot = searchRunningProcess();
+	p_heapPage heap = findAvaiableHeapPage(currentProcessSlot->process.heap, size);
 	void * freePointer = findFreePointer(heap);
 	heap->freeBytes -= size;
 	heap->occupiedBytes += size;
@@ -80,25 +85,16 @@ void * malloc_heap(int size, char * processName){
 
 }	
 
-Process searchRunningProcess(){
-	ProcessSlot * aux = tableProcess;
-
-	while(aux != NULL && aux->process.status != RUNNING){
-		aux = aux->next;
-	}
-
-	return aux->process;
-}
-
 p_heapPage findAvaiableHeapPage(p_heapPage firstPage, int size){
 	if(firstPage == NULL){
 		firstPage = createHeapPage();
-		Process currentProcess = searchRunningProcess();
-		currentProcess.heap = firstPage;
+		ProcessSlot * currentProcessSlot = searchRunningProcess();
+		currentProcessSlot->process.heap = firstPage;
 		return firstPage;
 	}
-	if(firstPage->freeBytes >= size)
+	if(firstPage->freeBytes >= size){
 		return firstPage;
+	}
 	
 	p_heapPage currentHeapPage = firstPage->nextHeapPage;
 	p_heapPage previousPage = firstPage;
@@ -108,8 +104,10 @@ p_heapPage findAvaiableHeapPage(p_heapPage firstPage, int size){
 		currentHeapPage = currentHeapPage->nextHeapPage;
 	}
 
-	if(currentHeapPage == NULL)
+	if(currentHeapPage == NULL){
 		previousPage->nextHeapPage = createHeapPage();
+		return previousPage->nextHeapPage;
+	}
 	else
 		return currentHeapPage;
 }

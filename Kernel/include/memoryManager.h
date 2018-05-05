@@ -4,6 +4,8 @@
 #define FREEPAGES 300
 #define PAGEQUANTITY 262144 // 1GB dividido entre 4KB
 
+#include "structs.h"
+
 struct memoryPage
   {
      void * startingMemory;
@@ -30,10 +32,14 @@ void * allocPage();
 void * searchForFreePage();
 
 /*Puts the released page in stack for optimization*/
-//void releasePage(struct Process * process);
+void releasePage(Process process);
 
 void markOccupiedPages();
 
 void printMemoryPages();
+
+void recursiveRealeseHeap();
+
+void printFreePages();
 
 #endif

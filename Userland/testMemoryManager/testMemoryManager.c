@@ -16,9 +16,11 @@ int main() {
 	int firstAmount;
 	int secondAmount;
 	int thirdAmount;
+	int fourthAmount;
 	char * firstStringPointer;
 	char * secondStringPointer;
 	char * thirdStringPointer;
+	char * fourthStringPointer;
 
 	printStartTestMessage();
 
@@ -38,10 +40,18 @@ int main() {
 
 	//Third test, reserve memory for third pointer
 	//Check that all pointers are not equal
-	//Check thath third pointer starts at second page of user heap
+	//Check that third pointer starts at second page of user heap
 	thirdStringPointer = whenAskedForMemoryThirdPointer(&thirdAmount,firstAmount,secondAmount);
 	thenAllPointersAreNotEqual(firstStringPointer, secondStringPointer, thirdStringPointer);
 	thenThirdPointerStartsWhereItShould(thirdStringPointer);
+
+	//Fourth test, reserve memory for fourth pointer
+	//Check that all pointers are not equal
+	//Check that fourth pointer in first page
+
+	fourthStringPointer = whenAskedForMemoryFourthPointer(&fourthAmount,firstAmount,secondAmount);
+	thenAllTestPointersAreNotEqual(firstStringPointer, secondStringPointer, thirdStringPointer, fourthStringPointer);
+	thenFourthPointerStartsWhereItShould(fourthStringPointer,firstAmount,secondAmount);
 
 	exitTest();
 
@@ -148,6 +158,42 @@ void thenThirdPointerStartsWhereItShould(void * thirdStringPointer){
 	}else{
 		printf("\nERROR!! -------- Our pointer address is: 0x");
 		printHexadecimal(thirdStringPointer);
+	} 
+}
+
+void * whenAskedForMemoryFourthPointer(int * fourthAmount, int firstAmount, int secondAmount){
+	int size;
+	do{
+		size = 0;
+		printfFourthTestMessage(firstAmount,secondAmount);
+		getNum(&size);
+	}while(size < 0 || size > 4096 - firstAmount - secondAmount);
+	*fourthAmount = size;
+	return malloc((*fourthAmount));
+}
+
+void printfFourthTestMessage(int firstAmount, int secondAmount){
+	printf("\n\nWe are going to ask for some memory for our fourth pointer\n");
+	printf("\nMemory asked should be between 0 and %d bytes\n", 4096 - firstAmount - secondAmount);
+	printf("Please enter the amount of memory to ask for: ");
+}
+
+void thenAllTestPointersAreNotEqual(void * firstStringPointer, void * secondStringPointer, void * thirdStringPointer, void * fourthStringPointer){
+	if(!assertEqualPointer(firstStringPointer,secondStringPointer) && !assertEqualPointer(secondStringPointer, thirdStringPointer)
+		&& !assertEqualPointer(thirdStringPointer,fourthStringPointer)){
+		printf("\nSUCCESS!! -------- All pointers are not equal");
+	}else{
+		printf("\nERROR!! -------- Some pointers are equal");
+	}
+}
+
+void thenFourthPointerStartsWhereItShould(void * fourthStringPointer, int firstAmount, int secondAmount){
+	if(assertEqualPointer(fourthStringPointer,firstPage + firstAmount + secondAmount)){
+		printf("\nSUCCESS!! -------- Our pointer address is: 0x");
+		printHexadecimal(fourthStringPointer);
+	}else{
+		printf("\nERROR!! -------- Our pointer address is: 0x");
+		printHexadecimal(fourthStringPointer);
 	} 
 }
 

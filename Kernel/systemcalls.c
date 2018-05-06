@@ -48,7 +48,15 @@ void sys_time(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
 }
 
 qword sys_malloc(qword size, qword rdx, qword rcx, qword r8, qword r9){
-	void * pointer = malloc_heap(size); 
+	void * pointer = malloc_heap(size);
+	//nextLine();
+	//nextLine();
+	//print_string("Kernel: Se pidio ");
+	//print_int(size);
+	//nextLine();
+	//print_string("Se retorna el puntero: ");
+	//printHex(pointer);
+	//nextLine();
 	return (qword) pointer;
 }
 

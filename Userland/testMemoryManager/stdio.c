@@ -128,7 +128,6 @@ int getNum(int * a){
 	  		}	   	
 		}	
 	}
-
 	if(buffer[0] == '-'){
 		for(int k = 1; k < index; k++){
 			buffer[k] = buffer[k] - '0';

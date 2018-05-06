@@ -10,9 +10,9 @@ int main (void){
 	printf("Buenos dias!\n");
 	printf("Deme el numero que quiera:");
 	getNum(&a);
-	char * memory = (char *) malloc(3000);
-	char * memory2 = (char *) malloc(2000);
-	char * memory3 = (char *) malloc(2500);
+	char * memory = (char *) malloc(250);
+	char * memory2 = (char *) malloc(300);
+	char * memory3 = (char *) malloc(200);
 	char * palabra = "Hola Mundo";
 	printf("\nEl puntero reservado es:\n");
 	printHexadecimal(memory);

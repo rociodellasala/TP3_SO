@@ -93,6 +93,7 @@ int createProcess(void * entryPoint, char * nameProcess){
 	newProcess.heap = NULL;
 	newProcess.status = READY;
 	newProcess.startingPoint = entryPoint;
+	newProcess.pipe = NULL;
 	//newProcess.baseStack = allocPage();
 	newProcess.userStack = fillStackFrame(entryPoint, 0x1000);
 	addProcessToPCB(newProcess);
@@ -298,4 +299,11 @@ void * fillStackFrame(void * entryPoint, void * baseStack) {
 	frame->base = 0x000;
 
 	return (void *) frame;	
+}
+
+//falta ahcerse
+
+
+void blockProgram(){
+	return;
 }

@@ -15,4 +15,7 @@ boolean strncmp(char * str1, char * str2, int num);
 /* Copy the string from source to dest*/
 char * strcpy(char * dest,const char * source);
 
+/* Copy n chars from source to dest*/
+char * strncpy(char * dest, const char * source, int charsToCopy);
+
 #endif

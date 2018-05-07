@@ -51,6 +51,16 @@ char * strcpy(char * dest,const char * source){
 	return dest;
 }
 
+char * strncpy(char * dest, const char * source, int charsToCopy){
+	int i;
+	for(i = 0; i <  charsToCopy; i++){
+		*(dest + i) = *(source + i);
+	}
+
+	*(dest + i) = '\0';
+	return dest;
+}
+
 
 
 

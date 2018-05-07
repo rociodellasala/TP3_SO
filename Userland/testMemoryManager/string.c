@@ -29,6 +29,16 @@ boolean strcmp(char * str1, char * str2){
 	return false;
 }
 
+boolean strncmp(char * str1, char * str2, int num){
+	int i = 0;
+	while(i != num){
+		if(*(str1 + i) != *(str2 + i))
+			return false;
+		i++;
+	}
+	return true;
+}
+
 char * strcpy(char * dest,const char * source){
 	int sourceLength = strlen(source);
 	int i;
@@ -40,6 +50,7 @@ char * strcpy(char * dest,const char * source){
 	*(dest + i) = '\0';
 	return dest;
 }
+
 
 
 

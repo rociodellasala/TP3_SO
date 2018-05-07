@@ -8,8 +8,8 @@
 #include <assert.h>
 #include <testMemoryManager.h>
 
-static void * firstPage = (void *)0x64000;
-static void * secondPage = (void *)0x65000;
+static void * firstPage = (void *)0x65000;
+static void * secondPage = (void *)0x66000;
 
 int main() {
 	clear_screen();
@@ -54,8 +54,8 @@ int main() {
 	thenFourthPointerStartsWhereItShould(fourthStringPointer,firstAmount,secondAmount);
 
 	exitTest();
-
-	return 0;
+	clear_screen();
+	exitProgram();
 }
 
 void printStartTestMessage(){
@@ -132,7 +132,7 @@ void * whenAskedForMemoryThirdPointer(int * thirdAmount, int firstAmount, int se
 		size2 = 0;
 		printfThirdTestMessage(firstAmount,secondAmount);
 		getNum(&size2);
-	}while(size2 < 4096 - firstAmount - secondAmount || size2 > 4096);
+	}while(size2 <= 4096 - firstAmount - secondAmount || size2 > 4096);
 	*thirdAmount = size2;
 	return malloc((*thirdAmount));
 }
@@ -204,5 +204,9 @@ void exitTest(){
 		printf("\nButton pressed: ");
 		getNum(&buttonPressed);
 	}while(buttonPressed != 0);
+}
+
+void exitProgram(){
+	int80(14,0,0,0,0);
 }
 

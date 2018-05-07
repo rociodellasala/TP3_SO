@@ -3,6 +3,7 @@
 #include <time.h>
 #include <types.h>
 #include <video_driver.h>
+#include <string.h>
 #include <scheduler.h>
 #include <heap.h>
 #include <converter.h>
@@ -70,8 +71,21 @@ void sys_printHex(qword pointer, qword rdx, qword rcx, qword r8, qword r9){
 	printHex(pointer);
 }
 
-void sys_createProcess(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
-	createProcess(needMemory, "needMemory");
+void sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r9){
+	print_string("Se me pidio ejecutar el proceso: ");
+	print_string(processName);
+	nextLine();
+	char * process = (char *) processName;
+	if(strcmp(processName,"linearGraph")){
+		createProcess(linearGraph, process);
+	}else if(strcmp(processName,"parabolicGraph")){
+		createProcess(parabolicGraph, process);
+	}else if(strcmp(processName,"needMemory")){
+		createProcess(needMemory, process);
+	}else{
+		createProcess(testMemoryManager, process);
+	}
+	return;
 }
 
 void sys_ls(qword pointer, qword rdx, qword rcx, qword r8, qword r9){

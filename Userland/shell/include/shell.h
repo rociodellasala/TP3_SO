@@ -3,7 +3,7 @@
 
 #define MAX_SIZE 2000
 #define exit 2
-
+#define MAX_COMMAND_SIZE 100
 /* Start the shell */
 void start_shell();
 
@@ -27,5 +27,6 @@ void ps();
 
 /* Prints current time */
 void time();
+
 
 #endif

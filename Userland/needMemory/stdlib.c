@@ -1,7 +1,4 @@
 #include <stdlib.h>
-#include <types.h>
-
-extern void int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
 void intToString(int num, char * str){
 	int dig = 0;
@@ -36,10 +33,9 @@ void intToString(int num, char * str){
 	}	
 }
 
-/*
 void * malloc(int size){
 	return int80(10,size,0,0,0,0);
-}*/
+}
 
 void printHexadecimal(void * pointer){
 	int80(11,pointer,0,0,0,0);

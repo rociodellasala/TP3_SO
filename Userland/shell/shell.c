@@ -74,12 +74,12 @@ void start_shell() {
 
 int get_command(char * buffer){
 	int x = 0;
-	char function[15];
+	char function[MAX_COMMAND_SIZE];
 
 	while(buffer[x] != '-' && buffer[x] != 0){
 		function[x] = buffer[x];
 		x++;
-		if(x > 14)
+		if(x > MAX_COMMAND_SIZE)
 			return 1;		
 	}
 	
@@ -90,6 +90,10 @@ int get_command(char * buffer){
 
 void linear(){
 	int80(12, 0, 0, 0, 0, 0);
+}
+
+void startProgram(char * program){
+	int80(12,program,0,0,0,0);
 }
 
 
@@ -114,8 +118,8 @@ int call_command(char * function, char * parameter){
 		invalid_opcode();
 	} else if(strcmp(function, "exit")){			
 		return 2;
-	*/} else if(strcmp(function, "linear")){
-		linear();
+	*/} else if(strncmp(function, "./", 2)){
+		startProgram(function + 2);
 		return 0;
 	} else if(strcmp(function, "ps")){
 		ps();

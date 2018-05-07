@@ -111,9 +111,12 @@ _irq00Handler:
 
 	popaq
 
+	push rax
+
 	mov al, 20h ; EOI
 	out 20h, al
 
+	pop rax
 	iretq
 
 restoreContext:
@@ -178,9 +181,11 @@ _exception6Handler:
 ;	Syscall
 ; -----------------------------------------------------------------------------
 _irq80Handler:
-	pushaq
+	push rbp
+	mov rbp, rsp
 	call syscall_handler
-	popaq
+	mov rsp, rbp
+	pop rbp
 	iretq
 
 

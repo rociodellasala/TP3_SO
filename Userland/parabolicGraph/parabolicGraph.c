@@ -96,8 +96,12 @@ int main (void){
 	while(i < 500000000){
 		i++;
 	}
+	clear_screen();
+	exitProgram();
+}
 
-	return 0;
+void exitProgram(){
+	int80(14,0,0,0,0);
 }
 
 void coordinates(){

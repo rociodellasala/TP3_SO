@@ -35,4 +35,6 @@ void thenFourthPointerStartsWhereItShould(void * fourthStringPointer, int firstA
 
 void exitTest();
 
+void exitProgram();
+
 #endif

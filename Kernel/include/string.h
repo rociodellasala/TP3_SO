@@ -3,13 +3,16 @@
 
 #include "types.h"
 
-/*Gets string length*/
+/* Returns the length of the specified string */
 int strlen(const char * str);
 
-/*Returns if two strings are equal*/
-boolean strcmp(char * s1, char * s2);
+/* Compares both strings and returns if they are equal */
+boolean strcmp(char * str1, char * str2);
 
-/*Returns true if 'c' es a space*/
-boolean isspace(char c);
+/* Compares both strings and returns if their first num characters are equal*/
+boolean strncmp(char * str1, char * str2, int num);
+
+/* Copy the string from source to dest*/
+char * strcpy(char * dest,const char * source);
 
 #endif

@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 
-int main() {
+int main() {	
 	clear_terminal();
 	start_shell();
 	return 0;
@@ -20,6 +20,7 @@ void start_shell() {
   	boolean isFirst = true;
   	
 	while(state != exit){
+			
 		if(isFirst == true){
 			index = 0;
 			buffer[0] = 0;
@@ -27,6 +28,7 @@ void start_shell() {
 		}
 
 		if ((c = getchar()) != EOF){
+			
 			if(c == '\b'){
 				if(index != 0){
 					index--;
@@ -54,12 +56,18 @@ void start_shell() {
 						isFirst = true;
 						break;
 				}
-  			}else {
+  			} else if(c != ' '){
 	      		buffer[index] = c;
-				putchar(buffer[index]);		      		
-				index++;
+				putchar(buffer[index]);
+				index++;		      		
 	      		buffer[index] = 0;
-  			}	   	
+  			}/* else if(c == ' '){ // ----------------------- ARREGLAR -----------------------------
+  				printf("HOLAAAA");
+	      		buffer[index] = c; ESTE BUG VIENE DE GETCHAR!! LO MISMO PASA EN EL RESTO DE LOS MODULOS QUE LO USAN
+				putchar(buffer[index]);
+				index++;		      		
+	      		buffer[index] = 0;
+  			} ACA HAY UN BUG QUE ME TOMA ENTERS CUANDO NO LOS PONGO, ARREGLAR*/
 		}	
 	}
 }
@@ -68,7 +76,7 @@ int get_command(char * buffer){
 	int x = 0;
 	char function[15];
 
-	while(buffer[x] != ' ' && buffer[x] != 0){
+	while(buffer[x] != '-' && buffer[x] != 0){
 		function[x] = buffer[x];
 		x++;
 		if(x > 14)
@@ -79,6 +87,11 @@ int get_command(char * buffer){
 	
 	return call_command(function, buffer + x + 1);
 }
+
+void linear(){
+	int80(12, 0, 0, 0, 0, 0);
+}
+
 
 int call_command(char * function, char * parameter){
 	if(strcmp(function, "echo")){
@@ -92,18 +105,24 @@ int call_command(char * function, char * parameter){
 	} else if(strcmp(function, "help")){
 		printHelp(); 
 		return 0;
-	} else if(strcmp(function, "sleep")){
-		sleep();
-		return 0;
-	}	else if(strcmp(function, "time")){
+	} else if(strcmp(function, "time")){
 		time();
 		return 0;
-	} else if(strcmp(function, "divideByZero")){		
+	/*} else if(strcmp(function, "divideByZero")){		
 		divide_by_zero();
 	} else if(strcmp(function, "invalidOpcode")){
 		invalid_opcode();
 	} else if(strcmp(function, "exit")){			
 		return 2;
+	*/} else if(strcmp(function, "linear")){
+		linear();
+		return 0;
+	} else if(strcmp(function, "ps")){
+		ps();
+		return 0;	
+	} else if(strcmp(function, "ls")){
+		ls();
+		return 0;	
 	}
 		return 1;
 }
@@ -111,15 +130,16 @@ int call_command(char * function, char * parameter){
 void printHelp(){
 	clear_screen();
 	printf("HELP -- Manual to interact with the terminal: \n\n");
-	printf("echo [message]:         Prints message.\n");
-	printf("font [color]:           Changes font color, ex: blue, red, yellow, white or violet.\n");	
 	printf("cls:                    Clears screen.\n");	
-	printf("help:                   Displays manual.\n");
-	printf("sleep:                  The console waits for a while.\n");
-	printf("time:                   Displays the current time.\n");
-	printf("divideByZero:           Makes an integer division to show how zero exception works.\n");
-	printf("invalidOpcode:          Shows how invalid opcode exception works by calling an undefined instruction.\n");
+	printf("echo-[message]:         Prints message.\n");
 	printf("exit:                   Goes back and displays the menu.\n");
+	printf("font-[color]:           Changes font color, ex: blue, red, yellow, white or violet.\n");	
+	printf("help:                   Displays manual.\n");
+	printf("ls: 			Displays runnable programs\n");
+	printf("ps:			Displays a snapshot of the status of currently running processes.\n");
+	printf("time:                   Displays the current time.\n");
+	//printf("divideByZero:           Makes an integer division to show how zero exception works.\n");
+	//printf("invalidOpcode:          Shows how invalid opcode exception works by calling an undefined instruction.\n");
 }
 
 void echo(char * buffer){
@@ -128,6 +148,20 @@ void echo(char * buffer){
 }
 
 
+void ps(){
+	nextLine();	
+	int80(13, 0, 0, 0, 0, 0);
+}
+
+void ls(){
+	nextLine();	
+	printf("linearGraph  parabolicGraph  needMemory  testMemoryManager");
+}
+
+void time(){
+	int80(9, 0, 0, 0, 0, 0);
+	return;
+}
 
 
 

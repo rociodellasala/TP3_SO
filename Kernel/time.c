@@ -3,29 +3,13 @@
 #include <time.h>
 #include <video_driver.h>
 
-static unsigned long ticks = 0;
 
-void timer_handler() {
-	ticks++;
+void enableTickInter(){
+	picMasterMask(0xFC);
 }
 
-int ticks_elapsed() {
-	return ticks;
-}
-
-int seconds_elapsed() {
-	return ticks / 18;
-}
-
-void sleep(unsigned long t){
-	_cli();
-    
-    unsigned long sleep_ticks = 0;
-	while(sleep_ticks < t){
-    		sleep_ticks++;
-	}
-	_sti();
-
+void disableTickInter(){
+	picMasterMask(0x01);
 }
 
 void calculateTime(int * h, int * m, int * s){

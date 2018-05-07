@@ -29,6 +29,8 @@ void picSlaveMask(int*);
 
 void load_idt();
 
+void restoreContext();
+
 //Termina la ejecución de la cpu.
 void haltcpu(void);
 

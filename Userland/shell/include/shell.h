@@ -19,4 +19,13 @@ void printHelp();
 /* Displays a line of text */
 void echo(char * buffer);
 
+/* Displays runnable programs */
+void ls();
+
+/* Displays current process running */
+void ps();
+
+/* Prints current time */
+void time();
+
 #endif

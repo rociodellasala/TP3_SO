@@ -18,7 +18,7 @@ void printBin(qword value){
 }
 
 void printBase(qword value, dword base){
-    uintToBase(value, buffer, base);
+    	uintToBase(value, buffer, base);
    	print_string(buffer);
 }
 

@@ -9,41 +9,35 @@
 #define FONT_WIDTH 10
 #define FONT_HEIGHT 16
 #define MAX_SIZE 2000
-#define exit 2
+
 #define WIDTH 1024
 #define HEIGHT 768
 
+void exit(){
+	int80(14,0,0,0,0);
+}
+
 int main (void){
-	clear_screen();
+	//clear_screen();
 	int y;
 	int a = 0; 
 	int b = 0;
+	printf("\n");
 	printf("f(x) = ax + b\n");
-	printf("Input 'a':\n");
+	printf("Input 'a': ");
   	char c;
   	int state;
-  
-	if(getNum(&a) == 1){
-		printf("Error: Incorrect parameter\n");
-		int j = 0;
-		while(j < 50000000){
-			j++;
-		}
-
-		return 0;
+  	char * str;
+	
+	while(getNum(&a) == 1){
+		printf("\nError: Incorrect parameter\n");
 	}
 	printf("\n");
-	
-	printf("Input 'b':\n");
-	if(getNum(&b) == 1){
-		printf("Error: Incorrect parameter\n");
-		int j = 0;
-		while(j < 50000000){
-			j++;
-		}
-
-		return 0;
+	printf("Input 'b': ");
+	while(getNum(&b) == 1){
+		printf("\nError: Incorrect parameter\n");
 	}
+
 	clear_screen();
 	
 	coordinates();
@@ -66,12 +60,11 @@ int main (void){
 
 	int i = 0;
 	
-	while(i < 500000000){
+	while(i < 50000000){
 		i++;
 	}
-
-	return 0;
-	
+	clear_screen();
+	exit();
 }
 
 void coordinates(){
@@ -102,14 +95,15 @@ int getNum(int * a){
       			
       			buffer[index] = 0;
 				state = exit;
-			}else if((c < '0' || c > '9' ) && c != '-'){
-				return 1; //error
-			}else{
+			} else if(c != ' '){
 	      		buffer[index] = c;
 	      		index++;
 	      		buffer[index] = 0;
 	     		putchar(buffer[index - 1]);	
-	  		}	   	
+	  		} /*else if( c == ' '){
+	  			printf("HOLA"); // --------------------------- MAGIA CAMBIAR ----------------------------
+	  		}*/ else if((c < '0' || c > '9' ) && c != '-' && c != ' ') // problema del getchar, same en shell
+				return 1; //error
 		}	
 	}
 
@@ -130,8 +124,6 @@ int getNum(int * a){
 		return 0;
 	}
 }
-
-
 
 
 

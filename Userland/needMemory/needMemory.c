@@ -3,17 +3,32 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include "./include/stdio.h"
+#include <types.h>
+
+extern int int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
+
+int sleep(){
+	return int80(6,0,0,0,0,0);
+}
+
 
 int main (void){
 	clear_screen();
 	int a;
 	printf("Buenos dias!\n");
 	printf("Deme el numero que quiera:");
-	getNum(&a);
+	a=sleep();
+
+	char * s;
+	intToString(a,s);
+	printf(s);
+
+	/*
 	char * memory = (char *) malloc(250);
 	char * memory2 = (char *) malloc(300);
 	char * memory3 = (char *) malloc(200);
 	char * palabra = "Hola Mundo";
+	
 	printf("\nEl puntero reservado es:\n");
 	printHexadecimal(memory);
 	printf("\n");
@@ -30,12 +45,9 @@ int main (void){
 	printf("%s\n",memory2);
 	printf("%s\n",memory3);
 	printf("Deme otro numero que quiera:");
-	getNum(&a);
+	getNum(&a);	*/
 	return 0;
 }
-
-
-
 
 
 

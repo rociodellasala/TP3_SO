@@ -10,6 +10,7 @@
 #include <heap.h>
 #include <memoryManager.h>
 #include <lib.h>
+#include <scheduler.h>
 
 extern byte bss;
 extern byte data;
@@ -54,56 +55,6 @@ void * initializeKernelBinary() {
 	return getStackBase();
 }
 
-
-void readFromBuff(){
-	int i = 0;
-	char opcion = '0';
-	int PID;
-
-	while((opcion = get_buffer()) == EOF || i < 1){
-		i++;
-	}
-
-	switch(opcion){
-		case '1':
-			PID = createProcess(shell, "shell");
-			((EntryPoint)shell)();
-			terminateProcess(PID);
-			break;
-
-		case '2':
-			PID = createProcess(linearGraph, "linearGraph");
-			((EntryPoint)linearGraph)();
-			terminateProcess(PID);
-			break;
-
-		case '3':
-			PID = createProcess(parabolicGraph, "parabolicGraph");
-			((EntryPoint)parabolicGraph)();
-			terminateProcess(PID);
-			break;
-
-		case '4':
-			PID = createProcess(needMemory, "needMemory");
-			((EntryPoint)needMemory)();
-			terminateProcess(PID);
-			break;
-		case '5':
-			PID = createProcess(needMemory, "testMemoryManager");
-			((EntryPoint)testMemoryManager)();
-			terminateProcess(PID); 
-	}
-}
-
-void start(){
-	while(1){
-		clear_screen();
-		print_menu();
-		printAllCurrentProcess();
-		readFromBuff();
-	}
-}
-
 int main(){
 	_cli();		
 	load_idt();
@@ -112,8 +63,11 @@ int main(){
 	_sti();
 	initializeMemoryManager();
 	initializeKernelHeap();
+	initializeKernelStack();
 	//printKernelHeap();
-	start();
+	startProcess(shell, "shell");
+
+	while(1);
 
 	return 0;
 }

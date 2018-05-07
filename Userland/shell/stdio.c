@@ -99,10 +99,6 @@ int changeFontColor(char * color){
 	return 0;
 }
 
-void time(){
-	int80(9, 0, 0, 0, 0, 0);
-	return;
-}
 
 
 

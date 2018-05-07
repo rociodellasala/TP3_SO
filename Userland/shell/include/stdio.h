@@ -28,7 +28,4 @@ void nextTerminalLine();
 /* Changes font color shown on terminal */
 int changeFontColor(char * c);
 
-/* Prints current time */
-void time();
-
 #endif

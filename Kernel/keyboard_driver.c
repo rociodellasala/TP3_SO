@@ -1,6 +1,7 @@
 #include <ascii_keyboard.h>
 #include <keyboard_driver.h>
 #include <types.h>
+#include <scheduler.h>
 
 #define BUFFER_SIZE 2000 /* 2000 = 80 * 25 */
 
@@ -14,12 +15,20 @@ static boolean altPressed = false;
 
 static int index = 0; 
 static int bufferIndex = 0; 
+
+extern ProcessSlot * currentProcess;
+extern ProcessSlot * lastProcess;
+extern allProcess;
  
 extern byte _read_keyboard();
 
 void keyboard_handler() {
 	byte key = _read_keyboard();	
-	checkKeyPressed(key);
+
+	if(( currentProcess->process.PID == 0 && lastProcess->process.PID == 0 && allProcess == 1 ) 
+		|| (currentProcess->process.PID != 0 && allProcess > 1)){	
+		checkKeyPressed(key);
+	}
 }
 
 void checkKeyPressed(unsigned char key){
@@ -87,15 +96,17 @@ char get_buffer(){
 }
 
 void read_buffer(char * buff, int size){
-        int i = 0;
-	char c;
+    if(( currentProcess->process.PID == 0 && lastProcess->process.PID == 0 && allProcess == 1 ) || (currentProcess->process.PID != 0 && allProcess > 1)){
+		int i = 0;
+		char c;
 
-    	while (i < (size - 1) && (c = get_buffer()) != EOF) {
-		buff[i] = (char) c;
-		i++;
-    	}
+	    while (i < (size - 1) && (c = get_buffer()) != EOF) {
+			buff[i] = (char) c;
+			i++;
+	    }
 
-    	buff[i] = 0;
+	    buff[i] = 0;
+	}
 }
 
 

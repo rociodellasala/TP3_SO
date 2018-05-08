@@ -34,6 +34,8 @@ int getCurrentPid();
 
 void removeFinishedProcess();
 
+int getProcessFromName(char * procesName);
+
 ProcessSlot * getProcessFromPid(int pid);
 
 void removeProcess(int pid);

@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-extern void int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
+extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
 void printf(const char * str, ...){
 	char num[12];

@@ -8,8 +8,10 @@
 #include <assert.h>
 #include <testMemoryManager.h>
 
-static void * firstPage = (void *)0x65000;
-static void * secondPage = (void *)0x66000;
+extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
+
+static void * firstPage = (void *)0x67000;
+static void * secondPage = (void *)0x68000;
 
 
 void clear_buffer(){
@@ -215,6 +217,6 @@ void exitTest(){
 }
 
 void exitProgram(){
-	int80(14,0,0,0,0);
+	int80(14,0,0,0,0,0);
 }
 

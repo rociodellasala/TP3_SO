@@ -2,9 +2,7 @@
 #include <scheduler.h>
 
 boolean wait(boolean mutex){
-	while(mutex == false){
-		blockProgram();
-	}
+	while(mutex == false);
 	return false;
 }
 

@@ -2,6 +2,7 @@
 #define PIPE_H
 
 #include "structs.h"
+#include "types.h"
 
 #define READ_ACTION 0
 
@@ -9,9 +10,11 @@ p_pipe createPipe(int callingProcessPID, int connectingProcessPID);
 
 s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID);
 
-void write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID);
+void printPipeInfo(p_pipe pipe);
 
-void read(p_pipe pipe,char * messageDestination,int charsToRead,int callingProcessPID);
+int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID);
+
+int read(p_pipe pipe,char * messageDestination,int charsToRead,int callingProcessPID);
 
 void close(p_pipe pipe,int action,int callingProcessPID);
 

@@ -170,10 +170,10 @@ void printAllCurrentProcess(){
 		else if((aux->process.foreground) == BACKGROUND)
 		prints("  -  BACKGROUND");
 		nextLine();
-		prints(" - NEXT PID: ");
+		//prints(" - NEXT PID: ");
 		i++;
 		aux = aux->next;
-		printi(aux->process.PID);
+		//printi(aux->process.PID);
 	}
 }
 
@@ -192,12 +192,36 @@ int getCurrentPid(){
 	return currentProcess->process.PID;
 }
 
+
+int getProcessFromName(char * procesName){
+	ProcessSlot * aux = tableProcess;
+
+	while(aux != NULL && ! strcmp(aux->process.processName,procesName)){
+		aux = aux->next;
+		if(aux == tableProcess)
+			break;
+	}
+	if(! strcmp(aux->process.processName,procesName)){
+		return -1;
+	}
+
+	return aux->process.PID;
+}
+
 ProcessSlot * getProcessFromPid(int pid){
 	ProcessSlot * aux = tableProcess;
 
+	if(pid == -1)
+		return NULL;
+
 	while(aux != NULL && aux->process.PID != pid){
 		aux = aux->next;
+		if(aux == tableProcess)
+			break;
 	}
+
+	if(aux->process.PID != pid)
+		return NULL;
 
 	return aux;
 }

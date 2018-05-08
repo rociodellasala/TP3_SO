@@ -7,16 +7,19 @@
 #include <scheduler.h>
 #include <heap.h>
 #include <converter.h>
+#include <pipe.h>
 
-static void * linearGraph = (void *)0x900000;
-static void * parabolicGraph = (void *)0xB00000;
-static void * needMemory = (void *)0xD00000;
-static void * testMemoryManager = (void *)0xE00000;
-static void * background = (void *)0xF00000;
+static void * shell = (void *)0x600000;
+static void * linearGraph = (void *)0x800000;
+static void * parabolicGraph = (void *)0x900000;
+static void * processRead = (void *)0xA00000;
+static void * testMemoryManager = (void *)0xB00000;
+static void * processWrite = (void *)0xC00000;
+
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
-static sys sysCalls[15]; 
+static sys sysCalls[21]; 
 
 void sys_write(qword buffer, qword size, qword rcx, qword r8, qword r9) {
 	print_char(buffer);
@@ -77,15 +80,17 @@ int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r
 		createProcess(linearGraph, process);
 	} else if(strcmp(processName,"parabolicGraph&")){
 		createProcess(parabolicGraph, process);
-	} else if(strcmp(processName,"needMemory&")){
-		createProcess(needMemory, process);
+	} else if(strcmp(processName,"processRead&")){
+		createProcess(processRead, process);
+	}else if(strcmp(processName,"processRead")){
+		createProcess(processRead, process);
 	} else if(strcmp(processName,"testMemoryManager&")){
 		createProcess(testMemoryManager, process);
-	} else if(strcmp(processName,"background")){
-		createProcess(background, process);
-	} else if(strcmp(processName,"background&")){
-		createProcess(background, process);
-	} else
+	} else if(strcmp(processName,"processWrite")){
+		createProcess(processWrite, process);
+	} else if(strcmp(processName,"processWrite&")){
+		createProcess(processWrite, process);
+	}else
 		return -1;
 	return 0;
 }
@@ -97,6 +102,46 @@ void sys_ls(qword pointer, qword rdx, qword rcx, qword r8, qword r9){
 void sys_pkill(qword pid, qword rdx, qword rcx, qword r8, qword r9){
 	disableTickInter();	
 	removeProcess(getCurrentPid());
+}
+
+void sys_pipeCreate(qword connectingProcessName, qword rdx, qword rcx, qword r8, qword r9){
+	int connectingProcessPID = getProcessFromName(connectingProcessName);
+	int callingProcessPID = getCurrentPid();
+	ProcessSlot * callingProcess = getProcessFromPid(callingProcessPID);
+
+	callingProcess->process.pipe = createPipe(callingProcessPID,connectingProcessPID);
+	return;
+}
+
+
+qword sys_pipeWrite(qword writingProcessPID, qword message, qword messageLength, qword r8, qword r9){
+	int charsRead;
+	char * messagePointer = (char *) message;
+	ProcessSlot * writingProcess = getProcessFromPid(writingProcessPID);
+	p_pipe pipePointer = writingProcess->process.pipe;
+	charsRead = write(pipePointer,messagePointer,messageLength,writingProcessPID);
+	return (qword) charsRead;
+}
+
+qword sys_pipeRead(qword readingProcessPID, qword messageDestination, qword charsToRead, qword r8, qword r9){
+	char * messageDestinationPointer = (char *) messageDestination;
+	ProcessSlot * readingProcess = getProcessFromPid(readingProcessPID);
+	p_pipe pipePointer = readingProcess->process.pipe;
+	return (qword) read(pipePointer,messageDestinationPointer,charsToRead,readingProcessPID);
+}
+
+void sys_pipeClose(qword callingProcessPID, qword operation, qword rcx, qword r8, qword r9){
+	ProcessSlot * callingProcess = getProcessFromPid(callingProcessPID);
+	close(callingProcess->process.pipe,operation,callingProcessPID);
+}
+
+void sys_pipeOpen(qword callingProcessPID, qword operation, qword rcx, qword r8, qword r9){
+	ProcessSlot * callingProcess = getProcessFromPid(callingProcessPID);
+	open(callingProcess->process.pipe,operation,callingProcessPID);
+}
+
+qword sys_getPID(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
+	return (qword) getCurrentPid();
 }
 
 
@@ -115,13 +160,18 @@ void load_systemcalls(){
 	sysCalls[12] = (sys)&sys_createProcess;
 	sysCalls[13] = (sys)&sys_ls;
 	sysCalls[14] = (sys)&sys_pkill;
-
+	sysCalls[15] = (sys)&sys_pipeCreate;
+	sysCalls[16] = (sys)&sys_pipeWrite;
+	sysCalls[17] = (sys)&sys_pipeRead;
+	sysCalls[18] = (sys)&sys_pipeClose;
+	sysCalls[19] = (sys)&sys_pipeOpen;
+	sysCalls[20] = (sys)&sys_getPID;
 	setup_IDT_entry(0x80, (qword)&_irq80Handler); 
 }
 
 
 qword syscall_handler(qword rdi,qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
-	if(rdi < 0 || rdi >= 15)
+	if(rdi < 0 || rdi >= 21	)
 		return 0;
 	
 	return sysCalls[rdi](rsi,rdx,rcx,r8,r9);

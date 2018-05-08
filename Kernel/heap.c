@@ -4,6 +4,7 @@
 #include "string.h"
 #include "memoryManager.h"
 #include "scheduler.h"
+#include "process.h"
 #include "video_driver.h"
 #include "converter.h"
 #include "lib.h"

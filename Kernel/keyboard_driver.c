@@ -1,7 +1,6 @@
 #include "ascii_keyboard.h"
 #include "keyboard_driver.h"
 #include "types.h"
-#include "scheduler.h"
 
 #define BUFFER_SIZE 2000 /* 2000 = 80 * 25 */
 
@@ -16,7 +15,6 @@ static boolean altPressed = false;
 static int index = 0; 
 static int bufferIndex = 0; 
 
-extern ProcessSlot * currentProcess;
 extern allProcess;
  
 extern byte read_keyboard();

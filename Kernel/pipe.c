@@ -6,6 +6,7 @@
 #include "mutex.h"
 #include "converter.h"
 #include "video_driver.h"
+#include <process.h>
 
 p_pipe createPipe(int callingProcessPID, int connectingProcessPID){
 		ProcessSlot * callingProcessSlot = getProcessFromPid(callingProcessPID);

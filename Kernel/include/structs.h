@@ -16,6 +16,8 @@
 #define LOCKED 4
 #define FINISHED 5
 
+typedef int (*EntryPoint)();
+
 typedef struct kernelHeapPage{
 	int occupiedBytes;
 	int freeBytes;
@@ -69,34 +71,5 @@ typedef struct ProcessSlot{
     struct ProcessSlot * next;
     Process process;
 }ProcessSlot;
-
-typedef int (*EntryPoint)();
-
-typedef struct StackFrame {
-  qword gs;
-  qword fs;
-  qword r15;
-  qword r14;
-  qword r13;
-  qword r12;
-  qword r11;
-  qword r10;
-  qword r9;
-  qword r8;
-  qword rsi;
-  qword rdi;
-  qword rbp;
-  qword rdx;
-  qword rcx;
-  qword rbx;
-  qword rax;
-
-  qword rip;
-  qword cs;
-  qword eflags;
-  qword rsp;
-  qword ss;
-  qword base;
-} StackFrame;
 
 #endif

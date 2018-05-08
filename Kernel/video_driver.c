@@ -2,6 +2,7 @@
 #include "types.h"
 #include "video_driver.h"
 #include "scheduler.h"
+#include "process.h"
 
 #define FONT_WIDTH     10
 #define FONT_HEIGHT    16

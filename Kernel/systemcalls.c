@@ -8,6 +8,7 @@
 #include <heap.h>
 #include <converter.h>
 #include <pipe.h>
+#include <process.h>
 
 static void * shell = (void *)0x600000;
 static void * linearGraph = (void *)0x800000;

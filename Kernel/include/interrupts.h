@@ -1,36 +1,45 @@
-#ifndef INTERRUPS_H_
-#define INTERRUPS_H_
+#ifndef INTERRUPS_H
+#define INTERRUPS_H
 
 #include "types.h"
 
-void _irq00Handler(void);
-void _irq01Handler(void);
-void _irq02Handler(void);
-void _irq03Handler(void);
-void _irq04Handler(void);
-void _irq05Handler(void);
+/* */
+void _irq00Handler();
+void _irq01Handler();
+void _irq02Handler();
+void _irq03Handler();
+void _irq04Handler();
+void _irq05Handler();
 
-void _irq80Handler(void);
+/* */
+void _irq80Handler();
 
-void _exception0Handler(void);
-void _exception4Handler(void);
-void _exception6Handler(void);
+/* */
+void _exception0Handler();
+void _exception6Handler();
 
-void setup_IDT_entry(int index, qword handler);
+void setup_IDT_entry(int, qword);
 
-void _cli(void);
+/* */
+void _cli();
 
-void _sti(void);
+/* */
+void _sti();
 
-void _hlt(void);
+/* */
+void _hlt();
 
+/* */
 void picMasterMask(word);
-void picSlaveMask(int*);
+void picSlaveMask(int *);
 
+/* */
 void load_idt();
 
+/* */
 void restoreContext();
 
-void haltcpu(void);
+/* */
+void haltcpu();
 
-#endif /* INTERRUPS_H_ */
+#endif

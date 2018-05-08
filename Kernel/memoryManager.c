@@ -1,8 +1,8 @@
-#include "memoryManager.h"
-#include "string.h"
-#include "video_driver.h"
 #include "converter.h"
+#include "memoryManager.h"
 #include "structs.h"
+#include "types.h"
+#include "video_driver.h"
 
 struct memoryPage memoryPages[PAGEQUANTITY];
 
@@ -49,7 +49,7 @@ void printFreePages(){
 	
 	while(i != freePages.size){
 		print_string("Pagina libre: ");
-		printHex(freePages.memoryFree[i]);
+		printHex((qword)freePages.memoryFree[i]);
 		nextLine();
 		i++;
 	}

@@ -1,23 +1,21 @@
-#include <interrupts.h>
-#include <keyboard_driver.h>
-#include <time.h>
-#include <types.h>
-#include <video_driver.h>
-#include <string.h>
-#include <scheduler.h>
-#include <heap.h>
-#include <converter.h>
-#include <pipe.h>
-#include <process.h>
+#include "converter.h"
+#include "interrupts.h"
+#include "heap.h"
+#include "keyboard_driver.h"
+#include "pipe.h"
+#include "process.h"
+#include "scheduler.h"
+#include "string.h"
+#include "time.h"
+#include "types.h"
+#include "video_driver.h"
 
-static void * shell = (void *)0x600000;
-static void * linearGraph = (void *)0x800000;
-static void * parabolicGraph = (void *)0x900000;
-static void * processRead = (void *)0xA00000;
-static void * testMemoryManager = (void *)0xB00000;
-static void * processWrite = (void *)0xC00000;
-static void * background = (void *)0xD00000;
-
+static void * linearGraph = (void *) 0x800000;
+static void * parabolicGraph = (void *) 0x900000;
+static void * processRead = (void *) 0xA00000;
+static void * testMemoryManager = (void *) 0xB00000;
+static void * processWrite = (void *) 0xC00000;
+static void * background = (void *) 0xD00000;
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
@@ -61,14 +59,6 @@ int sys_sleep(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
 
 qword sys_malloc(qword size, qword rdx, qword rcx, qword r8, qword r9){
 	void * pointer = malloc_heap(size);
-	nextLine();
-	nextLine();
-	print_string("Kernel: Se pidio ");
-	print_int(size);
-	nextLine();
-	print_string("Se retorna el puntero: ");
-	printHex(pointer);
-	nextLine();
 	return (qword) pointer;
 }
 
@@ -78,23 +68,23 @@ void sys_printHex(qword pointer, qword rdx, qword rcx, qword r8, qword r9){
 
 int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r9){
 	char * process = (char *) processName;
-	if(strcmp(processName,"linearGraph&")){
+	if(strcmp(process,"linearGraph&")){
 		createProcess(linearGraph, process);
-	} else if(strcmp(processName,"parabolicGraph&")){
+	} else if(strcmp(process,"parabolicGraph&")){
 		createProcess(parabolicGraph, process);
-	} else if(strcmp(processName,"processRead&")){
+	} else if(strcmp(process,"processRead&")){
 		createProcess(processRead, process);
-	}else if(strcmp(processName,"processRead")){
+	}else if(strcmp(process,"processRead")){
 		createProcess(processRead, process);
-	} else if(strcmp(processName,"testMemoryManager&")){
+	} else if(strcmp(process,"testMemoryManager&")){
 		createProcess(testMemoryManager, process);
-	} else if(strcmp(processName,"processWrite")){
+	} else if(strcmp(process,"processWrite")){
 		createProcess(processWrite, process);
-	} else if(strcmp(processName,"processWrite&")){
+	} else if(strcmp(process,"processWrite&")){
 		createProcess(processWrite, process);
-	} else if(strcmp(processName,"background")){
+	} else if(strcmp(process,"background")){
 		createProcess(background, process);
-	} else if(strcmp(processName,"background&")){
+	} else if(strcmp(process,"background&")){
 		createProcess(background, process);
 	} else
 		return -1;
@@ -111,7 +101,7 @@ void sys_pkill(qword pid, qword rdx, qword rcx, qword r8, qword r9){
 }
 
 void sys_pipeCreate(qword connectingProcessName, qword rdx, qword rcx, qword r8, qword r9){
-	int connectingProcessPID = getProcessFromName(connectingProcessName);
+	int connectingProcessPID = getProcessFromName((char *)connectingProcessName);
 	int callingProcessPID = getCurrentPid();
 	ProcessSlot * callingProcess = getProcessFromPid(callingProcessPID);
 
@@ -150,7 +140,6 @@ qword sys_getPID(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
 	return (qword) getCurrentPid();
 }
 
-
 void load_systemcalls(){
 	sysCalls[1] = (sys)&sys_write;
 	sysCalls[2] = (sys)&sys_clear;
@@ -174,7 +163,6 @@ void load_systemcalls(){
 	sysCalls[20] = (sys)&sys_getPID;
 	setup_IDT_entry(0x80, (qword)&_irq80Handler); 
 }
-
 
 qword syscallHandler(qword rdi,qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
 	if(rdi < 0 || rdi >= 21	)

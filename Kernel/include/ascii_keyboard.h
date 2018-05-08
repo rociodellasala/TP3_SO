@@ -1,5 +1,5 @@
-#ifndef _ASCII_CODE
-#define _ASCII_CODE
+#ifndef ASCII_CODE_H
+#define ASCII_CODE_H
 
 /* Define the position of the keys on keyboard */
 const char KEY_VALUE[] = { 0, '|', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '\'', '¿', '\b', 			/* 0 - 14 */

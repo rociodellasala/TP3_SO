@@ -1,6 +1,5 @@
-#ifndef _defs_
-#define _defs_
-
+#ifndef DEFS_H
+#define DEFS_H
 
 /* Flags for access rights of the segments */
 #define ACS_PRESENT     0x80            /* segment present in memory */
@@ -15,6 +14,5 @@
 #define ACS_CODE        (ACS_PRESENT | ACS_CSEG | ACS_READ)
 #define ACS_DATA        (ACS_PRESENT | ACS_DSEG | ACS_WRITE)
 #define ACS_STACK       (ACS_PRESENT | ACS_DSEG | ACS_WRITE)
-
 
 #endif

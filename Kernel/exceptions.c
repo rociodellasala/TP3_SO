@@ -22,14 +22,14 @@ void zero_divisionHandler(qword * rsp){
 	clear_screen();
 	print_string("EXCEPTION 00: DIVIDE ERROR");
 	nextLine();	
-	showRegisters(rsp);
+	showRegistersValues(rsp);
 }
 
 void invalid_opcodeHandler(qword * rsp){
 	clear_screen();
 	print_string("EXCEPTION 06: INVALID OPCODE");
 	nextLine();	
-	showRegisters(rsp);
+	showRegistersValues(rsp);
 }
 
 void cycle(){
@@ -38,7 +38,7 @@ void cycle(){
 		i++;	
 }
 
-void showRegisters(qword * rsp){
+void showRegistersValues(qword * rsp){
 	int i;
 
 	for(i = 0; i < 16; i++){

@@ -10,14 +10,14 @@ void loadModules(void * payloadStart, void ** targetModuleAddress){
 		loadModule(&currentModule, targetModuleAddress[i]);
 }
 
-static void loadModule(byte ** module, void * targetModuleAddress){
+void loadModule(byte ** module, void * targetModuleAddress){
 	dword moduleSize = readUint32(module);
 
 	memcpy(targetModuleAddress, *module, moduleSize);
 	*module += moduleSize;
 }
 
-static dword readUint32(byte ** address){
+dword readUint32(byte ** address){
 	dword result = *(dword *)(*address);
 	*address += sizeof(dword);
 	return result;

@@ -1,11 +1,11 @@
 #include "font.h"
+#include "process.h"
+#include "scheduler.h"
 #include "types.h"
 #include "video_driver.h"
-#include "scheduler.h"
-#include "process.h"
 
-#define FONT_WIDTH     10
-#define FONT_HEIGHT    16
+#define FONT_WIDTH 10
+#define FONT_HEIGHT 16
 
 #pragma pack(push)
 #pragma pack(1)
@@ -158,7 +158,7 @@ void print_string(const char * str){
   	
 }
 
-/* ------------------- */
+/* -----------SACARRRRRRRRRRRR -------- */
 void printc(unsigned char c){
   	
   	if(c == '\n'){
@@ -179,14 +179,12 @@ void printc(unsigned char c){
 }
 
 void prints(const char * str){
-  	
-	  	int i = 0;
+  	int i = 0;
 	 	
-		while(str[i] != '\0'){
-	    		printc(str[i]);
-	    		i++;
-	  	}
-  	
+	while(str[i] != '\0'){
+	    	printc(str[i]);
+	    	i++;
+	  }
 }
 
 
@@ -274,14 +272,12 @@ void print_int(qword n){
 	char s[16] = {0};
 	int digits = countDigits(n) - 1;
 
-	/* Calculate character */
 	while(digits >= 0){
 		s[digits] = n % 10 + '0';
 		n /= 10;
 		digits--;
 	}
 
-	/* Print array */
 	print_string(s);
 }
 
@@ -295,18 +291,3 @@ int countDigits(qword n){
 
 	return i;
 }
-
-void print_menu(){
-	clear_screen();
-	print_string("1: SHELL");
-	nextLine();
-	print_string("2: LINEAR GRAPH");
-	nextLine();
-	print_string("3: PARABOLIC GRAPH");
-	nextLine();
-	print_string("4: NEED MEMORY");
-	nextLine();
-	print_string("5: TEST MEMORY");
-	nextLine();
-}
-

@@ -18,7 +18,7 @@ void printBase(qword, dword);
 /* Converts the specified value into specified base */
 dword uintToBase(qword, char *, dword);
 
-/* ??????? */
+/* Converts int to string */
 void intToString(int, char *);
 
 #endif

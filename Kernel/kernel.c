@@ -13,13 +13,15 @@ extern byte endOfKernel;
 
 static const qword PageSize = 0x1000;
 
-static void * shell = (void *)0x600000;
-static void * linearGraph = (void *)0x800000;
-static void * parabolicGraph = (void *)0x900000;
-static void * processRead = (void *)0xA00000;
-static void * testMemoryManager = (void *)0xB00000;
-static void * processWrite = (void *)0xC00000;
-static void * background = (void *)0xD00000;
+void * kernelStack;
+
+static void * shell = (void *) 0x600000;
+static void * linearGraph = (void *) 0x800000;
+static void * parabolicGraph = (void *) 0x900000;
+static void * processRead = (void *) 0xA00000;
+static void * testMemoryManager = (void *) 0xB00000;
+static void * processWrite = (void *) 0xC00000;
+static void * background = (void *) 0xD00000;
 
 void clearBSS(void * bssAddress, qword bssSize){
 	memset(bssAddress, 0, bssSize);
@@ -39,6 +41,10 @@ void * initializeKernelBinary(){
 	loadModules(&endOfKernelBinary, moduleAddresses);
 	clearBSS(&bss, &endOfKernel - &bss);
 	return getStackBase();
+}
+
+void initializeKernelStack(){
+	kernelStack = (void *) allocPage();
 }
 
 int main(){

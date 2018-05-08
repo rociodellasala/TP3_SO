@@ -1,12 +1,12 @@
 #include "keyboard_driver.h"
 #include "types.h"
 
-typedef void (*handler_t)(void);
+typedef void (*handler_t)();
 
-handler_t handlers[] = {0, keyboardHandler};
+handler_t interrupts_handlers[] = {0, keyboardHandler};
 
 void irqDispatcher(qword irq) {
-	handlers[irq]();
+	interrupts_handlers[irq]();
 }
 
 

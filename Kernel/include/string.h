@@ -9,13 +9,13 @@ int strlen(const char *);
 /* Compares both strings and returns if they are equal */
 boolean strcmp(char *, char *);
 
-/* Compares both strings and returns if their first num characters are equal*/
+/* Compares both strings and returns if their first num characters are equal */
 boolean strncmp(char *, char *, int);
 
-/* Copy the string from source to dest*/
+/* Copy the string from source to dest */
 char * strcpy(char *, const char *);
 
-/* Copy n chars from source to dest*/
+/* Copy n chars from source to dest */
 char * strncpy(char *, const char *, int);
 
 /* Returns the char located at the position i of the specified string */

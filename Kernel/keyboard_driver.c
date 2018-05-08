@@ -5,6 +5,8 @@
 #define BUFFER_SIZE 2000 /* 2000 = 80 * 25 */
 
 static byte buffer[BUFFER_SIZE];
+static int index = 0; 
+static int bufferIndex = 0; 
 
 static boolean ctrlPressed = false; 
 static boolean bloqMayusPressed = false; 
@@ -12,10 +14,7 @@ static boolean shiftRPressed = false;
 static boolean shiftLPressed = false; 
 static boolean altPressed = false; 
 
-static int index = 0; 
-static int bufferIndex = 0; 
-
-extern allProcess;
+extern int allProcess;
  
 extern byte read_keyboard();
 

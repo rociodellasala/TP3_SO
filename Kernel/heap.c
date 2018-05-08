@@ -1,15 +1,13 @@
+#include "converter.h"
 #include "heap.h"
-#include "structs.h"
-#include "heap.h"
-#include "string.h"
+#include "lib.h"
 #include "memoryManager.h"
 #include "scheduler.h"
-#include "process.h"
+#include "structs.h"
 #include "video_driver.h"
-#include "converter.h"
-#include "lib.h"
 
 extern ProcessSlot * tableProcess;
+
 kernelHeapHeader kernelHeader;
 
 void initializeKernelHeap(){

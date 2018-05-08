@@ -1,19 +1,21 @@
-#include <process.h>
-#include <scheduler.h>
-#include <string.h>
-#include <video_driver.h>
-#include <heap.h>
-#include <converter.h>
-#include <memoryManager.h>
-#include <interrupts.h>
-#include <stack.h>
+#include "interrupts.h"
+#include "heap.h"
+#include "lib.h"
+#include "memoryManager.h"
+#include "process.h"
+#include "scheduler.h"
+#include "stack.h"
+#include "string.h"
+#include "video_driver.h"
 
 int currentProcessId = 0; 
 int allProcess = 0;
+
 extern int allProcessBackground;
 extern int allProcessForeground;
 
 extern ProcessSlot * currentProcess;
+
 ProcessSlot * lastProcess;
 ProcessSlot * tableProcess;
 

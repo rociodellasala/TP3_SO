@@ -3,13 +3,10 @@
 
 #include "types.h"
 
-/* */
-void * memset(void * destination, dword character, qword length);
+void * memset(void *, dword, qword);
 
-/* */
-void * memcpy(void * destination, const void * source, qword length);
+void * memcpy(void *, const void *, qword);
 
-/* */
-char * cpuVendor(char * result);
+char * cpuVendor(char *);
 
 #endif

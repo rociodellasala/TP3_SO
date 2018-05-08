@@ -1,11 +1,10 @@
-#include <scheduler.h>
-#include <string.h>
-#include <video_driver.h>
-#include <heap.h>
-#include <converter.h>
-#include <memoryManager.h>
-#include <interrupts.h>
-#include <process.h>
+#include "interrupts.h"
+#include "memoryManager.h"
+#include "process.h"
+#include "scheduler.h"
+#include "string.h"
+#include "time.h"
+#include "video_driver.h"
 
 #define QUANTUM 5
 
@@ -20,7 +19,7 @@ ProcessSlot * currentProcess;
 extern ProcessSlot * lastProcess;
 extern ProcessSlot * tableProcess;
 
-static void * kernelStack;
+extern void * kernelStack;
 
 void * switchUserToKernel(void * esp){
 	currentProcess->process.userStack = esp;
@@ -29,10 +28,6 @@ void * switchUserToKernel(void * esp){
 
 void * switchKernelToUser(){
 	return currentProcess->process.userStack;
-}
-
-void initializeKernelStack() {
-	kernelStack = (void *) allocPage();
 }
 
 void runScheduler(){
@@ -60,6 +55,9 @@ void runScheduler(){
 		currentProcess = currentProcess->next;
 	
 	currentProcess->process.status = RUNNING;
+	//prints("          Cambiando de proceso : ");
+	//prints(currentProcess->process.processName);
+	//printAllCurrentProcess();
 }
 
 void startProcess(void * entryPoint, char * nameProcess){
@@ -129,6 +127,26 @@ void removeProcess(int pid){
 		currentProcess = lastProcess = tableProcess = NULL;
 		return;
 	}
+
+	prints("\nA eliminar: ");
+	printi(pid);
+	prints("\n---------- ANTES DE ELIMINAR ----------");
+	prints("\nCurrentProcess: ");
+	prints(currentProcess->process.processName);
+	printi(currentProcess->process.PID);
+	prints(" - siguiente: ");
+	prints(currentProcess->next->process.processName);
+	printi(currentProcess->next->process.PID);
+	prints(" - lastProcess: ");
+	prints(lastProcess->process.processName);
+	printi(lastProcess->process.PID);
+	prints(" - first: ");
+	prints(tableProcess->process.processName);
+	nextLine();
+	prints("Todos los procesos: ");
+	nextLine();
+	printAllCurrentProcess();
+	nextLine();
 	
 	ProcessSlot * slot = getProcessFromPid(pid);
 	
@@ -146,6 +164,25 @@ void removeProcess(int pid){
 	
 	currentProcess = currentProcess->next;
 	currentProcess->process.status = RUNNING;
+
+	currentProcess->process.status = RUNNING;
+	prints("\n---------- DESPUES DE ELIMINAR ----------");
+	prints("\nCurrentProcess: ");
+	prints(currentProcess->process.processName);
+	printi(currentProcess->process.PID);
+	prints(" - siguiente: ");
+	prints(currentProcess->next->process.processName);
+	printi(currentProcess->next->process.PID);
+	prints(" - lastProcess: ");
+	prints(lastProcess->process.processName);
+	printi(lastProcess->process.PID);
+	prints(" - first: ");
+	prints(tableProcess->process.processName);
+	nextLine();
+	prints("Todos los procesos: ");
+	nextLine();
+	printAllCurrentProcess();
+	nextLine();
 	
 	enableTickInter();
 	if(slot->process.foreground == FOREGROUND)

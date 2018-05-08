@@ -5,42 +5,37 @@
 
 #define INVALID_PID -1
 
-/*Creates a pointer to an struct Process with all needed to run a process*/
-int createProcess(void * entryPoint, char * nameProcess);
+/* */
+void startProcess(void *, char *);
 
-/*Add process to table Process*/
-void addProcessToPCB(Process newProcess);
-
-void startProcess(void * entryPoint, char * nameProcess);
-
+/* */
 void runScheduler();
 
-void * switchUserToKernel(void * esp);
+/* */
+void * switchUserToKernel(void *);
 
+/* */
 void * switchKernelToUser();
 
-
-void printAllCurrentProcess();
-
+/* */
 ProcessSlot * searchRunningProcess();
 
-void terminateProcess(int PID);
+/* */
+void terminateProcess(int);
 
+/* */
 void initializeKernelStack();
 
-void * fillStackFrame(void * entryPoint, void * baseStack);
-
+/* */
 int getCurrentPid();
 
+/* */
 void removeFinishedProcess();
 
-int getProcessFromName(char * procesName);
+/* */
+void removeProcess(int);
 
-ProcessSlot * getProcessFromPid(int pid);
-
-void removeProcess(int pid);
-
+/* */
 void blockProgram();
-
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef _TIME_H_
-#define _TIME_H_
+#ifndef TIME_H
+#define TIME_H
 
 /* Enables timer tick interrupt */
 void enableTickInter();

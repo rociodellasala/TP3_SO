@@ -5,17 +5,21 @@
 #include "structs.h"
 
 /* Creates a pointer to an struct Process with all needed to run a process */
-int createProcess(void * entryPoint, char * nameProcess);
+int createProcess(void *, char *);
 
 /* Adds process to table process */
-void addProcessToPCB(Process newProcess);
+void addProcessToPCB(Process);
 
-ProcessSlot * createSlot(Process newProcess);
+/* */
+ProcessSlot * createSlot(Process);
 
+/* */
 void printAllCurrentProcess();
 
-int getProcessFromName(char * procesName);
+/* */
+int getProcessFromName(char *);
 
-ProcessSlot * getProcessFromPid(int pid);
+/* */
+ProcessSlot * getProcessFromPid(int);
 
 #endif

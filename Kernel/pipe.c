@@ -6,15 +6,10 @@
 #include "mutex.h"
 #include "converter.h"
 #include "video_driver.h"
-#include <process.h>
+#include "process.h"
 
 p_pipe createPipe(int callingProcessPID, int connectingProcessPID){
-		ProcessSlot * callingProcessSlot = getProcessFromPid(callingProcessPID);
 		ProcessSlot * connectingProcessSlot = getProcessFromPid(connectingProcessPID);
-
-
-		Process callingProcess = callingProcessSlot->process;
-		Process connectingProcess = connectingProcessSlot->process;
 
 		if(connectingProcessSlot != NULL){
 			if(connectingProcessSlot->process.pipe != NULL){
@@ -62,14 +57,14 @@ p_pipe searchPipe(int callingProcessPID, int connectingProcessPID){
 	}
 	return NULL;
 }
-*/
+
 
 void printPipeInfo(p_pipe pipe){
 	nextLine();
 	print_string("Pipe information:");
 	nextLine();
 	print_string("Pipe pointer: ");
-	printHex(pipe);
+	printHex((qword)pipe);
 	nextLine();
 	print_string("PID 1: ");
 	print_int(pipe->processOnePID);
@@ -108,7 +103,7 @@ void printPipeInfo(p_pipe pipe){
 	nextLine();
 	nextLine();
 }
-
+*/
 int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID){
 	int messageSentLenght = strlen(messageSent);
 	if(messageSentLenght > MAX_MESSAGE_LENGHT - pipe->messageIndex)
@@ -119,12 +114,13 @@ int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID){
 		strcpy((pipe->message) + pipe->messageIndex,messageSent);
 		pipe->messageIndex += messageSentLenght;
 		pipe->mutex = signal();
-	}else if(pipe->processTwoPID == callingProcessPID && pipe->processTwoWrite == true){
+	} else if(pipe->processTwoPID == callingProcessPID && pipe->processTwoWrite == true){
 		pipe->mutex = wait(pipe->mutex);
 		strcpy((pipe->message) + pipe->messageIndex,messageSent);
 		pipe->messageIndex += messageSentLenght;
 		pipe->mutex = signal();
-	}
+	} 
+
 	return msgLenght;
 }
 
@@ -142,7 +138,7 @@ int read(p_pipe pipe,char * messageDestination,int charsToRead,int callingProces
 		strcpy(pipe->message,aux);
 		pipe->messageIndex = pipe->messageIndex - charsToRead + 1;
 		pipe->mutex = signal();
-	}else if(pipe->processTwoPID == callingProcessPID && pipe->processTwoRead == true){
+	} else if(pipe->processTwoPID == callingProcessPID && pipe->processTwoRead == true){
 		while(pipe->messageIndex == 0);
 		pipe->mutex = wait(pipe->mutex);
 		strncpy(messageDestination,pipe->message,charsToRead);
@@ -153,7 +149,6 @@ int read(p_pipe pipe,char * messageDestination,int charsToRead,int callingProces
 		pipe->mutex = signal();
 	}
 
-	//printPipeInfo(pipe);
 	return charsToRead;
 
 }

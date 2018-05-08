@@ -4,7 +4,7 @@
 #include "types.h"
 
 /* */
-boolean wait(boolean mutex);
+boolean wait(boolean);
 
 /* */
 boolean signal();

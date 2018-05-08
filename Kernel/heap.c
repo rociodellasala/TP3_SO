@@ -1,18 +1,21 @@
-#include <heap.h>
-#include <string.h>
-#include <memoryManager.h>
-#include <scheduler.h>
-#include <video_driver.h>
-#include <converter.h>
-#include <lib.h>
+#include "heap.h"
+#include "structs.h"
+#include "heap.h"
+#include "string.h"
+#include "memoryManager.h"
+#include "scheduler.h"
+#include "video_driver.h"
+#include "converter.h"
+#include "lib.h"
 
 extern ProcessSlot * tableProcess;
 kernelHeapHeader kernelHeader;
 
 void initializeKernelHeap(){
 	int i;
-
+	
 	kernelHeader.nextPage = 0;
+	
 	for(i = 0; i < PAGES_KERNEL_HEAP; i++){
 		kernelHeapPage heapPageK;
 		heapPageK.occupiedBytes = 0;
@@ -24,6 +27,7 @@ void initializeKernelHeap(){
 
 void printKernelHeap(){
 	int i;
+	
 	for(i = 0; i < PAGES_KERNEL_HEAP; i++){
 		print_string("Pagina ");
 		print_int(i);
@@ -34,15 +38,19 @@ void printKernelHeap(){
 }
 
 p_heapPage createHeapPage(){
+	int sizeNewHeapStruct;
+	void * kernelHeapPage;
 	heapPage newHeap;
 	p_heapPage newHeapPointer;
+
 	newHeap.currentPage = allocPage();
 	newHeap.occupiedBytes = 0;
 	newHeap.nextHeapPage = NULL;
 	newHeap.freeBytes = PAGE_SIZE;
 	newHeapPointer = &newHeap;
-	int sizeNewHeapStruct = sizeof(heapPage);
-	void * kernelHeapPage = findAvaiableHeapKernelPage(sizeNewHeapStruct);
+	
+	sizeNewHeapStruct = sizeof(heapPage);
+	kernelHeapPage = findAvaiableHeapKernelPage(sizeNewHeapStruct);
 	newHeapPointer = memcpy(kernelHeapPage, newHeapPointer, sizeNewHeapStruct);
 	return newHeapPointer;
 }
@@ -50,12 +58,13 @@ p_heapPage createHeapPage(){
 void * findAvaiableHeapKernelPage(int size){
 	int nextPage = kernelHeader.nextPage;
 	kernelHeapPage heapPageK = kernelHeader.kernelHeapPages[nextPage];
+	
 	if(heapPageK.freeBytes >= size){
 		void * address = (heapPageK.pageAddress) + (heapPageK.occupiedBytes);
 		kernelHeader.kernelHeapPages[nextPage].occupiedBytes += size;
 		kernelHeader.kernelHeapPages[nextPage].freeBytes -= size;
 		return address;
-	}else{
+	} else {
 		heapPageK = kernelHeader.kernelHeapPages[nextPage + 1];
 		kernelHeader.nextPage++;
 		kernelHeader.kernelHeapPages[nextPage + 1].occupiedBytes += size;
@@ -70,19 +79,7 @@ void * malloc_heap(int size){
 	void * freePointer = findFreePointer(heap);
 	heap->freeBytes -= size;
 	heap->occupiedBytes += size;
-	//printHex((qword)heap->currentPage);
-	//nextLine();
-	//print_string("El inicio del heap del proceso guardado en kernel es:");
-	//printHex((qword)tableProcess[numberProcess].heap);
-	//nextLine();
-	//print_string("El inicio del heap del proceso es:");
-	//printHex((qword)tableProcess[numberProcess].heap->currentPage);
-	//nextLine();
-	//print_string("El puntero que reservo el usuario esta en la posicion:");
-	//printHex((qword)freePointer);
-	//nextLine();
 	return freePointer;
-
 }	
 
 p_heapPage findAvaiableHeapPage(p_heapPage firstPage, int size){
@@ -92,6 +89,7 @@ p_heapPage findAvaiableHeapPage(p_heapPage firstPage, int size){
 		currentProcessSlot->process.heap = firstPage;
 		return firstPage;
 	}
+	
 	if(firstPage->freeBytes >= size){
 		return firstPage;
 	}
@@ -107,8 +105,7 @@ p_heapPage findAvaiableHeapPage(p_heapPage firstPage, int size){
 	if(currentHeapPage == NULL){
 		previousPage->nextHeapPage = createHeapPage();
 		return previousPage->nextHeapPage;
-	}
-	else
+	} else 
 		return currentHeapPage;
 }
 

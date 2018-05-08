@@ -1,12 +1,17 @@
 #ifndef EXCEPTION_H
 #define EXCEPTION_H
 
-static void zero_division(qword * rsp);
+#include "types.h"
 
-static void invalid_opcode(qword * rsp);
+/* Dispatches the exception to the corresponding driver */
+void exceptionDispatcher(int , qword *);
 
-void showRegisters(qword * rsp);
+/* Displays the values ​​of the registers at the time the exception occurred */
+void zero_divisionHandler(qword *);
 
-void cycle();
+/* Displays the values ​​of the registers at the time the exception occurred */
+void invalid_opcodeHandler(qword *);
+
+void showRegisters(qword *);
 
 #endif

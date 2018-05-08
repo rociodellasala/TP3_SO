@@ -3,8 +3,10 @@
 
 #include "types.h"
 
+/* */
 boolean wait(boolean mutex);
 
+/* */
 boolean signal();
 
 #endif

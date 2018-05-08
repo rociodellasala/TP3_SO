@@ -1,8 +1,7 @@
-#include <converter.h>
-#include <interrupts.h>
-#include <time.h>
-#include <video_driver.h>
-
+#include "converter.h"
+#include "interrupts.h"
+#include "time.h"
+#include "video_driver.h"
 
 void enableTickInter(){
 	picMasterMask(0xFC);

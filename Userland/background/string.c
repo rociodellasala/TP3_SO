@@ -1,11 +1,12 @@
-#include "types.h"
-#include "string.h"
+#include <types.h>
+#include <string.h>
 
 int strlen(const char * str){
 	int length = 0;
 	while(str[length++] != '\0' );
 	return length - 1;
 }
+
 
 boolean strcmp(char * str1, char * str2){
 	int i;
@@ -50,25 +51,7 @@ char * strcpy(char * dest,const char * source){
 	return dest;
 }
 
-char * strncpy(char * dest, const char * source, int charsToCopy){
-	int i;
-	for(i = 0; i <  charsToCopy; i++){
-		*(dest + i) = *(source + i);
-	}
 
-	*(dest + i) = '\0';
-	return dest;
-}
 
-char charAtPos(char * str, int i){
-	char * aux = str;
-	int j = 0;
 
-	while( *aux != '\0' && j < i){
-		j++;
-		aux++;	
-	}
-	
-	return *aux;
-}
 

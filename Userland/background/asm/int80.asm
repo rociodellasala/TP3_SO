@@ -1,18 +1,18 @@
-GLOBAL read_keyboard
 section .text
+GLOBAL int80
 
 ; -----------------------------------------------------------------------------
-;	Get the RAW data from the Keyboard.
-;	Return:
-;		-rax: the RAW data.
+;	Enables Userland function to make system calls to the Kernel
+;	Parameters:
+;		Depends on the command invoked.
 ; -----------------------------------------------------------------------------
-read_keyboard:
+int80:
+	
 	push rbp
-	mov rbp, rsp
+	mov rbp,rsp
 
-	in al,60h
+	int 80h
 
-	leave
+	mov rsp,rbp
+	pop rbp
 	ret
-
-

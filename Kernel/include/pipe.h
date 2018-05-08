@@ -6,21 +6,25 @@
 
 #define READ_ACTION 0
 
-p_pipe createPipe(int callingProcessPID, int connectingProcessPID);
+/* */
+p_pipe createPipe(int, int);
 
-s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID);
+/* */
+s_pipe createPipeStruct(int, int);
 
+/* */
 void printPipeInfo(p_pipe pipe);
 
-int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID);
+/* */
+int write(p_pipe pipe,char *, int, int);
 
-int read(p_pipe pipe,char * messageDestination,int charsToRead,int callingProcessPID);
+/* */
+int read(p_pipe pipe,char *, int, int);
 
-void close(p_pipe pipe,int action,int callingProcessPID);
+/* */
+void close(p_pipe pipe,int, int);
 
-void open(p_pipe pipe,int action,int callingProcessPID);
-
-
-
+/* */
+void open(p_pipe pipe, int, int);
 
 #endif

@@ -31,7 +31,6 @@ void load_idt();
 
 void restoreContext();
 
-//Termina la ejecución de la cpu.
 void haltcpu(void);
 
 #endif /* INTERRUPS_H_ */

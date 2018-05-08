@@ -1,7 +1,5 @@
-#include <converter.h>
-#include <video_driver.h>
-
-static dword uintToBase(qword value, char * buffer, dword base);
+#include "converter.h"
+#include "video_driver.h"
 
 static char buffer[64] = { '0' };
 
@@ -22,7 +20,7 @@ void printBase(qword value, dword base){
    	print_string(buffer);
 }
 
-static dword uintToBase(qword value, char * buffer, dword base){
+dword uintToBase(qword value, char * buffer, dword base){
 	char *p = buffer;
 	char *p1, *p2;
 	dword digits = 0;
@@ -31,14 +29,13 @@ static dword uintToBase(qword value, char * buffer, dword base){
 		dword remainder = value % base;
 		*p++ = (remainder < 10) ? remainder + '0' : remainder + 'A' - 10;
 		digits++;
-	}
-	
-	while (value /= base);
+	} while (value /= base);
 
 	*p = 0;
 
 	p1 = buffer;
 	p2 = p - 1;
+	
 	while (p1 < p2){
 		char tmp = *p1;
 		*p1 = *p2;

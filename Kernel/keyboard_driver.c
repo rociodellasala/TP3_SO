@@ -1,7 +1,7 @@
-#include <ascii_keyboard.h>
-#include <keyboard_driver.h>
-#include <types.h>
-#include <scheduler.h>
+#include "ascii_keyboard.h"
+#include "keyboard_driver.h"
+#include "types.h"
+#include "scheduler.h"
 
 #define BUFFER_SIZE 2000 /* 2000 = 80 * 25 */
 
@@ -19,14 +19,11 @@ static int bufferIndex = 0;
 extern ProcessSlot * currentProcess;
 extern allProcess;
  
-extern byte _read_keyboard();
+extern byte read_keyboard();
 
-void keyboard_handler() {
-	byte key = _read_keyboard();	
-
-		
+void keyboardHandler() {
+	byte key = read_keyboard();	
 	checkKeyPressed(key);
-	
 }
 
 void checkKeyPressed(unsigned char key){
@@ -39,7 +36,7 @@ void checkKeyPressed(unsigned char key){
    		return;
     
     getCharacterFromKeyboard(&key);
-	update_buffer(key);
+	updateBuffer(key);
 }
 
 void checkSpecialKeyPressed(unsigned char key){
@@ -78,12 +75,12 @@ void getCharacterFromKeyboard(unsigned char * key){
 	}
 }
 
-void update_buffer(unsigned char key){
+void updateBuffer(unsigned char key){
 	buffer[bufferIndex] = key;
 	bufferIndex = (bufferIndex + 1) % BUFFER_SIZE;
 }
 
-char get_buffer(){
+char getBuffer(){
 	if(index != bufferIndex){
 		byte aux = buffer[index];
 		index = (index +  1) % BUFFER_SIZE;
@@ -93,18 +90,16 @@ char get_buffer(){
 	return EOF;
 }
 
-void read_buffer(char * buff, int size){
-    	int i = 0;
-		char c;
+void readBuffer(char * buff, int size){
+    int i = 0;
+	char c;
 
-	    while (i < (size - 1) && (c = get_buffer()) != EOF) {
-			buff[i] = (char) c;
-			i++;
-	    }
+	while (i < (size - 1) && (c = getBuffer()) != EOF) {
+		buff[i] = (char) c;
+		i++;
+	}
 
-	    buff[i] = 0;
-	
+	buff[i] = 0;
 }
-
 
 

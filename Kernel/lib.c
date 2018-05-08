@@ -1,5 +1,4 @@
-#include <stdint.h>
-#include <types.h>
+#include "types.h"
 
 void * memset(void * destination, dword c, qword length){
 	byte chr = (byte)c;

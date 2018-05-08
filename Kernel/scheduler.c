@@ -7,11 +7,14 @@
 #include <interrupts.h>
 
 #define QUANTUM 5
+
 static int numberOfTicks = 0;
+
 int currentProcessId = 0; //esto es para tener constancia de los PID de cada programa
 int allProcess = 0;
 int allProcessBackground = 0;
 int allProcessForeground = 0;
+
 ProcessSlot * currentProcess;
 ProcessSlot * lastProcess;
 ProcessSlot * tableProcess;
@@ -240,7 +243,9 @@ void removeFinishedProcess() {
 	
 	while(aux != tableProcess){
 		if(aux->process.status == FINISHED) {
-
+			if(lastProcess == aux){
+				lastProcess = prev;
+			}
 			// Remove process 
 			releasePage(aux->process);
 			prev->next = aux->next;
@@ -271,7 +276,8 @@ void removeProcess(int pid){
 		currentProcess = lastProcess = tableProcess = NULL;
 		return;
 	}
-	/*prints("A eliminar: ");
+	
+	prints("\nA eliminar: ");
 	printi(pid);
 	prints("\n---------- ANTES DE ELIMINAR ----------");
 	prints("\nCurrentProcess: ");
@@ -289,7 +295,7 @@ void removeProcess(int pid){
 	prints("Todos los procesos: ");
 	nextLine();
 	printAllCurrentProcess();
-	nextLine();*/
+	nextLine();
 
 	ProcessSlot * slot = getProcessFromPid(pid);
 	if(slot->process.foreground == FOREGROUND)
@@ -317,10 +323,6 @@ void removeProcess(int pid){
 	printAllCurrentProcess();
 	nextLine();*/
 
-	if(lastProcess == currentProcess){
-		lastProcess = currentProcess->next;
-	}
-
 	if(allProcessForeground == 0 && tableProcess->process.status == LOCKED){
 		tableProcess->process.status = READY;
 	}
@@ -330,8 +332,8 @@ void removeProcess(int pid){
 
 
 	currentProcess->process.status = RUNNING;
-
-	/*prints("\nCurrentProcess: ");
+	prints("\n---------- DESPUES DE ELIMINAR ----------");
+	prints("\nCurrentProcess: ");
 	prints(currentProcess->process.processName);
 	printi(currentProcess->process.PID);
 	prints(" - siguiente: ");
@@ -346,7 +348,7 @@ void removeProcess(int pid){
 	prints("Todos los procesos: ");
 	nextLine();
 	printAllCurrentProcess();
-	nextLine();*/
+	nextLine();
 	
 	enableTickInter();
 	if(slot->process.foreground == FOREGROUND)

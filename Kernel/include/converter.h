@@ -1,18 +1,24 @@
-#ifndef NAIVE_CONSOLE_H
-#define NAIVE_CONSOLE_H
+#ifndef CONVERTER_H
+#define CONVERTER_H
 
-#include <types.h>
+#include "types.h"
 
 /* Converts the specified value into decimal and prints it */
-void printDec(qword value);
+void printDec(qword);
 
 /* Converts the specified value into hexadecimal and prints it */
-void printHex(qword value);
+void printHex(qword);
 
 /* Converts the specified value into binary and prints it */
-void printBin(qword value);
+void printBin(qword);
 
 /* Converts the specified value into specified base and prints it */
-void printBase(qword value, dword base);
+void printBase(qword, dword);
+
+/* Converts the specified value into specified base */
+dword uintToBase(qword, char *, dword);
+
+/* ??????? */
+void intToString(int, char *);
 
 #endif

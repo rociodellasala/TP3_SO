@@ -5,7 +5,6 @@ GLOBAL hour
 
 section .text
 
-
 extract:
 	push rax
 	mov al, 0Bh

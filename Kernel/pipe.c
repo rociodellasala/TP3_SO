@@ -1,11 +1,11 @@
-#include <pipe.h>
-#include <scheduler.h>
-#include <heap.h>
-#include <lib.h>
-#include <string.h>
-#include <mutex.h>
-#include <converter.h>
-#include <video_driver.h>
+#include "pipe.h"
+#include "scheduler.h"
+#include "heap.h"
+#include "lib.h"
+#include "string.h"
+#include "mutex.h"
+#include "converter.h"
+#include "video_driver.h"
 
 p_pipe createPipe(int callingProcessPID, int connectingProcessPID){
 		ProcessSlot * callingProcessSlot = getProcessFromPid(callingProcessPID);

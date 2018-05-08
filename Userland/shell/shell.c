@@ -126,11 +126,11 @@ int call_command(char * function, char * parameter){
 	} else if(strcmp(function, "time")){
 		time();
 		return 0;
-	/*} else if(strcmp(function, "divideByZero")){		
+	}else if(strcmp(function, "divideByZero")){		
 		divide_by_zero();
 	} else if(strcmp(function, "invalidOpcode")){
 		invalid_opcode();
-	*/} else if(strncmp(function, "./", 2)){
+	} else if(strncmp(function, "./", 2)){
 		return startProgram(function + 2);
 	} else if(strcmp(function, "ps")){
 		ps();
@@ -172,7 +172,7 @@ void ps(){
 
 void ls(){
 	nextLine();	
-	printf("linearGraph  parabolicGraph  needMemory  testMemoryManager");
+	printf("linearGraph  parabolicGraph  testMemoryManager  processRead  processWrite  background");
 }
 
 void time(){

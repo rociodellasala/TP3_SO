@@ -1,7 +1,7 @@
-#include <font.h>
-#include <types.h>
-#include <video_driver.h>
-#include <scheduler.h>
+#include "font.h"
+#include "types.h"
+#include "video_driver.h"
+#include "scheduler.h"
 
 #define FONT_WIDTH     10
 #define FONT_HEIGHT    16

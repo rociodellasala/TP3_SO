@@ -4,21 +4,21 @@
 #include "types.h"
 
 /* Returns the length of the specified string */
-int strlen(const char * str);
+int strlen(const char *);
 
 /* Compares both strings and returns if they are equal */
-boolean strcmp(char * str1, char * str2);
+boolean strcmp(char *, char *);
 
 /* Compares both strings and returns if their first num characters are equal*/
-boolean strncmp(char * str1, char * str2, int num);
+boolean strncmp(char *, char *, int);
 
 /* Copy the string from source to dest*/
-char * strcpy(char * dest,const char * source);
+char * strcpy(char *, const char *);
 
 /* Copy n chars from source to dest*/
-char * strncpy(char * dest, const char * source, int charsToCopy);
+char * strncpy(char *, const char *, int);
 
 /* Returns the char located at the position i of the specified string */
-char charAtPos(char * str, int i);
+char charAtPos(char *, int);
 
 #endif

@@ -22,7 +22,7 @@ GLOBAL restoreContext
 GLOBAL clearStack
 
 EXTERN irqDispatcher
-EXTERN syscall_handler
+EXTERN syscallHandler
 EXTERN exceptionDispatcher
 EXTERN main
 EXTERN runScheduler
@@ -183,7 +183,7 @@ _exception6Handler:
 _irq80Handler:
 	push rbp
 	mov rbp, rsp
-	call syscall_handler
+	call syscallHandler
 	mov rsp, rbp
 	pop rbp
 	iretq

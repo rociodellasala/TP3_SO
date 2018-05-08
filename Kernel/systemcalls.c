@@ -15,6 +15,7 @@ static void * parabolicGraph = (void *)0x900000;
 static void * processRead = (void *)0xA00000;
 static void * testMemoryManager = (void *)0xB00000;
 static void * processWrite = (void *)0xC00000;
+static void * background = (void *)0xD00000;
 
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
@@ -30,7 +31,7 @@ void sys_clear(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
 }
 
 void sys_read(qword file, qword buffer, qword size, qword r8, qword r9) {
-	read_buffer((char*) buffer, (int) size);   
+	readBuffer((char*) buffer, (int) size);   
 }
 
 void sys_fontColor(qword color, qword rdx, qword rcx, qword r8, qword r9) {
@@ -90,7 +91,11 @@ int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r
 		createProcess(processWrite, process);
 	} else if(strcmp(processName,"processWrite&")){
 		createProcess(processWrite, process);
-	}else
+	} else if(strcmp(processName,"background")){
+		createProcess(background, process);
+	} else if(strcmp(processName,"background&")){
+		createProcess(background, process);
+	} else
 		return -1;
 	return 0;
 }
@@ -170,7 +175,7 @@ void load_systemcalls(){
 }
 
 
-qword syscall_handler(qword rdi,qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
+qword syscallHandler(qword rdi,qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
 	if(rdi < 0 || rdi >= 21	)
 		return 0;
 	

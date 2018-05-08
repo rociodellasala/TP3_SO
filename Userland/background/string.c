@@ -51,25 +51,7 @@ char * strcpy(char * dest,const char * source){
 	return dest;
 }
 
-char * strncpy(char * dest, const char * source, int charsToCopy){
-	int i;
-	for(i = 0; i <  charsToCopy; i++){
-		*(dest + i) = *(source + i);
-	}
 
-	*(dest + i) = '\0';
-	return dest;
-}
 
-char charAtPos(char * str, int i){
-	char * aux = str;
-	int j = 0;
 
-	while( *aux != '\0' && j < i){
-		j++;
-		aux++;	
-	}
-	
-	return *aux;
-}
 

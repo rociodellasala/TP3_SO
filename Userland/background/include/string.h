@@ -1,8 +1,6 @@
 #ifndef STRINGS_H
 #define STRINGS_H
 
-#include "types.h"
-
 /* Returns the length of the specified string */
 int strlen(const char * str);
 
@@ -14,11 +12,5 @@ boolean strncmp(char * str1, char * str2, int num);
 
 /* Copy the string from source to dest*/
 char * strcpy(char * dest,const char * source);
-
-/* Copy n chars from source to dest*/
-char * strncpy(char * dest, const char * source, int charsToCopy);
-
-/* Returns the char located at the position i of the specified string */
-char charAtPos(char * str, int i);
 
 #endif

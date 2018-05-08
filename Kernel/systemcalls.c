@@ -8,11 +8,11 @@
 #include <heap.h>
 #include <converter.h>
 
-static void * shell = (void *)0x600000;
 static void * linearGraph = (void *)0x900000;
 static void * parabolicGraph = (void *)0xB00000;
 static void * needMemory = (void *)0xD00000;
 static void * testMemoryManager = (void *)0xE00000;
+static void * background = (void *)0xF00000;
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
@@ -71,21 +71,23 @@ void sys_printHex(qword pointer, qword rdx, qword rcx, qword r8, qword r9){
 	printHex(pointer);
 }
 
-void sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r9){
-	print_string("Se me pidio ejecutar el proceso: ");
-	print_string(processName);
-	nextLine();
+int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r9){
 	char * process = (char *) processName;
-	if(strcmp(processName,"linearGraph")){
+	if(strcmp(processName,"linearGraph&")){
 		createProcess(linearGraph, process);
-	}else if(strcmp(processName,"parabolicGraph")){
+	} else if(strcmp(processName,"parabolicGraph&")){
 		createProcess(parabolicGraph, process);
-	}else if(strcmp(processName,"needMemory")){
+	} else if(strcmp(processName,"needMemory&")){
 		createProcess(needMemory, process);
-	}else{
+	} else if(strcmp(processName,"testMemoryManager&")){
 		createProcess(testMemoryManager, process);
-	}
-	return;
+	} else if(strcmp(processName,"background")){
+		createProcess(background, process);
+	} else if(strcmp(processName,"background&")){
+		createProcess(background, process);
+	} else
+		return -1;
+	return 0;
 }
 
 void sys_ls(qword pointer, qword rdx, qword rcx, qword r8, qword r9){

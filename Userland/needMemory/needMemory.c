@@ -3,6 +3,12 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include "./include/stdio.h"
+#include <types.h>
+
+void clear_buffer(){
+	char c;
+	while(c = getchar() != EOF );
+}
 
 int main (void){
 	clear_screen();
@@ -32,6 +38,7 @@ int main (void){
 	printf("Deme otro numero que quiera:");
 	getNum(&a);
 	clear_screen();
+	clear_buffer();
 	exitProgram();
 }
 

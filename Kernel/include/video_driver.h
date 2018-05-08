@@ -54,4 +54,12 @@ int countDigits(qword n);
 /* Displays main menu*/
 void print_menu();
 
+/* Writes a character in the next writing position. */
+void printc(unsigned char c);
+
+/* Prints string in the next writing position */
+void prints(const char * str);
+
+void printi(qword n);
+
 #endif

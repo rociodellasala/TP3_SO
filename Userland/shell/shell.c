@@ -12,6 +12,11 @@ int main() {
 	return 0;
 }
 
+void exitProgram(){
+	int80(14,0,0,0,0);
+}
+
+
 void start_shell() {
 	char buffer[MAX_SIZE];
   	int index;
@@ -35,7 +40,9 @@ void start_shell() {
 	    			buffer[index] = 0;
 	    			backspace();
 				}
-			}else if(c == '\n'){
+			} else if( c == '\n' && index == 0){
+				nextTerminalLine();		
+			} else if(c == '\n'){
       			buffer[index] = 0;
       			state = get_command(buffer);
 				
@@ -52,6 +59,8 @@ void start_shell() {
 						index = 0;
 						buffer[0] = 0;
 						break;
+					case 2:
+						state = exit;
 					case 3:
 						isFirst = true;
 						break;
@@ -70,6 +79,8 @@ void start_shell() {
   			} ACA HAY UN BUG QUE ME TOMA ENTERS CUANDO NO LOS PONGO, ARREGLAR*/
 		}	
 	}
+
+	exitProgram();
 }
 
 int get_command(char * buffer){
@@ -92,8 +103,11 @@ void linear(){
 	int80(12, 0, 0, 0, 0, 0);
 }
 
-void startProgram(char * program){
-	int80(12,program,0,0,0,0);
+int startProgram(char * program){
+	int i = int80(12,program,0,0,0,0);
+	if(i == -1)
+		return 1;
+	return 3;
 }
 
 
@@ -116,17 +130,16 @@ int call_command(char * function, char * parameter){
 		divide_by_zero();
 	} else if(strcmp(function, "invalidOpcode")){
 		invalid_opcode();
-	} else if(strcmp(function, "exit")){			
-		return 2;
 	*/} else if(strncmp(function, "./", 2)){
-		startProgram(function + 2);
-		return 0;
+		return startProgram(function + 2);
 	} else if(strcmp(function, "ps")){
 		ps();
 		return 0;	
 	} else if(strcmp(function, "ls")){
 		ls();
 		return 0;	
+	} else if(strcmp(function, "exit")){
+		return 2;	
 	}
 		return 1;
 }
@@ -139,8 +152,8 @@ void printHelp(){
 	printf("exit:                   Goes back and displays the menu.\n");
 	printf("font-[color]:           Changes font color, ex: blue, red, yellow, white or violet.\n");	
 	printf("help:                   Displays manual.\n");
-	printf("ls: 			Displays runnable programs\n");
-	printf("ps:			Displays a snapshot of the status of currently running processes.\n");
+	printf("ls:                     Displays runnable programs\n");
+	printf("ps:                     Displays a snapshot of the status of currently running processes.\n");
 	printf("time:                   Displays the current time.\n");
 	//printf("divideByZero:           Makes an integer division to show how zero exception works.\n");
 	//printf("invalidOpcode:          Shows how invalid opcode exception works by calling an undefined instruction.\n");

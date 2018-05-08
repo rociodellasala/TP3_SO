@@ -1,12 +1,15 @@
 #include <font.h>
 #include <types.h>
 #include <video_driver.h>
+#include <scheduler.h>
 
 #define FONT_WIDTH     10
 #define FONT_HEIGHT    16
 
 #pragma pack(push)
 #pragma pack(1)
+
+extern ProcessSlot * currentProcess;
 
 typedef struct {
 	  word attributes;
@@ -125,6 +128,7 @@ void clear_screen(){
 }
 
 void print_char(unsigned char c){
+  	if(currentProcess->process.foreground == FOREGROUND){
   	if(c == '\n'){
     	nextLine();
     	return;
@@ -139,16 +143,68 @@ void print_char(unsigned char c){
   	}
   
 	buffer_position++;
+	}
 }
 
 void print_string(const char * str){
-  	int i = 0;
- 	
-	while(str[i] != '\0'){
-    		print_char(str[i]);
-    		i++;
-  	}
+  	
+	  	int i = 0;
+	 	
+		while(str[i] != '\0'){
+	    		print_char(str[i]);
+	    		i++;
+	  	}
+  	
 }
+
+/* ------------------- */
+void printc(unsigned char c){
+  	
+  	if(c == '\n'){
+    	nextLine();
+    	return;
+  	}
+  
+	draw_char(c, (buffer_position % buffer_max_per_line) * FONT_WIDTH, 
+		(buffer_position / buffer_max_per_line) * FONT_HEIGHT);
+  
+	if ( buffer_position / buffer_max_per_line == (buffer_max_per_column) ){
+   		move_screen();
+    	buffer_position -= buffer_max_per_line;
+  	}
+  
+	buffer_position++;
+	
+}
+
+void prints(const char * str){
+  	
+	  	int i = 0;
+	 	
+		while(str[i] != '\0'){
+	    		printc(str[i]);
+	    		i++;
+	  	}
+  	
+}
+
+
+void printi(qword n){
+	char s[16] = {0};
+	int digits = countDigits(n) - 1;
+
+	/* Calculate character */
+	while(digits >= 0){
+		s[digits] = n % 10 + '0';
+		n /= 10;
+		digits--;
+	}
+
+	/* Print array */
+	prints(s);
+}
+ /* -------------------------- */
+
 
 void print_string_by_length(const char * str, int length){
   	int i = 0;

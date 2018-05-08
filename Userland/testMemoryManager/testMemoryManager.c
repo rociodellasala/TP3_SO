@@ -11,6 +11,13 @@
 static void * firstPage = (void *)0x65000;
 static void * secondPage = (void *)0x66000;
 
+
+void clear_buffer(){
+	char c;
+	while(c = getchar() != EOF );
+}
+
+
 int main() {
 	clear_screen();
 	int firstAmount;
@@ -55,6 +62,7 @@ int main() {
 
 	exitTest();
 	clear_screen();
+	clear_buffer();
 	exitProgram();
 }
 

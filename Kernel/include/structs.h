@@ -8,11 +8,13 @@
 #define PAGES_KERNEL_HEAP 96
 #define MAX_MESSAGE_LENGHT 100
 
-#define RUNNING 1
-#define READY 2
-#define FINISHED 3
+#define FOREGROUND 0
+#define BACKGROUND 1
 
-
+#define RUNNING 2
+#define READY 3
+#define LOCKED 4
+#define FINISHED 5
 
 typedef struct kernelHeapPage{
 	int occupiedBytes;
@@ -53,6 +55,7 @@ typedef s_pipe * p_pipe;
 typedef struct Process{
     int PID;
     int status;
+    int foreground;
     char processName[MAX_PROCESS_NAME];
     void * pages[MAX_PAGES];
     void * startingPoint;
@@ -95,10 +98,5 @@ typedef struct StackFrame {
   qword ss;
   qword base;
 } StackFrame;
-
-
-
-
-
 
 #endif

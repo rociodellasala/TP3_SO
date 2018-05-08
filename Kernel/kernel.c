@@ -28,15 +28,12 @@ static void * linearGraph = (void *)0x900000;
 static void * parabolicGraph = (void *)0xB00000;
 static void * needMemory = (void *)0xD00000;
 static void * testMemoryManager = (void *)0xE00000;
+static void * background = (void *)0xF00000;
 
-void * map(void * fisica, void * module){
-	memcpy(fisica,module,8192);
-	return fisica;
-}
 
 typedef int (*EntryPoint)();
 
-void clearBSS(void * bssAddress, qword bssSize) {
+void clearBSS(void * bssAddress, qword bssSize){
 	memset(bssAddress, 0, bssSize);
 }
 
@@ -49,7 +46,7 @@ void * getStackBase() {
 }
 
 void * initializeKernelBinary() {
-	void * moduleAddresses[] = {shell, linearGraph, parabolicGraph,needMemory,testMemoryManager,};
+	void * moduleAddresses[] = {shell, linearGraph, parabolicGraph,needMemory,testMemoryManager, background,};
 	loadModules(&endOfKernelBinary, moduleAddresses);
 	clearBSS(&bss, &endOfKernel - &bss);
 	return getStackBase();
@@ -65,9 +62,8 @@ int main(){
 	initializeKernelHeap();
 	initializeKernelStack();
 	//printKernelHeap();
-	startProcess(shell, "shell");
 
-	while(1);
+	startProcess(shell, "shell");
 
 	return 0;
 }

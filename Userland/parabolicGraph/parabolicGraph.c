@@ -14,6 +14,11 @@
 
 #include "./include/stdio.h"
 
+void clear_buffer(){
+	char c;
+	while(c = getchar() != EOF );
+}
+
 int main (void){
 	clear_screen();
 	int a = 0; 
@@ -97,6 +102,7 @@ int main (void){
 		i++;
 	}
 	clear_screen();
+	clear_buffer();
 	exitProgram();
 }
 

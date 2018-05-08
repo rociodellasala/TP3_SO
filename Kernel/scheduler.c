@@ -7,10 +7,11 @@
 #include <interrupts.h>
 
 #define QUANTUM 5
-
 static int numberOfTicks = 0;
 int currentProcessId = 0; //esto es para tener constancia de los PID de cada programa
 int allProcess = 0;
+int allProcessBackground = 0;
+int allProcessForeground = 0;
 ProcessSlot * currentProcess;
 ProcessSlot * lastProcess;
 ProcessSlot * tableProcess;
@@ -31,6 +32,12 @@ void initializeKernelStack() {
 }
 
 void runScheduler(){
+	
+	if(currentProcess->process.PID == 0 && allProcess > 1 && allProcessForeground > 0){
+		currentProcess->process.status = LOCKED;
+	}
+
+
 	if(currentProcess == NULL) //Si todavia no hay ningun proceso en la cola de procesos
 		return;
 
@@ -40,18 +47,20 @@ void runScheduler(){
 		return;
 	}
 	
-	/*print_string("CurrentProcess: ");
-	print_string(currentProcess->process.processName);
-	print_string(" - siguiente: ");
-	print_string(currentProcess->next->process.processName);
-	print_string(" - lastProcess: ");
-	print_string(lastProcess->process.processName);
+	
+	/*prints("CurrentProcess: ");
+	printi(currentProcess->process.PID);
+	prints(" - siguiente: ");
+	printi(currentProcess->next->process.PID);
+	prints(" - lastProcess: ");
+	printi(lastProcess->process.PID);
 	nextLine();
-	print_string("Todos los procesos: ");
+	prints("Todos los procesos: ");
+	printi(allProcess);
 	nextLine();
 	printAllCurrentProcess();
-	nextLine();
-	*/
+	nextLine();*/
+	
 
 	/* Run next process */
 	numberOfTicks = 0;
@@ -61,9 +70,15 @@ void runScheduler(){
 	}
 
 	currentProcess = currentProcess->next;
+
+	while(currentProcess->process.status != READY){
+		currentProcess = currentProcess->next;
+	}
+
+	
 	currentProcess->process.status = RUNNING;
-	//print_string("cambiando de proceso a: ");
-	//print_string(currentProcess->process.processName);
+	//prints("          Cambiando de proceso : ");
+	//prints(currentProcess->process.processName);
 	//printAllCurrentProcess();
 }
 
@@ -92,11 +107,23 @@ int createProcess(void * entryPoint, char * nameProcess){
 	memcpy(newProcess.processName,nameProcess,20); //deberia ser strlen de nameProcess
 	newProcess.heap = NULL;
 	newProcess.status = READY;
+	if(strcmp(nameProcess,"shell")){
+		newProcess.foreground = FOREGROUND;
+	} else {
+	char c = charAtPos(nameProcess,strlen(nameProcess)-1);
+	if(c == '&'){
+		newProcess.foreground = FOREGROUND;
+		allProcessForeground++;
+	} else {
+		newProcess.foreground = BACKGROUND;
+		allProcessBackground++;
+	}}
 	newProcess.startingPoint = entryPoint;
 	newProcess.pipe = NULL;
-	//newProcess.baseStack = allocPage();
-	newProcess.userStack = fillStackFrame(entryPoint, 0x1000);
+	newProcess.baseStack = allocPage();
+	newProcess.userStack = fillStackFrame(entryPoint, newProcess.baseStack);
 	addProcessToPCB(newProcess);
+
 	return newProcess.PID;
 }
 
@@ -118,27 +145,35 @@ void addProcessToPCB(Process newProcess){
 void printAllCurrentProcess(){
 	ProcessSlot * aux = tableProcess;
 	int i = 0;
-	print_string(" ---------- TABLE PROCESS ---------- \n");
+	prints(" ---------- TABLE PROCESS ---------- \n");
 	
 	while(aux != NULL && i < allProcess){
-		print_string("Process name: ");
-		print_string(aux->process.processName);
-		print_string("  -  PID: ");
-		print_int(aux->process.PID);
+		prints("Process name: ");
+		prints(aux->process.processName);
+		prints("  -  PID: ");
+		printi(aux->process.PID);
 		if(aux->process.heap == NULL)
-			print_string("	-  Heap: No heap avaiable");
+			prints("	-  Heap: No heap avaiable");
 		else
-			print_string("	-  Heap: There is a heap");
-		print_string("  -  Status: ");
-		if((aux->process.status) == 1) 
-			print_string("RUNNING");
-		else if((aux->process.status) == 2)
-			print_string("READY");
+			prints("	-  Heap: There is a heap");
+		prints("  -  Status: ");
+		if((aux->process.status) == RUNNING) 
+			prints("RUNNING");
+		else if((aux->process.status) == READY)
+			prints("READY");
+		else if((aux->process.status) == LOCKED)
+			prints("LOCKED");
 		else
-			print_string("FINISHED");
+			prints("FINISHED");
+		if((aux->process.foreground) == FOREGROUND)
+		prints("  -  FOREGROUND ");
+		else if((aux->process.foreground) == BACKGROUND)
+		prints("  -  BACKGROUND");
 		nextLine();
+		prints(" - NEXT PID: ");
 		i++;
 		aux = aux->next;
+		printi(aux->process.PID);
 	}
 }
 
@@ -152,28 +187,6 @@ ProcessSlot * searchRunningProcess(){
 	return aux;
 }
 
-void terminateProcess(int PID){
-	ProcessSlot * aux = tableProcess;
-
-	if(tableProcess->process.PID == PID){
-		releasePage(tableProcess->process);
-		tableProcess = tableProcess->next;
-		return;
-	}
-
-	ProcessSlot * previous = tableProcess;
-	aux = tableProcess->next;
-
-	while(aux->process.PID != PID && aux != NULL){
-		previous = aux;
-		aux = aux->next;
-	}
-
-	//Deberia manejarse el caso que haya terminado y aux == NULL
-	releasePage(aux->process);
-	previous->next = aux->next;
-	return;
-}
 
 int getCurrentPid(){
 	return currentProcess->process.PID;
@@ -192,7 +205,6 @@ ProcessSlot * getProcessFromPid(int pid){
 void removeFinishedProcess() {
 
 	if(tableProcess->process.status == FINISHED){
-		//releasePage(tableProcess->process.userStack);
 		releasePage(tableProcess->process);
 		tableProcess = tableProcess->next;
 		lastProcess->next = tableProcess;
@@ -206,7 +218,6 @@ void removeFinishedProcess() {
 		if(aux->process.status == FINISHED) {
 
 			// Remove process 
-			//releasePage(aux->process.userStack);
 			releasePage(aux->process);
 			prev->next = aux->next;
 			return;
@@ -220,27 +231,74 @@ void removeFinishedProcess() {
 
 
 void removeProcess(int pid){
-	print_string("CurrentProcess: ");
-	print_string(currentProcess->process.processName);
-	print_string(" - siguiente: ");
-	print_string(currentProcess->next->process.processName);
-	print_string(" - lastProcess: ");
-	print_string(lastProcess->process.processName);
-	print_string(" - first: ");
-	print_string(tableProcess->process.processName);
+	if(pid == 0){
+		clear_screen();
+		print_string("Leaving OS in... ");
+		int i = 0, j = 3;
+		while(i < 400000000){
+			if(i == 100000000 || i == 200000000 || i == 300000000){
+				print_int(j);
+				print_string(" ");
+				j--;
+			}
+			i++;
+		}
+		clear_screen();
+		currentProcess = lastProcess = tableProcess = NULL;
+		return;
+	}
+	/*prints("A eliminar: ");
+	printi(pid);
+	prints("\n---------- ANTES DE ELIMINAR ----------");
+	prints("\nCurrentProcess: ");
+	prints(currentProcess->process.processName);
+	printi(currentProcess->process.PID);
+	prints(" - siguiente: ");
+	prints(currentProcess->next->process.processName);
+	printi(currentProcess->next->process.PID);
+	prints(" - lastProcess: ");
+	prints(lastProcess->process.processName);
+	printi(lastProcess->process.PID);
+	prints(" - first: ");
+	prints(tableProcess->process.processName);
 	nextLine();
-	print_string("Todos los procesos: ");
+	prints("Todos los procesos: ");
 	nextLine();
 	printAllCurrentProcess();
-	nextLine();
+	nextLine();*/
 
 	ProcessSlot * slot = getProcessFromPid(pid);
+	if(slot->process.foreground == FOREGROUND)
+		allProcessForeground--;
+	else
+		allProcessBackground--;
 	slot->process.status = FINISHED;
-	
+	allProcess--;
 	removeFinishedProcess();
 	
+	/*prints("\nCurrentProcess: ");
+	prints(currentProcess->process.processName);
+	printi(currentProcess->process.PID);
+	prints(" - siguiente: ");
+	prints(currentProcess->next->process.processName);
+	printi(currentProcess->next->process.PID);
+	prints(" - lastProcess: ");
+	prints(lastProcess->process.processName);
+	printi(lastProcess->process.PID);
+	prints(" - first: ");
+	prints(tableProcess->process.processName);
+	nextLine();
+	prints("Todos los procesos: ");
+	nextLine();
+	printAllCurrentProcess();
+	nextLine();*/
+
 	if(lastProcess == currentProcess){
 		lastProcess = currentProcess->next;
+	}
+
+	if(allProcessForeground == 0 && tableProcess->process.status == LOCKED){
+		tableProcess->process.status = READY;
 	}
 
 	currentProcess = currentProcess->next;
@@ -248,28 +306,30 @@ void removeProcess(int pid){
 
 
 	currentProcess->process.status = RUNNING;
-	currentProcess->next = currentProcess->next->next;
-	allProcess--;
-	print_string("CurrentProcess: ");
-	print_string(currentProcess->process.processName);
-	print_string(" - siguiente: ");
-	print_string(currentProcess->next->process.processName);
-	print_string(" - lastProcess: ");
-	print_string(lastProcess->process.processName);
-	print_string(" - first: ");
-	print_string(tableProcess->process.processName);
+
+	/*prints("\nCurrentProcess: ");
+	prints(currentProcess->process.processName);
+	printi(currentProcess->process.PID);
+	prints(" - siguiente: ");
+	prints(currentProcess->next->process.processName);
+	printi(currentProcess->next->process.PID);
+	prints(" - lastProcess: ");
+	prints(lastProcess->process.processName);
+	printi(lastProcess->process.PID);
+	prints(" - first: ");
+	prints(tableProcess->process.processName);
 	nextLine();
-	print_string("Todos los procesos: ");
+	prints("Todos los procesos: ");
 	nextLine();
 	printAllCurrentProcess();
-	nextLine();
+	nextLine();*/
+	
 	enableTickInter();
-
+	if(slot->process.foreground == FOREGROUND)
 	print_string("Restaurando SHELL - Presione ENTER");
 	
 	restoreContext();
-	
-	print_string("Restaurando SHELL - Presione ENTER2");
+
 }
 
 void * fillStackFrame(void * entryPoint, void * baseStack) {
@@ -301,9 +361,11 @@ void * fillStackFrame(void * entryPoint, void * baseStack) {
 	return (void *) frame;	
 }
 
-//falta ahcerse
+//falta hacer una funcion que desbloqueee!!
 
 
-void blockProgram(){
+void blockProgram(int pid){
+	ProcessSlot * p = getProcessFromPid(pid);
+	p->process.status = LOCKED;
 	return;
 }

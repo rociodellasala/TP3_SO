@@ -60,11 +60,18 @@ int main (void){
 
 	int i = 0;
 	
-	while(i < 50000000){
+	while(i < 70000000){
 		i++;
 	}
+	
 	clear_screen();
+	clear_buffer();
 	exit();
+}
+
+void clear_buffer(){
+	char c;
+	while(c = getchar() != EOF );
 }
 
 void coordinates(){

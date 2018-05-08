@@ -85,7 +85,13 @@ void * searchForFreePage(){
 
 void releasePage(Process process){
 	recursiveRealeseHeap(process.heap);
+	releaseStack(process.baseStack);
 	//printFreePages();
+}
+
+void releaseStack(void * baseStack){
+	freePages.memoryFree[freePages.size] = baseStack;
+	freePages.size++;
 }
 
 void recursiveRealeseHeap(p_heapPage heap){

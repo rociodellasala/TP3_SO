@@ -1,5 +1,5 @@
-#include <types.h>
-#include <string.h>
+#include "types.h"
+#include "string.h"
 
 int strlen(const char * str){
 	int length = 0;
@@ -8,7 +8,7 @@ int strlen(const char * str){
 }
 
 
-boolean strcmp(char * str1, char * str2){
+boolean strcmp(const char * str1, const char * str2){
 	int i;
 	boolean equals = true;			
 	

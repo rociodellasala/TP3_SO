@@ -1,8 +1,8 @@
-#include <types.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
+#include "stdarg.h"
+#include "stdlib.h"
+#include "stdio.h"
+#include "types.h"
+#include "string.h"
 
 extern void int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
@@ -52,7 +52,7 @@ void putchar(unsigned char c) {
 	int80(1, c, 1, 0, 0, 0);
 }
 
-char getchar() {
+char getchar(){
 	unsigned char c[2];
 	int80(3, 0, (qword)c, 2, 0, 0);
 	if(c[0] == 0 ) 

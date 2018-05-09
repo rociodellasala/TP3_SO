@@ -7,31 +7,31 @@ void printfFirstTestMessage();
 
 void printfSecondTestMessage();
 
-void printfThirdTestMessage(int firstAmount, int secondAmount);
+void printfThirdTestMessage(int, int);
 
-void printfFourthTestMessage(int firstAmount, int secondAmount);
+void printfFourthTestMessage(int, int);
 
-void * whenAskedForMemoryFirstPointer(int * firstAmount);
+void * whenAskedForMemoryFirstPointer(int *);
 
-void thenMemoryIsReserved(void * firstPointer);
+void thenMemoryIsReserved(void *);
 
-void * whenAskedForMemorySecondPointer(int * secondAmount);
+void * whenAskedForMemorySecondPointer(int *);
 
-void thenBothPointersAreNotEqual(void * firstPointer, void * secondPointer);
+void thenBothPointersAreNotEqual(void *, void *);
 
-void thenSecondPointerStartsWhereItShould(int firstAmount, void * firstPointer, void * secondPointer);
+void thenSecondPointerStartsWhereItShould(int, void *, void *);
 
-void * whenAskedForMemoryThirdPointer(int * thirdAmount,int firstAmount,int secondAmount);
+void * whenAskedForMemoryThirdPointer(int *,int,int);
 
-void thenAllPointersAreNotEqual(void * firstStringPointer, void * secondStringPointer, void * thirdStringPointer);
+void thenAllPointersAreNotEqual(void *, void *, void *);
 
-void thenThirdPointerStartsWhereItShould(void * thirdStringPointer);
+void thenThirdPointerStartsWhereItShould(void *);
 
-void * whenAskedForMemoryFourthPointer(int * fourthAmount, int firstAmount, int secondAmount);
+void * whenAskedForMemoryFourthPointer(int *, int, int);
 
-void thenAllTestPointersAreNotEqual(void * firstStringPointer, void * secondStringPointer, void * thirdStringPointer, void * fourthStringPointer);
+void thenAllTestPointersAreNotEqual(void *, void *, void *, void *);
 
-void thenFourthPointerStartsWhereItShould(void * fourthStringPointer, int firstAmount, int secondAmount);
+void thenFourthPointerStartsWhereItShould(void *, int, int);
 
 void exitTest();
 

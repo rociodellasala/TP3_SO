@@ -2,10 +2,12 @@
 #define STDLIB_H
 
 /* Converts an int into string */
-void intToString(int num, char * str);
+void intToString(int, char *);
 
-void * malloc(int size);
+void * malloc(int);
 
-void printHexadecimal(void * pointer);
+void clear_buffer();
+
+void printHexadecimal(void *);
 
 #endif

@@ -1,15 +1,15 @@
 #ifndef STRINGS_H
 #define STRINGS_H
 
-#include "../types.h"
+#include "types.h"
 
 /*Gets string length*/
-int strlen(const char * str);
+int strlen(const char *);
 
 /*Returns if two strings are equal*/
-boolean strcmp(char * s1, char * s2);
+boolean strcmp(char *, char *);
 
 /*Returns true if 'c' es a space*/
-boolean isspace(char c);
+boolean isspace(char);
 
 #endif

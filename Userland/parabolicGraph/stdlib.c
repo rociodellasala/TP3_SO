@@ -1,4 +1,8 @@
-#include <stdlib.h>
+#include "stdlib.h"
+#include "types.h"
+#include "stdio.h"
+
+extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
 void intToString(int num, char * str){
 	int dig = 0;
@@ -31,4 +35,14 @@ void intToString(int num, char * str){
 	}else{
 		str[0] = '0';
 	}	
+}
+
+
+void exitProcess(){
+	int80(14,0,0,0,0,0);
+}
+
+void clear_buffer(){
+	char c;
+	while((c = getchar()) != EOF );
 }

@@ -3,13 +3,12 @@
 
 void printStaringMessageTest();
 
-char * givenStringToStore(int size);
+char * givenStringToStore(int);
 
-void whenStringIsReceived(char * firstString, int charsToRead, int pid);
+void whenStringIsReceived(char *, int, int);
 
-void thenFirstStringIsReceived(char const * firstString);
+void thenFirstStringIsReceived(char const *);
 
-void thenSecondStringIsReceived(char const * secondString);
-
+void thenSecondStringIsReceived(char const *);
 
 #endif

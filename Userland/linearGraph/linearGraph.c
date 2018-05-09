@@ -50,7 +50,7 @@ int main(void){
 
 	int i = 0;
 	
-	while(i < 70000000){
+	while(i < 100000000){
 		i++;
 	}
 	

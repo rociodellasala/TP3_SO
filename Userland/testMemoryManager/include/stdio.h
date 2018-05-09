@@ -5,10 +5,10 @@
 #define exit 2
 
 /* Prints string with format */
-void printf(const char * str, ...);
+void printf(const char *, ...);
 
 /* Prints character */
-void putchar(unsigned char c);
+void putchar(unsigned char);
 
 /* Gets a character, an unsigned char, from stdin */
 char getchar();
@@ -29,11 +29,9 @@ void nextLine();
 void nextTerminalLine();
 
 /* Changes font color shown on terminal */
-int changeFontColor(char * c);
+int changeFontColor(char *);
 
-int getNum(int * a);
+int getNum(int *);
 
-/* Prints current time */
-void time();
 
 #endif

@@ -1,23 +1,14 @@
-#include <exception.h>
-#include <types.h>
-#include <shell.h>
-#include "./include/stdio.h"
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <assert.h>
-#include <testMemoryManager.h>
+#include "types.h"
+#include "stdio.h"
+#include "string.h"
+#include "stdlib.h"
+#include "testMemoryManager.h"
+#include "assert.h"
 
 extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
 static void * firstPage = (void *)0x67000;
 static void * secondPage = (void *)0x68000;
-
-
-void clear_buffer(){
-	char c;
-	while(c = getchar() != EOF );
-}
 
 
 int main() {
@@ -66,6 +57,7 @@ int main() {
 	clear_screen();
 	clear_buffer();
 	exitProgram();
+	return 0;
 }
 
 void printStartTestMessage(){

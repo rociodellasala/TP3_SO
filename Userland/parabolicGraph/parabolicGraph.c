@@ -1,9 +1,7 @@
-#include <stdarg.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdarg.h>
-#include <types.h>
-#include <stdlib.h>
+#include "string.h"
+#include "types.h"
+#include "stdlib.h"
+#include "stdio.h"
 
 #define FONT_WIDTH 10
 #define FONT_HEIGHT 16
@@ -12,60 +10,28 @@
 #define WIDTH 1024
 #define HEIGHT 768
 
-#include "./include/stdio.h"
-
-void clear_buffer(){
-	char c;
-	while(c = getchar() != EOF );
-}
-
 int main (void){
 	clear_screen();
 	int a = 0; 
 	int b = 0;
-	int q = 0; //Seria mi c pero como 'c' ya lo uso para getchar uso q
+	int q = 0; 
 	int y;
   
 	printf("f(x) = ax^2 + bx + c\n");
-	printf("Input'a':\n");
+	printf("Input 'a':\n");
 
-  	if(getNum(&a) == 1){
-		printf("Error: Incorrect parameter\n");
-		int j = 0;
-		while(j < 50000000){
-			j++;
-		}
-
-		return 0;
-	}
-
+	while(getNum(&a) == 1)
+		printf("\nError: Incorrect parameter\n");
+	
 	printf("\n");
 	printf("Input 'b':\n");
-
-	if(getNum(&b) == 1){
-		printf("Error: Incorrect parameter\n");
-		int j = 0;
-		while(j < 50000000){
-			j++;
-		}
-
-		return 0;
-	}
-
+	while(getNum(&b) == 1)
+		printf("\nError: Incorrect parameter\n");
+	
 	printf("\n");
 	printf("Input 'c':\n");
-
-	if(getNum(&q) == 1){
-		printf("Error: Incorrect parameter\n");
-		int j = 0;
-		while(j < 50000000){
-			j++;
-		}
-
-		return 0;
-	}
-
-	printf("\n");
+	while(getNum(&q) == 1)
+		printf("\nError: Incorrect parameter\n");
 
 	clear_screen();
 	coordinates();
@@ -98,16 +64,13 @@ int main (void){
 
 	int i = 0;
 
-	while(i < 500000000){
+	while(i < 100000000){
 		i++;
 	}
 	clear_screen();
 	clear_buffer();
-	exitProgram();
-}
-
-void exitProgram(){
-	int80(14,0,0,0,0);
+	exitProcess();
+	return 0;
 }
 
 void coordinates(){

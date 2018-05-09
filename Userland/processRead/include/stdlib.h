@@ -5,22 +5,26 @@
 #define WRITE 1
 
 /* Converts an int into string */
-void intToString(int num, char * str);
+void intToString(int, char *);
 
-void * malloc(int size);
+void * malloc(int);
 
-void printHexadecimal(void * pointer);
+void clear_buffer();
+
+void exitProcess();
+
+void printHexadecimal(void *);
 
 int getPID();
 
-int pipe(char * connectingProcessName);
+int pipe(char *);
 
-int write(int pid,char * message, int messageLenght);
+int write(int ,char *, int);
 
-int read(int pid,char * messageDestination, int charsToRead);
+int read(int,char *, int);
 
-void close(int pid, int operation);
+void close(int, int);
 
-void open(int pid, int operation);
+void open(int, int);
 
 #endif

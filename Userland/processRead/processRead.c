@@ -1,21 +1,15 @@
-#include <stdarg.h>
-#include <stdint.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include "./include/stdio.h"
-#include <types.h>
-#include <string.h>
-#include <processRead.h>
+#include "stdarg.h"
+#include "stdint.h"
+#include "stdlib.h"
+#include "stdio.h"
+#include "types.h"
+#include "string.h"
+#include "processRead.h"
 
 extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
 char const * string1 = "Hola llegue";
 char const * string2 = "hola mundillo";
-
-void clear_buffer(){
-	char c;
-	while(c = getchar() != EOF );
-}
 
 int main (void){
 	int start = 0;
@@ -47,7 +41,7 @@ int main (void){
 		getNum(&start);
 	}while(start != 1);
 	clear_screen();
-	exitProgram();
+	exitProcess();
 	return 0;
 }
 
@@ -80,9 +74,4 @@ void thenSecondStringIsReceived(char const * secondString){
 		printf("ERROR!!!!! --------- Second string received: %s\n",secondString);
 	}
 }
-
-void exitProgram(){
-	int80(14,0,0,0,0,0);
-}
-
 

@@ -65,63 +65,73 @@ void start_video_mode(){
 }
 
 void draw_pixel(int x, int y){
-	unsigned pos = x * pixel_width + y * pitch;
-    	screen[pos] = currColor & 255;              // BLUE
-    	screen[pos + 1] = (currColor >> 8) & 255;   // GREEN
-    	screen[pos + 2] = (currColor >> 16) & 255;  // RED
+	if(currentProcess->process.foreground == FOREGROUND){		
+		unsigned pos = x * pixel_width + y * pitch;
+	    	screen[pos] = currColor & 255;              // BLUE
+	    	screen[pos + 1] = (currColor >> 8) & 255;   // GREEN
+	    	screen[pos + 2] = (currColor >> 16) & 255;  // RED
+	}
 }
 
 void draw_char(unsigned char c, int x, int y){
-	int cx, cy;
-	int mask[8] = {1, 2, 4, 8, 16, 32, 64, 128};
-	unsigned char * glyph = font[c - 32];
+	if(currentProcess->process.foreground == FOREGROUND){		
+		int cx, cy;
+		int mask[8] = {1, 2, 4, 8, 16, 32, 64, 128};
+		unsigned char * glyph = font[c - 32];
 
-	for(cy = 0; cy < 13; cy++){
-		for(cx = 0; cx < 8; cx++){
-			if(glyph[cy] & mask[cx]){
-				draw_pixel(x + 8 - cx, y + 13 - cy);
+		for(cy = 0; cy < 13; cy++){
+			for(cx = 0; cx < 8; cx++){
+				if(glyph[cy] & mask[cx]){
+					draw_pixel(x + 8 - cx, y + 13 - cy);
+				}
 			}
 		}
 	}
 }
 
 void draw_string(char * str, int x, int y){
-	int i = 0;
+	if(currentProcess->process.foreground == FOREGROUND){		
+		int i = 0;
 
-	while(str[i] != '\0'){
-		draw_char(str[i], x + (10 * i), y);
-   	 	i++;
+		while(str[i] != '\0'){
+			draw_char(str[i], x + (10 * i), y);
+	   	 	i++;
+		}
 	}
 }
 
 void draw_filled_rectangle(int x1, int y1, int x2, int y2, int color){
-	int i, j;
-	byte blue = color & 255;
-	byte green = (color >> 8 ) & 255;
-	byte red = (color >> 16) & 255;
-	int pos1 = x1 * pixel_width + y1 * pitch;
-	byte * draw = &screen[pos1];
+	if(currentProcess->process.foreground == FOREGROUND){	
+		int i, j;
+		byte blue = color & 255;
+		byte green = (color >> 8 ) & 255;
+		byte red = (color >> 16) & 255;
+		int pos1 = x1 * pixel_width + y1 * pitch;
+		byte * draw = &screen[pos1];
 
-	for (i = 0; i <= y2 - y1; i++){
-	  for (j = 0 ;j <= x2 - x1; j++){
-	    draw[pixel_width * j] = blue;
-	    draw[pixel_width * j + 1] = green;
-	    draw[pixel_width * j + 2] = red;
-	  } draw += pitch;
+		for (i = 0; i <= y2 - y1; i++){
+		  for (j = 0 ;j <= x2 - x1; j++){
+		    draw[pixel_width * j] = blue;
+		    draw[pixel_width * j + 1] = green;
+		    draw[pixel_width * j + 2] = red;
+		  } draw += pitch;
+		}
 	}
 }
 
 void clear_screen(){
-  	int i, j;
- 	byte * draw = screen;
-  	buffer_position = 0;
+	if(currentProcess->process.foreground == FOREGROUND){  	
+		int i, j;
+	 	byte * draw = screen;
+	  	buffer_position = 0;
 	
-	for ( i = 0; i <= yres; i++){
-	  for( j = 0; j <= xres; j++){
-	    draw[pixel_width * j] = 0;
-	    draw[pixel_width * j + 1 ] = 0;
-	    draw[pixel_width * j + 2 ] = 0;
-	  } draw += pitch;
+		for ( i = 0; i <= yres; i++){
+		  for( j = 0; j <= xres; j++){
+		    draw[pixel_width * j] = 0;
+		    draw[pixel_width * j + 1 ] = 0;
+		    draw[pixel_width * j + 2 ] = 0;
+		  } draw += pitch;
+		}
 	}
 }
 
@@ -145,12 +155,14 @@ void print_char(unsigned char c){
 }
 
 void print_string(const char * str){
-  	int i = 0;
-	 	
-	while(str[i] != '\0'){
-	    	print_char(str[i]);
-	    	i++;
-	}	
+	if(currentProcess->process.foreground == FOREGROUND){  	
+		int i = 0;
+		 	
+		while(str[i] != '\0'){
+		    	print_char(str[i]);
+		    	i++;
+		}	
+	}
 }
 
 /* -----------SACARRRRRRRRRRRR -------- */
@@ -196,12 +208,14 @@ void printi(qword n){
 /* -------------------------- */
 
 void delete(){
-  	if (buffer_position > 0){
-		int x = ((buffer_position - 1) % buffer_max_per_line) * FONT_WIDTH;
-	   	int y = ((buffer_position - 1) / buffer_max_per_line) * FONT_HEIGHT;
-	    draw_filled_rectangle(x, y, x + FONT_WIDTH, y + FONT_HEIGHT, 0x000000);
-	    buffer_position--;
-  	}
+	if(currentProcess->process.foreground == FOREGROUND){	  	
+		if (buffer_position > 0){
+			int x = ((buffer_position - 1) % buffer_max_per_line) * FONT_WIDTH;
+		   	int y = ((buffer_position - 1) / buffer_max_per_line) * FONT_HEIGHT;
+		    draw_filled_rectangle(x, y, x + FONT_WIDTH, y + FONT_HEIGHT, 0x000000);
+		    buffer_position--;
+	  	}
+	}
 }
 
 void deleteLine(int line){
@@ -210,27 +224,33 @@ void deleteLine(int line){
 }
 
 void nextLine(){
-	if (buffer_position / buffer_max_per_line == (buffer_max_per_column - 3)){
-		move_screen();
-  	} else {
-		buffer_position += buffer_max_per_line - buffer_position % buffer_max_per_line;
+	if(currentProcess->process.foreground == FOREGROUND){	
+		if(currentProcess->process.foreground == FOREGROUND){	
+			if (buffer_position / buffer_max_per_line == (buffer_max_per_column - 3)){
+				move_screen();
+		  	} else {
+				buffer_position += buffer_max_per_line - buffer_position % buffer_max_per_line;
+			}
+		}
 	}
 }
 
 void move_screen(){
-	int i;
-	int pos1 = 0;
- 	int pos2 = FONT_HEIGHT * pitch;
-  	
-	for (i = 0; i < xres * yres - buffer_max_per_line; i++){
-      	screen[pos1] = screen[pos2];
-     	screen[pos1 + 1] = screen[pos2 + 1];
-      	screen[pos1 + 2] = screen[pos2 + 2];
-      	pos1 += pixel_width;
-      	pos2 += pixel_width;
- 	}
+	if(currentProcess->process.foreground == FOREGROUND){		
+		int i;
+		int pos1 = 0;
+	 	int pos2 = FONT_HEIGHT * pitch;
+	  	
+		for (i = 0; i < xres * yres - buffer_max_per_line; i++){
+		      	screen[pos1] = screen[pos2];
+		     	screen[pos1 + 1] = screen[pos2 + 1];
+		      	screen[pos1 + 2] = screen[pos2 + 2];
+		      	pos1 += pixel_width;
+		      	pos2 += pixel_width;
+	 	}
 
-	deleteLine(buffer_position / buffer_max_per_line);
+		deleteLine(buffer_position / buffer_max_per_line);
+	}
 }
 
 void changeFontColor(int color){
@@ -238,16 +258,18 @@ void changeFontColor(int color){
 }
 
 void print_int(qword n){
-	char s[16] = {0};
-	int digits = countDigits(n) - 1;
+	if(currentProcess->process.foreground == FOREGROUND){	
+		char s[16] = {0};
+		int digits = countDigits(n) - 1;
 
-	while(digits >= 0){
-		s[digits] = n % 10 + '0';
-		n /= 10;
-		digits--;
+		while(digits >= 0){
+			s[digits] = n % 10 + '0';
+			n /= 10;
+			digits--;
+		}
+
+		print_string(s);
 	}
-
-	print_string(s);
 }
 
 int countDigits(qword n){

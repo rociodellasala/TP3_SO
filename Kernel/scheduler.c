@@ -6,7 +6,7 @@
 #include "time.h"
 #include "video_driver.h"
 
-#define QUANTUM 5
+#define QUANTUM 10
 #define WAIT 60000000
 
 static int numberOfTicks = 0;
@@ -55,8 +55,8 @@ void runScheduler(){
 	
 	currentProcess->process.status = RUNNING;
 	/* DESPUES ELIMINAR ESTO */
-	//prints("          Cambiando de proceso : ");
-	//prints(currentProcess->process.processName);
+	prints("          Cambiando de proceso : ");
+	prints(currentProcess->process.processName);
 	//printAllCurrentProcess();
 }
 

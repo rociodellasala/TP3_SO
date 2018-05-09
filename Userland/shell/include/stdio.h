@@ -2,10 +2,10 @@
 #define STDIO_H
 
 /* Prints string with format */
-void printf(const char * str, ...);
+void printf(const char *, ...);
 
 /* Prints character */
-void putchar(unsigned char c);
+void putchar(unsigned char);
 
 /* Gets a character, an unsigned char, from stdin */
 char getchar();
@@ -22,10 +22,13 @@ void clear_terminal();
 /* Prints a new line */
 void nextLine();
 
+/* Displays a line of text */
+void echo(char *);
+
 /* Prints a new line with prompt */
 void nextTerminalLine();
 
 /* Changes font color shown on terminal */
-int changeFontColor(char * c);
+int changeFontColor(char *);
 
 #endif

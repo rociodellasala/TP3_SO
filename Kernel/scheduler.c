@@ -7,6 +7,7 @@
 #include "video_driver.h"
 
 #define QUANTUM 5
+#define WAIT 60000000
 
 static int numberOfTicks = 0;
 
@@ -37,13 +38,11 @@ void runScheduler(){
 	if(currentProcess == NULL) 
 		return;
 
-	/* Check quantum */
 	if(numberOfTicks < QUANTUM) {
 		numberOfTicks++;
 		return;
 	}
 	
-	/* Run next process */
 	numberOfTicks = 0;
 
 	if(currentProcess->process.status == RUNNING)
@@ -55,6 +54,7 @@ void runScheduler(){
 		currentProcess = currentProcess->next;
 	
 	currentProcess->process.status = RUNNING;
+	/* DESPUES ELIMINAR ESTO */
 	//prints("          Cambiando de proceso : ");
 	//prints(currentProcess->process.processName);
 	//printAllCurrentProcess();
@@ -97,37 +97,41 @@ void removeFinishedProcess() {
 			if(lastProcess == aux)
 				lastProcess = prev;
 			
-			// Remove process 
 			releasePage(aux->process);
 			prev->next = aux->next;
 			return;
-
 		}
-
 		prev = aux;
 		aux = aux->next;
 	}
 }
 
+void exitMessage(){
+	int i = 0, j = 3;
+	clear_screen();
+	print_string("Leaving OS in... ");
+		
+	while(i < WAIT){
+		if(i == WAIT/6 || i == WAIT/4 || i == WAIT/2 ){
+			print_int(j);
+			print_string(" ");
+			j--;
+		}
+		i++;
+	}
+
+	clear_screen();
+}
+
 
 void removeProcess(int pid){
 	if(pid == 0){
-		clear_screen();
-		print_string("Leaving OS in... ");
-		int i = 0, j = 3;
-		while(i < 400000000){
-			if(i == 100000000 || i == 200000000 || i == 300000000){
-				print_int(j);
-				print_string(" ");
-				j--;
-			}
-			i++;
-		}
-		clear_screen();
+		exitMessage();
 		currentProcess = lastProcess = tableProcess = NULL;
 		return;
 	}
 
+	/* DESPUES ELIMINAR ESTO */
 	prints("\nA eliminar: ");
 	printi(pid);
 	prints("\n---------- ANTES DE ELIMINAR ----------");
@@ -165,7 +169,7 @@ void removeProcess(int pid){
 	currentProcess = currentProcess->next;
 	currentProcess->process.status = RUNNING;
 
-	currentProcess->process.status = RUNNING;
+	/* DESPUES ELIMINAR ESTO */
 	prints("\n---------- DESPUES DE ELIMINAR ----------");
 	prints("\nCurrentProcess: ");
 	prints(currentProcess->process.processName);
@@ -189,12 +193,11 @@ void removeProcess(int pid){
 	print_string("Restaurando SHELL - Presione ENTER");
 	
 	restoreContext();
-
 }
 
 
 //falta hacer una funcion que desbloqueee!!
-void blockProgram(int pid){
+void blockProcess(int pid){
 	ProcessSlot * p = getProcessFromPid(pid);
 	p->process.status = LOCKED;
 	return;

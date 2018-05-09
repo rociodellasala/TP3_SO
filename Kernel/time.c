@@ -44,7 +44,7 @@ void displayTime(int h, int m, int s){
 	print_int(s);
 }
 
-void printTime() {
+void printTime(){
 	int h,m,s; 
 
 	nextLine();

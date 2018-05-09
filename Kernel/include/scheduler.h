@@ -5,37 +5,31 @@
 
 #define INVALID_PID -1
 
-/* */
+/* Starts shell process as init one */
 void startProcess(void *, char *);
 
-/* */
+/* Changes current running process if number of ticks equals quantum */
 void runScheduler();
 
-/* */
+/* Returns kernel stack in order to run kernel code */
 void * switchUserToKernel(void *);
 
-/* */
+/* Returns user stack of the next process to run */
 void * switchKernelToUser();
 
-/* */
+/* Searchs into the table process with process is currently running */
 ProcessSlot * searchRunningProcess();
 
-/* */
-void terminateProcess(int);
-
-/* */
-void initializeKernelStack();
-
-/* */
+/* Returns PID of the current process */
 int getCurrentPid();
 
-/* */
+/* Removes from the table process the one that has already finished */
 void removeFinishedProcess();
 
-/* */
+/* Sets the pointer in order to run the next process. Removes from the table process the one that has already finished */
 void removeProcess(int);
 
-/* */
-void blockProgram();
+/* Blocks a process */
+void blockProcess();
 
 #endif

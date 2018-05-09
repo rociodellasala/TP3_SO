@@ -46,7 +46,7 @@ void printHexadecimal(void * pointer){
 }
 
 int getPID(){
-	return int80(20,0,0,0,0,0);
+	return int80(6,0,0,0,0,0);
 }
 
 int pipe(char * connectingProcessName){

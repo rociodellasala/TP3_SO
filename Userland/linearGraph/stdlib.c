@@ -1,4 +1,8 @@
-#include <stdlib.h>
+#include "stdlib.h"
+#include "types.h"
+#include "stdio.h"
+
+extern void int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
 void intToString(int num, char * str){
 	int dig = 0;
@@ -32,3 +36,42 @@ void intToString(int num, char * str){
 		str[0] = '0';
 	}	
 }
+
+void clear_buffer(){
+	char c;
+	while((c = getchar()) != EOF );
+}
+
+void exitProcess(){
+	int80(14,0,0,0,0,0);
+}
+
+char * readInt(char * string, int * num){
+    *num = 0;
+	boolean sign = 1;
+
+    if(*string == '-'){
+		if (isNum(*(string + 1))){
+			sign = -1;
+			*num = (*(string + 1) - '0') * sign;
+			string++;
+			string++;
+		}else{
+			return string;
+		}
+	}
+
+	int c;
+
+    while (isNum(c = *string)){
+        *num = (*num) * 10 + (c - '0') * sign;
+        string++;
+    }
+
+    return string;
+}
+
+int isNum(char c){
+	return (c >= '0' && c <= '9');
+}
+

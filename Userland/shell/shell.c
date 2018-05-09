@@ -1,23 +1,17 @@
-#include <exception.h>
-#include <types.h>
-#include <shell.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#include "exception.h"
+#include "types.h"
+#include "shell.h"
+#include "stdio.h"
+#include "string.h"
+#include "stdlib.h"
 
-
-int main() {	
+int main(){	
 	clear_terminal();
 	start_shell();
 	return 0;
 }
 
-void exitProgram(){
-	int80(14,0,0,0,0);
-}
-
-
-void start_shell() {
+void start_shell(){
 	char buffer[MAX_SIZE];
   	int index;
   	char c;
@@ -40,7 +34,7 @@ void start_shell() {
 	    			buffer[index] = 0;
 	    			backspace();
 				}
-			} else if( c == '\n' && index == 0){
+			} else if(c == '\n' && index == 0){
 				nextTerminalLine();		
 			} else if(c == '\n'){
       			buffer[index] = 0;
@@ -70,17 +64,16 @@ void start_shell() {
 				putchar(buffer[index]);
 				index++;		      		
 	      		buffer[index] = 0;
-  			}/* else if(c == ' '){ // ----------------------- ARREGLAR -----------------------------
-  				printf("HOLAAAA");
-	      		buffer[index] = c; ESTE BUG VIENE DE GETCHAR!! LO MISMO PASA EN EL RESTO DE LOS MODULOS QUE LO USAN
+  			} else { 
+	      		buffer[index] = c; 
 				putchar(buffer[index]);
 				index++;		      		
 	      		buffer[index] = 0;
-  			} ACA HAY UN BUG QUE ME TOMA ENTERS CUANDO NO LOS PONGO, ARREGLAR*/
+  			} 
 		}	
 	}
 
-	exitProgram();
+	exitProcess();
 }
 
 int get_command(char * buffer){
@@ -97,17 +90,6 @@ int get_command(char * buffer){
 	function[x] = 0;
 	
 	return call_command(function, buffer + x + 1);
-}
-
-void linear(){
-	int80(12, 0, 0, 0, 0, 0);
-}
-
-int startProgram(char * program){
-	int i = int80(12,program,0,0,0,0);
-	if(i == -1)
-		return 1;
-	return 3;
 }
 
 
@@ -131,7 +113,7 @@ int call_command(char * function, char * parameter){
 	} else if(strcmp(function, "invalidOpcode")){
 		invalid_opcode();
 	} else if(strncmp(function, "./", 2)){
-		return startProgram(function + 2);
+		return startProcess(function + 2);
 	} else if(strcmp(function, "ps")){
 		ps();
 		return 0;	
@@ -148,37 +130,17 @@ void printHelp(){
 	clear_screen();
 	printf("HELP -- Manual to interact with the terminal: \n\n");
 	printf("cls:                    Clears screen.\n");	
+	printf("divideByZero:           Makes an integer division to show how zero exception works.\n");
 	printf("echo-[message]:         Prints message.\n");
 	printf("exit:                   Goes back and displays the menu.\n");
 	printf("font-[color]:           Changes font color, ex: blue, red, yellow, white or violet.\n");	
 	printf("help:                   Displays manual.\n");
+	printf("invalidOpcode:          Shows how invalid opcode exception works by calling an undefined instruction.\n");
 	printf("ls:                     Displays runnable programs\n");
 	printf("ps:                     Displays a snapshot of the status of currently running processes.\n");
 	printf("time:                   Displays the current time.\n");
-	//printf("divideByZero:           Makes an integer division to show how zero exception works.\n");
-	//printf("invalidOpcode:          Shows how invalid opcode exception works by calling an undefined instruction.\n");
 }
 
-void echo(char * buffer){
-	nextLine();		
-	printf(buffer);
-}
-
-
-void ps(){
-	nextLine();	
-	int80(13, 0, 0, 0, 0, 0);
-}
-
-void ls(){
-	nextLine();	
-	printf("linearGraph  parabolicGraph  testMemoryManager  processRead  processWrite  background");
-}
-
-void time(){
-	int80(9, 0, 0, 0, 0, 0);
-	return;
-}
 
 
 

@@ -71,7 +71,6 @@ void draw_pixel(int x, int y){
     	screen[pos + 2] = (currColor >> 16) & 255;  // RED
 }
 
-
 void draw_char(unsigned char c, int x, int y){
 	int cx, cy;
 	int mask[8] = {1, 2, 4, 8, 16, 32, 64, 128};
@@ -108,8 +107,7 @@ void draw_filled_rectangle(int x1, int y1, int x2, int y2, int color){
 	    draw[pixel_width * j] = blue;
 	    draw[pixel_width * j + 1] = green;
 	    draw[pixel_width * j + 2] = red;
-	  }
-	 draw += pitch;
+	  } draw += pitch;
 	}
 }
 
@@ -123,44 +121,40 @@ void clear_screen(){
 	    draw[pixel_width * j] = 0;
 	    draw[pixel_width * j + 1 ] = 0;
 	    draw[pixel_width * j + 2 ] = 0;
-	  }
-	draw += pitch;
+	  } draw += pitch;
 	}
 }
 
 void print_char(unsigned char c){
   	if(currentProcess->process.foreground == FOREGROUND){
-  	if(c == '\n'){
-    	nextLine();
-    	return;
-  	}
+  		if(c == '\n'){
+    		nextLine();
+    		return;
+  		}
   
-	draw_char(c, (buffer_position % buffer_max_per_line) * FONT_WIDTH, 
-		(buffer_position / buffer_max_per_line) * FONT_HEIGHT);
-  
-	if ( buffer_position / buffer_max_per_line == (buffer_max_per_column) ){
-   		move_screen();
-    	buffer_position -= buffer_max_per_line;
-  	}
-  
-	buffer_position++;
+		draw_char(c, (buffer_position % buffer_max_per_line) * FONT_WIDTH, 
+			(buffer_position / buffer_max_per_line) * FONT_HEIGHT);
+	  
+		if ( buffer_position / buffer_max_per_line == (buffer_max_per_column) ){
+	   		move_screen();
+	    	buffer_position -= buffer_max_per_line;
+	  	}
+	  
+		buffer_position++;
 	}
 }
 
 void print_string(const char * str){
-  	
-	  	int i = 0;
+  	int i = 0;
 	 	
-		while(str[i] != '\0'){
-	    		print_char(str[i]);
-	    		i++;
-	  	}
-  	
+	while(str[i] != '\0'){
+	    	print_char(str[i]);
+	    	i++;
+	}	
 }
 
 /* -----------SACARRRRRRRRRRRR -------- */
 void printc(unsigned char c){
-  	
   	if(c == '\n'){
     	nextLine();
     	return;
@@ -169,22 +163,21 @@ void printc(unsigned char c){
 	draw_char(c, (buffer_position % buffer_max_per_line) * FONT_WIDTH, 
 		(buffer_position / buffer_max_per_line) * FONT_HEIGHT);
   
-	if ( buffer_position / buffer_max_per_line == (buffer_max_per_column) ){
+	if (buffer_position / buffer_max_per_line == (buffer_max_per_column) ){
    		move_screen();
     	buffer_position -= buffer_max_per_line;
   	}
   
 	buffer_position++;
-	
 }
 
 void prints(const char * str){
   	int i = 0;
 	 	
 	while(str[i] != '\0'){
-	    	printc(str[i]);
-	    	i++;
-	  }
+	    printc(str[i]);
+	    i++;
+	}
 }
 
 
@@ -192,30 +185,18 @@ void printi(qword n){
 	char s[16] = {0};
 	int digits = countDigits(n) - 1;
 
-	/* Calculate character */
 	while(digits >= 0){
 		s[digits] = n % 10 + '0';
 		n /= 10;
 		digits--;
 	}
 
-	/* Print array */
 	prints(s);
 }
- /* -------------------------- */
-
-
-void print_string_by_length(const char * str, int length){
-  	int i = 0;
-  
-	while( i < length){
-    		print_char(str[i]);
-    		i++;
-  	}
-}
+/* -------------------------- */
 
 void delete(){
-  	if ( buffer_position > 0){
+  	if (buffer_position > 0){
 		int x = ((buffer_position - 1) % buffer_max_per_line) * FONT_WIDTH;
 	   	int y = ((buffer_position - 1) / buffer_max_per_line) * FONT_HEIGHT;
 	    draw_filled_rectangle(x, y, x + FONT_WIDTH, y + FONT_HEIGHT, 0x000000);
@@ -229,7 +210,7 @@ void deleteLine(int line){
 }
 
 void nextLine(){
-	if ( buffer_position / buffer_max_per_line == (buffer_max_per_column - 3) ){
+	if (buffer_position / buffer_max_per_line == (buffer_max_per_column - 3)){
 		move_screen();
   	} else {
 		buffer_position += buffer_max_per_line - buffer_position % buffer_max_per_line;
@@ -241,7 +222,7 @@ void move_screen(){
 	int pos1 = 0;
  	int pos2 = FONT_HEIGHT * pitch;
   	
-	for ( i = 0; i < xres * yres - buffer_max_per_line; i++ ){
+	for (i = 0; i < xres * yres - buffer_max_per_line; i++){
       	screen[pos1] = screen[pos2];
      	screen[pos1 + 1] = screen[pos2 + 1];
       	screen[pos1 + 2] = screen[pos2 + 2];
@@ -249,19 +230,7 @@ void move_screen(){
       	pos2 += pixel_width;
  	}
 
-	deleteLine(buffer_position / buffer_max_per_line );
-}
-
-
-void print_line(int x1, int y1, int x2, int y2){
-	double dx = x2 - x1;
-	double dy = y2 - y1;
-	int x, y;
-	  
-	for ( x = x1; x <= x2; x++){
-		y = y1 + dy * (x - x1) / dx;
-		draw_pixel(x, y);
-	}
+	deleteLine(buffer_position / buffer_max_per_line);
 }
 
 void changeFontColor(int color){

@@ -1,64 +1,19 @@
-#include <exception.h>
-#include <types.h>
-#include <shell.h>
-#include "./include/stdio.h"
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <assert.h>
+#include "types.h"
+#include "string.h"
+#include "stdlib.h"
+#include "stdio.h"
 
-printMsg(int j){
-	while(j < 50000000){
-		j++;	
-	}
-	printf("\nSolo si corro en foreground podras leer mi mensaje!");
-}
-
-void clear_buffer(){
-	char c;
-	while(c = getchar() != EOF );
-}
 
 int main() {
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
+	int i;
+	for(i = 0; i < 15; i++)
 		printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
-	printMsg(0);
 
-	
-	
-		
+	nextLine();
 	
 	clear_buffer();
-	exitProgram();
+	exitProcess();
+	return 0;
 }
 
-
-
-
-void exitProgram(){
-	int80(14,0,0,0,0);
-}
 

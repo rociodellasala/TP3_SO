@@ -19,42 +19,38 @@ static void * background = (void *) 0xD00000;
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
-static sys sysCalls[21]; 
+static sys sysCalls[20]; 
 
 void sys_write(qword buffer, qword size, qword rcx, qword r8, qword r9) {
 	print_char(buffer);
 }
 
-void sys_clear(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
+void sys_clear(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
 	clear_screen();
 }
 
-void sys_read(qword file, qword buffer, qword size, qword r8, qword r9) {
-	readBuffer((char*) buffer, (int) size);   
+void sys_read(qword file, qword buffer, qword size, qword r8, qword r9){
+	readBuffer((char*) buffer,(int) size);   
 }
 
-void sys_fontColor(qword color, qword rdx, qword rcx, qword r8, qword r9) {
+void sys_fontColor(qword color, qword rdx, qword rcx, qword r8, qword r9){
 	changeFontColor(color);  
 }
 
-void sys_nextLine(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
+void sys_nextLine(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
     nextLine();
 }
 
-void sys_delete(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
+void sys_delete(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
 	delete();
 }
 
-void sys_pixel(qword x, qword y, qword rcx, qword r8, qword r9) {
+void sys_pixel(qword x, qword y, qword rcx, qword r8, qword r9){
     draw_pixel(x, y);
 }
 
-void sys_time(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
+void sys_time(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
 	printTime();
-}
-
-int sys_sleep(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
-	return 3;
 }
 
 qword sys_malloc(qword size, qword rdx, qword rcx, qword r8, qword r9){
@@ -74,7 +70,7 @@ int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r
 		createProcess(parabolicGraph, process);
 	} else if(strcmp(process,"processRead&")){
 		createProcess(processRead, process);
-	}else if(strcmp(process,"processRead")){
+	} else if(strcmp(process,"processRead")){
 		createProcess(processRead, process);
 	} else if(strcmp(process,"testMemoryManager&")){
 		createProcess(testMemoryManager, process);
@@ -101,7 +97,7 @@ void sys_pkill(qword pid, qword rdx, qword rcx, qword r8, qword r9){
 }
 
 void sys_pipeCreate(qword connectingProcessName, qword rdx, qword rcx, qword r8, qword r9){
-	int connectingProcessPID = getProcessFromName((char *)connectingProcessName);
+	int connectingProcessPID = getProcessFromName((char *) connectingProcessName);
 	int callingProcessPID = getCurrentPid();
 	ProcessSlot * callingProcess = getProcessFromPid(callingProcessPID);
 
@@ -141,31 +137,31 @@ qword sys_getPID(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
 }
 
 void load_systemcalls(){
-	sysCalls[1] = (sys)&sys_write;
-	sysCalls[2] = (sys)&sys_clear;
-	sysCalls[3] = (sys)&sys_read;
-	sysCalls[4] = (sys)&sys_fontColor;
-	sysCalls[5] = (sys)&sys_nextLine;
-	sysCalls[6] = (sys)&sys_sleep;
-	sysCalls[7] = (sys)&sys_delete;
-	sysCalls[8] = (sys)&sys_pixel;
-	sysCalls[9] = (sys)&sys_time;
-	sysCalls[10] = (sys)&sys_malloc;
-	sysCalls[11] = (sys)&sys_printHex;
-	sysCalls[12] = (sys)&sys_createProcess;
-	sysCalls[13] = (sys)&sys_ls;
-	sysCalls[14] = (sys)&sys_pkill;
-	sysCalls[15] = (sys)&sys_pipeCreate;
-	sysCalls[16] = (sys)&sys_pipeWrite;
-	sysCalls[17] = (sys)&sys_pipeRead;
-	sysCalls[18] = (sys)&sys_pipeClose;
-	sysCalls[19] = (sys)&sys_pipeOpen;
-	sysCalls[20] = (sys)&sys_getPID;
-	setup_IDT_entry(0x80, (qword)&_irq80Handler); 
+	sysCalls[1] = (sys) &sys_write;
+	sysCalls[2] = (sys) &sys_clear;
+	sysCalls[3] = (sys) &sys_read;
+	sysCalls[4] = (sys) &sys_fontColor;
+	sysCalls[5] = (sys) &sys_nextLine;
+	sysCalls[6] = (sys) &sys_getPID;
+	sysCalls[7] = (sys) &sys_delete;
+	sysCalls[8] = (sys) &sys_pixel;
+	sysCalls[9] = (sys) &sys_time;
+	sysCalls[10] = (sys) &sys_malloc;
+	sysCalls[11] = (sys) &sys_printHex;
+	sysCalls[12] = (sys) &sys_createProcess;
+	sysCalls[13] = (sys) &sys_ls;
+	sysCalls[14] = (sys) &sys_pkill;
+	sysCalls[15] = (sys) &sys_pipeCreate;
+	sysCalls[16] = (sys) &sys_pipeWrite;
+	sysCalls[17] = (sys) &sys_pipeRead;
+	sysCalls[18] = (sys) &sys_pipeClose;
+	sysCalls[19] = (sys) &sys_pipeOpen;
+
+	setup_IDT_entry(0x80, (qword) &_irq80Handler); 
 }
 
-qword syscallHandler(qword rdi,qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
-	if(rdi < 0 || rdi >= 21	)
+qword syscallHandler(qword rdi,qword rsi, qword rdx, qword rcx, qword r8, qword r9){
+	if(rdi < 0 || rdi >= 20)
 		return 0;
 	
 	return sysCalls[rdi](rsi,rdx,rcx,r8,r9);

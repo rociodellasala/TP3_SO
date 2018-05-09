@@ -52,11 +52,15 @@ void putchar(unsigned char c) {
 	int80(1, c, 1, 0, 0, 0);
 }
 
-char getchar() {
+
+char getchar(){
 	unsigned char c[2];
-	int80(3, 0, (qword)c, 2, 0, 0);
-	if(c[0] == 0 ) 
+	int80(3, 0, (qword) c, 2, 0, 0);
+
+	if(c[0] == 0 ){
 		return EOF;
+	}
+
 	return c[0];
 }
 
@@ -98,55 +102,6 @@ int changeFontColor(char * color){
 	}
 	return 0;
 }
-
-void time(){
-	int80(9, 0, 0, 0, 0, 0);
-	return;
-}
-int getNum(int * a){
-	int state = 0;
-	char c;
-	char buffer[MAX_SIZE];
-	int index = 0;
-
-	while(state != exit){
-		if ((c = getchar()) != EOF){
-			if(c == '\n'){
-      			if(index == 0){
-					return 1; //error
-				}
-      			
-      			buffer[index] = 0;
-				state = exit;
-			}else if((c < '0' || c > '9' ) && c != '-'){
-				return 1; //error
-			}else{
-	      		buffer[index] = c;
-	      		index++;
-	      		buffer[index] = 0;
-	     		putchar(buffer[index - 1]);	
-	  		}	   	
-		}	
-	}
-	if(buffer[0] == '-'){
-		for(int k = 1; k < index; k++){
-			buffer[k] = buffer[k] - '0';
-			*a = (*a) * 10 + buffer[k];
-		}
-
-		*a = (-1) * (*a);
-		return 0;
-	}else{
-		for(int k = 0; k < index; k++){
-			buffer[k] = buffer[k] - '0';
-			*a = (*a) * 10 + buffer[k];
-		}
-
-		return 0;
-	}
-}
-
-
 
 
 

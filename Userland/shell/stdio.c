@@ -1,8 +1,8 @@
-#include <types.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-#include <stdlib.h>
+#include "types.h"
+#include "stdio.h"
+#include "string.h"
+#include "stdarg.h"
+#include "stdlib.h"
 
 extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
@@ -48,19 +48,20 @@ void printf(const char * str, ...){
 	va_end(arguments);
 }
 
-void putchar(unsigned char c) {
+void putchar(unsigned char c){
 	int80(1, c, 1, 0, 0, 0);
 }
 
-char getchar() {
+char getchar(){
 	unsigned char c[2];
 	int80(3, 0, (qword)c, 2, 0, 0);
-	if(c[0] == 0 ) 
+	if(c[0] == 0 ) {
 		return EOF;
+	}
 	return c[0];
 }
 
-void backspace() {
+void backspace(){
 	int80(7, 0, 0, 0 ,0, 0);
 }
 
@@ -68,7 +69,7 @@ void clear_screen(){
 	int80(2, 1, 0, 0, 0, 0);
 }
 
-void clear_terminal() {
+void clear_terminal(){
 	int80(2, 1, 0, 0, 0, 0);
 	printf("$>:  ");
 }
@@ -80,6 +81,11 @@ void nextLine(){
 void nextTerminalLine(){
 	int80(5, 0, 0, 0, 0, 0);
 	printf("$>:  ");
+}
+
+void echo(char * buffer){
+	nextLine();		
+	printf(buffer);
 }
 
 int changeFontColor(char * color){

@@ -1,15 +1,18 @@
 #ifndef STRINGS_H
 #define STRINGS_H
 
-#include "../types.h"
+#include "types.h"
 
-/*Gets string length*/
-int strlen(const char * str);
+/* Returns the length of the specified string */
+int strlen(const char *);
 
-/*Returns if two strings are equal*/
-boolean strcmp(char * s1, char * s2);
+/* Compares both strings and returns if they are equal */
+boolean strcmp(char *, char *);
 
-/*Returns true if 'c' es a space*/
-boolean isspace(char c);
+/* Compares both strings and returns if their first num characters are equal */
+boolean strncmp(char *, char *, int);
+
+/* Copy the string from source to dest */
+char * strcpy(char *,const char *);
 
 #endif

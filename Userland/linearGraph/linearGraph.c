@@ -1,10 +1,8 @@
-#include <stdarg.h>
-#include <stdint.h>
-#include <string.h>
-#include <stdarg.h>
-#include <types.h>
-#include <stdlib.h>
-#include "./include/stdio.h"
+#include "stdarg.h"
+#include "string.h"
+#include "types.h"
+#include "stdlib.h"
+#include "stdio.h"
 
 #define FONT_WIDTH 10
 #define FONT_HEIGHT 16
@@ -13,30 +11,22 @@
 #define WIDTH 1024
 #define HEIGHT 768
 
-void exit(){
-	int80(14,0,0,0,0);
-}
-
-int main (void){
-	//clear_screen();
+int main(void){
 	int y;
 	int a = 0; 
 	int b = 0;
 	printf("\n");
 	printf("f(x) = ax + b\n");
 	printf("Input 'a': ");
-  	char c;
-  	int state;
-  	char * str;
 	
-	while(getNum(&a) == 1){
+	while(getNum(&a) == 1)
 		printf("\nError: Incorrect parameter\n");
-	}
+	
 	printf("\n");
 	printf("Input 'b': ");
-	while(getNum(&b) == 1){
+	while(getNum(&b) == 1)
 		printf("\nError: Incorrect parameter\n");
-	}
+	
 
 	clear_screen();
 	
@@ -48,7 +38,7 @@ int main (void){
 		for(int i = 0; i < WIDTH; i++){
 			draw_pixel(i, HEIGHT / 2 -  b);
 		}	
-	}else{
+	} else {
 		for(int i = -WIDTH / 2 + (WIDTH / 2 - HEIGHT / 2); i < WIDTH - (WIDTH / 2 - HEIGHT / 2); i++){
 			y = a * i + b;
 			ejex = i + (2 * (WIDTH / 2 - HEIGHT / 2) + (WIDTH / 2 - 2 * (WIDTH / 2 - HEIGHT / 2)));
@@ -66,12 +56,8 @@ int main (void){
 	
 	clear_screen();
 	clear_buffer();
-	exit();
-}
-
-void clear_buffer(){
-	char c;
-	while(c = getchar() != EOF );
+	exitProcess();
+	return 0;
 }
 
 void coordinates(){
@@ -107,10 +93,10 @@ int getNum(int * a){
 	      		index++;
 	      		buffer[index] = 0;
 	     		putchar(buffer[index - 1]);	
-	  		} /*else if( c == ' '){
-	  			printf("HOLA"); // --------------------------- MAGIA CAMBIAR ----------------------------
-	  		}*/ else if((c < '0' || c > '9' ) && c != '-' && c != ' ') // problema del getchar, same en shell
-				return 1; //error
+	  		} else if( c == ' '){
+	  			printf("HOLA"); 
+	  		} else if((c < '0' || c > '9' ) && c != '-' && c != ' ') 
+				return 1; 
 		}	
 	}
 

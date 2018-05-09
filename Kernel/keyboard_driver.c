@@ -88,7 +88,7 @@ char getBuffer(){
 }
 
 void readBuffer(char * buff, int size){
-    int i = 0;
+	int i = 0;
 	char c;
 
 	while (i < (size - 1) && (c = getBuffer()) != EOF) {

@@ -6,9 +6,6 @@
 /* Starts video mode and initializes pointers  */
 void  start_video_mode();
 
-/* Deletes a line */
-void deleteLine(int);
-
 /* Puts pixel in the received coordinates */
 void draw_pixel(int, int);
 
@@ -30,20 +27,20 @@ void print_char(unsigned char);
 /* Prints string in the next writing position */
 void print_string(const char *);
 
-/* Prints string until the indicated length */
-void print_string_by_length(const char *, int);
-
 /* Deletes the character in the previous writing position */
 void delete();
+
+/* Deletes a line */
+void deleteLine(int);
 
 /* Ends the line and continue drawing characters in the bottom line */
 void nextLine();
 
-/* Changes current font color acording to parameter */
-void changeFontColor(int);
-
 /* When the text reaches the bottom, it moves all the characters one line up */
 void move_screen();
+
+/* Changes current font color acording to parameter */
+void changeFontColor(int);
 
 /* Prints number in the next writing position */
 void print_int(qword);

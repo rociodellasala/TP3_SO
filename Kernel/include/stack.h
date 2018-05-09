@@ -3,6 +3,7 @@
 
 #include "types.h"
 
+/* Stack frame structure taken from RowDaBoat */
 typedef struct StackFrame{
   qword gs;
   qword fs;
@@ -30,6 +31,7 @@ typedef struct StackFrame{
   qword base;
 } StackFrame;
 
+/* Fills all registers of the stackframe structure with it's values */
 void * fillStackFrame(void *, void *);
 
 #endif

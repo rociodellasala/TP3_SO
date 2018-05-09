@@ -31,29 +31,34 @@ ProcessSlot * createSlot(Process newProcess){
 	return newSlot;
 }
 
+int checkIfForegroundOrBackground(char * nameProcess){
+	if(strcmp(nameProcess,"shell")){
+		return FOREGROUND;
+	} else {
+		char c = charAtPos(nameProcess,strlen(nameProcess)-1);
+		
+		if(c == '&'){
+			allProcessForeground++;
+			return FOREGROUND;
+		} else {
+			allProcessBackground++;
+			return BACKGROUND;
+		}
+	}
+}
+
 int createProcess(void * entryPoint, char * nameProcess){
 	Process newProcess;
 	newProcess.PID = currentProcessId++;
 	memcpy(newProcess.processName,nameProcess,20); //deberia ser strlen de nameProcess
 	newProcess.heap = NULL;
 	newProcess.status = READY;
-	if(strcmp(nameProcess,"shell")){
-		newProcess.foreground = FOREGROUND;
-	} else {
-	char c = charAtPos(nameProcess,strlen(nameProcess)-1);
-	if(c == '&'){
-		newProcess.foreground = FOREGROUND;
-		allProcessForeground++;
-	} else {
-		newProcess.foreground = BACKGROUND;
-		allProcessBackground++;
-	}}
+	newProcess.foreground = checkIfForegroundOrBackground(nameProcess);
 	newProcess.startingPoint = entryPoint;
 	newProcess.pipe = NULL;
 	newProcess.baseStack = allocPage();
 	newProcess.userStack = fillStackFrame(entryPoint, newProcess.baseStack);
 	addProcessToPCB(newProcess);
-
 	return newProcess.PID;
 }
 
@@ -72,6 +77,7 @@ void addProcessToPCB(Process newProcess){
 	allProcess++;
 }
 
+/* cambiar prints printi por los verdaderos!! */
 void printAllCurrentProcess(){
 	ProcessSlot * aux = tableProcess;
 	int i = 0;
@@ -115,6 +121,7 @@ int getProcessFromName(char * procesName){
 		if(aux == tableProcess)
 			break;
 	}
+	
 	if(! strcmp(aux->process.processName,procesName)){
 		return -1;
 	}

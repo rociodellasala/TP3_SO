@@ -1,50 +1,28 @@
 #ifndef STDIO_H
 #define STDIO_H
 
-#include "../types.h"
+#include "types.h"
+#define exit 2
 
 /* Prints character */
 void putchar(unsigned char c);
 
-/*Returns string length*/
-int strlen(const char * str);
+/* Gets a character, an unsigned char, from stdin */
+char getchar();
 
 /*Transforms int to string*/
-void intostr(int num, char * a);
+void intToString(int, char *);
 
 /* Prints string with format */
-void printf(const char * str, ...);
+void printf(const char *, ...);
 
 /* Clears the screen, displaying an empty screen */
 void clear_screen();
 
 /*Draws pixel*/
-void draw_pixel(int x, int y);
-
-/* Scans input */
-int scanf(const char * format, ...);
-
-int sscanf(char format [90],char str[90], ...);
+void draw_pixel(int, int);
 
 /* Deletes the last character from stdin */
 void backspace();
-
-/* Reads a string as an int */
-char * readInt(char * string, int * num);
-
-/* Reads until the end of line */
-char* readLine();
-
-/* Returns true if the character is a number */
-int isNum(char c);
-
-/* Allocates space */
-void * malloc(int size);
-
-/* Draws the x-axis and y-axis */
-void coordinates();
-
-/* Reads a number */
-int getNum(int * a);
 
 #endif

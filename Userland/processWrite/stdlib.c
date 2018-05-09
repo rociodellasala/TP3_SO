@@ -1,6 +1,6 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <types.h>
+#include "stdlib.h"
+#include "types.h"
+#include "stdio.h"
 
 extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
@@ -37,29 +37,38 @@ void intToString(int num, char * str){
 	}	
 }
 
+void clear_buffer(){
+	char c;
+	while((c = getchar()) != EOF );
+}
+
+void exitProcess(){
+	int80(14,0,0,0,0,0);
+}
+
 void * malloc(int size){
-	return int80(10,size,0,0,0,0);
+	return ((void *)int80(10,size,0,0,0,0));
 }
 
 void printHexadecimal(void * pointer){
-	int80(11,pointer,0,0,0,0);
+	int80(11,(qword) pointer,0,0,0,0);
 }
 
 int getPID(){
-	return int80(20,0,0,0,0,0);
+	return int80(6,0,0,0,0,0);
 }
 
 int pipe(char * connectingProcessName){
-	int80(15,connectingProcessName,0,0,0,0);
+	int80(15,(qword) connectingProcessName,0,0,0,0);
 	return getPID();
 }
 
 int write(int pid,char * message, int messageLenght){
-	return int80(16,pid,message,messageLenght,0,0);
+	return int80(16,pid,(qword) message,messageLenght,0,0);
 }
 
 int read(int pid,char * messageDestination, int charsToRead){
-	return int80(17,pid,messageDestination,charsToRead,0,0);
+	return int80(17,pid,(qword) messageDestination,charsToRead,0,0);
 }
 
 void close(int pid, int operation){

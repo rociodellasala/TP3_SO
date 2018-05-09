@@ -1,12 +1,11 @@
-#include <types.h>
-#include <string.h>
+#include "types.h"
+#include "string.h"
 
 int strlen(const char * str){
 	int length = 0;
 	while(str[length++] != '\0' );
 	return length - 1;
 }
-
 
 boolean strcmp(char * str1, char * str2){
 	int i;

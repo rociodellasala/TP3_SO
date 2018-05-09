@@ -12,17 +12,20 @@ char const * string1 = "Hola llegue";
 char const * string2 = "hola mundillo";
 
 int main (void){
-	clear_screen();
 	int start = 0;
-	int pid = pipe("processWrite");
+
 	char * firstString;
 	char * secondString;
+
+	int pid = pipe("processWrite");
+	
+	clear_screen();
 	printStaringMessageTest();
 
 	do{
 		printf("To start the test please press 1 : ");
 		getNum(&start);
-	}while(start != 1);
+	} while(start != 1);
 
 	firstString = givenStringToStore(strlen(string1));
 	whenStringIsReceived(firstString,strlen(string1),pid);

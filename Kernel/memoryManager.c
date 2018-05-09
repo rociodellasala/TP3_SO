@@ -64,7 +64,7 @@ void * allocPage(){
 	} else {
 		page = searchForFreePage(memoryPages);
 	}
-	//if(page == NULL); //lanzaria una excepcion
+	
 	return page;
 }
 

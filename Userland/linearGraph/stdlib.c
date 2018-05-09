@@ -7,6 +7,7 @@ extern void int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9
 void intToString(int num, char * str){
 	int dig = 0;
 	char aux;
+	int x;
 
 	if(num != 0){
 		/*If number is negative then the first character is '-' */
@@ -24,7 +25,7 @@ void intToString(int num, char * str){
 		}
 
 		/* Reverse array */
-		for(int x = 0; x < dig / 2; x++){
+		for(x = 0; x < dig / 2; x++){
 			aux = str[x];
 			str[x] = str[dig - x - 1];
 			str[dig - x - 1] = aux;
@@ -47,8 +48,9 @@ void exitProcess(){
 }
 
 char * readInt(char * string, int * num){
+    int c;
+    boolean sign = 1;
     *num = 0;
-	boolean sign = 1;
 
     if(*string == '-'){
 		if (isNum(*(string + 1))){
@@ -60,8 +62,6 @@ char * readInt(char * string, int * num){
 			return string;
 		}
 	}
-
-	int c;
 
     while (isNum(c = *string)){
         *num = (*num) * 10 + (c - '0') * sign;

@@ -67,9 +67,9 @@ void start_video_mode(){
 void draw_pixel(int x, int y){
 	if(currentProcess->process.foreground == FOREGROUND){		
 		unsigned pos = x * pixel_width + y * pitch;
-	    	screen[pos] = currColor & 255;              // BLUE
-	    	screen[pos + 1] = (currColor >> 8) & 255;   // GREEN
-	    	screen[pos + 2] = (currColor >> 16) & 255;  // RED
+	    	screen[pos] = currColor & 255;              
+	    	screen[pos + 1] = (currColor >> 8) & 255;   
+	    	screen[pos + 2] = (currColor >> 16) & 255; 
 	}
 }
 
@@ -164,48 +164,6 @@ void print_string(const char * str){
 		}	
 	}
 }
-
-/* -----------SACARRRRRRRRRRRR -------- */
-void printc(unsigned char c){
-  	if(c == '\n'){
-    	nextLine();
-    	return;
-  	}
-  
-	draw_char(c, (buffer_position % buffer_max_per_line) * FONT_WIDTH, 
-		(buffer_position / buffer_max_per_line) * FONT_HEIGHT);
-  
-	if (buffer_position / buffer_max_per_line == (buffer_max_per_column) ){
-   		move_screen();
-    	buffer_position -= buffer_max_per_line;
-  	}
-  
-	buffer_position++;
-}
-
-void prints(const char * str){
-  	int i = 0;
-	 	
-	while(str[i] != '\0'){
-	    printc(str[i]);
-	    i++;
-	}
-}
-
-
-void printi(qword n){
-	char s[16] = {0};
-	int digits = countDigits(n) - 1;
-
-	while(digits >= 0){
-		s[digits] = n % 10 + '0';
-		n /= 10;
-		digits--;
-	}
-
-	prints(s);
-}
-/* -------------------------- */
 
 void delete(){
 	if(currentProcess->process.foreground == FOREGROUND){	  	

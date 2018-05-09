@@ -48,9 +48,4 @@ void print_int(qword);
 /* Returns the number of digits in an int */
 int countDigits(qword);
 
-/* SACARRRRRRRRR */
-void printc(unsigned char);
-void prints(const char *);
-void printi(qword);
-
 #endif

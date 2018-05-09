@@ -84,6 +84,9 @@ int getCurrentPid(){
 }
 
 void removeFinishedProcess() {
+	ProcessSlot * aux;
+	ProcessSlot * prev;
+
 	if(tableProcess->process.status == FINISHED){
 		releasePage(tableProcess->process);
 		tableProcess = tableProcess->next;
@@ -91,8 +94,8 @@ void removeFinishedProcess() {
 		return;
 	}
 
-	ProcessSlot * aux = tableProcess->next;
-	ProcessSlot * prev = tableProcess;
+	aux = tableProcess->next;
+	prev = tableProcess;
 	
 	while(aux != tableProcess){
 		if(aux->process.status == FINISHED) {
@@ -127,12 +130,15 @@ void exitMessage(){
 
 
 void removeProcess(int pid){
+	ProcessSlot * slot;
+
 	if(pid == 0){
 		exitMessage();
 		currentProcess = lastProcess = tableProcess = NULL;
 		return;
 	}
-	ProcessSlot * slot = getProcessFromPid(pid);
+	
+	slot = getProcessFromPid(pid);
 	
 	if(slot->process.foreground == FOREGROUND)
 		allProcessForeground--;

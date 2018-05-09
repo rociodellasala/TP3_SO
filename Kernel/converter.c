@@ -50,7 +50,8 @@ dword uintToBase(qword value, char * buffer, dword base){
 void intToString(int num, char * str){
 	int dig = 0;
 	char aux;
-	
+	int x;
+
 	if(num != 0){
 		if(num < 0){
 			num = -num;
@@ -64,7 +65,7 @@ void intToString(int num, char * str){
 			dig++;
 		}
 	
-		for(int x = 0; x < dig / 2; x++){
+		for(x = 0; x < dig / 2; x++){
 			aux = str[x];
 			str[x] = str[dig - x - 1];
 			str[dig - x - 1] = aux;

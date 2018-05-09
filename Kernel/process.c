@@ -22,11 +22,14 @@ ProcessSlot * tableProcess;
 ProcessSlot * createSlot(Process newProcess){
 	ProcessSlot newSlotStruct;
 	ProcessSlot * newSlot;
+	int sizeNewProcessSlotStruct;	
+	void * destination;
+
 	newSlotStruct.process = newProcess;
 	newSlotStruct.next = NULL;
 	newSlot = &newSlotStruct;
-	int sizeNewProcessSlotStruct = sizeof(ProcessSlot);
-	void * destination = findAvaiableHeapKernelPage(sizeNewProcessSlotStruct);
+	sizeNewProcessSlotStruct = sizeof(ProcessSlot);
+	destination = findAvaiableHeapKernelPage(sizeNewProcessSlotStruct);
 	newSlot = memcpy(destination, newSlot, sizeNewProcessSlotStruct);
 	return newSlot;
 }
@@ -54,13 +57,16 @@ int createProcess(void * entryPoint, char * nameProcess){
 	newProcess.heap = NULL;
 	newProcess.status = READY;
 	newProcess.foreground = checkIfForegroundOrBackground(nameProcess);
+	
 	if(newProcess.foreground == BACKGROUND || strcmp(nameProcess,"shell"))
 		strcpy(newProcess.processName,nameProcess);
 	else
 		strncpy(newProcess.processName,nameProcess,strlen(nameProcess) - 1);
 	newProcess.startingPoint = entryPoint;
+	
 	for(i = 0; i < MAX_PIPES; i++)
 		newProcess.pipes[i] = NULL;
+
 	newProcess.pipeIndex = 0;
 	newProcess.baseStack = allocPage();
 	newProcess.userStack = fillStackFrame(entryPoint, newProcess.baseStack);
@@ -83,39 +89,39 @@ void addProcessToPCB(Process newProcess){
 	allProcess++;
 }
 
-/* cambiar prints printi por los verdaderos!! */
 void printAllCurrentProcess(){
 	ProcessSlot * aux = tableProcess;
 	int i = 0;
-	prints(" ---------- TABLE PROCESS ---------- \n");
+	print_string(" ---------- TABLE PROCESS ---------- \n");
 	
 	while(aux != NULL && i < allProcess){
-		prints("Process name: ");
-		prints(aux->process.processName);
-		prints("  -  PID: ");
-		printi(aux->process.PID);
+		print_string("Process name: ");
+		print_string(aux->process.processName);
+		print_string("  -  PID: ");
+		print_int(aux->process.PID);
 		if(aux->process.heap == NULL)
-			prints("	-  Heap: No heap avaiable");
+			print_string("	-  Heap: No heap avaiable");
 		else
-			prints("	-  Heap: There is a heap");
-		prints("  -  Status: ");
+			print_string("	-  Heap: There is a heap");
+		print_string("  -  Status: ");
+		
 		if((aux->process.status) == RUNNING) 
-			prints("RUNNING");
+			print_string("RUNNING");
 		else if((aux->process.status) == READY)
-			prints("READY");
+			print_string("READY");
 		else if((aux->process.status) == LOCKED)
-			prints("LOCKED");
+			print_string("LOCKED");
 		else
-			prints("FINISHED");
+			print_string("FINISHED");
 		if((aux->process.foreground) == FOREGROUND)
-		prints("  -  FOREGROUND ");
+		print_string("  -  FOREGROUND ");
 		else if((aux->process.foreground) == BACKGROUND)
-		prints("  -  BACKGROUND");
+		print_string("  -  BACKGROUND");
 		nextLine();
-		//prints(" - NEXT PID: ");
+		
 		i++;
 		aux = aux->next;
-		//printi(aux->process.PID);
+
 	}
 }
 

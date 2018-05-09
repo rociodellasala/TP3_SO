@@ -13,6 +13,9 @@ int pipePIDs = 0;
 p_pipe createPipe(int callingProcessPID, int connectingProcessPID, char * connectingProcessName){
 		ProcessSlot * connectingProcessSlot = getProcessFromPid(connectingProcessPID);
 		ProcessSlot * callingProcessSlot = getProcessFromPid(callingProcessPID);
+		int sizeOfPipe;	
+		void * destination;
+	
 		/*
 		if(connectingProcessSlot != NULL){
 			if(connectingProcessSlot->process.pipe != NULL){
@@ -36,8 +39,8 @@ p_pipe createPipe(int callingProcessPID, int connectingProcessPID, char * connec
 			*/
 			s_pipe pipeStruct = createPipeStruct(callingProcessPID,-1, connectingProcessName);
 			pipePointer = &pipeStruct;
-			int sizeOfPipe = sizeof(s_pipe);
-			void * destination = findAvaiableHeapKernelPage(sizeOfPipe);
+			sizeOfPipe = sizeof(s_pipe);
+			destination = findAvaiableHeapKernelPage(sizeOfPipe);
 			pipePointer = memcpy(destination, pipePointer, sizeOfPipe);
 		}
 		return pipePointer;

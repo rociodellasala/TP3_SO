@@ -7,7 +7,7 @@ ASMOBJECTS=$(ASMSOURCES:.asm=.o)
 COBJECTS=$(SOURCES:.c=.o)
 
 %.o: %.c
-	$(GCC) $(GCCFLAGS) -I./include -c _loader.c $(SOURCES) 
+	$(GCC) $(GCCFLAGS) -I./include -c _loader.c $(SOURCES) -pedantic -ansi -Wall
 
 %.o: %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@

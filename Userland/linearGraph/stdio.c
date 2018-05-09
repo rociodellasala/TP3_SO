@@ -17,12 +17,14 @@ void backspace(){
 
 void printf(const char * str,...){
 	char num[12];
+	int state = 0;
+	int x;
+	int index;
+	int length = strlen(str);
 	va_list arguments;
 	va_start(arguments, str);
-	int length = strlen(str);
-	int state = 0;
 
-	for(int x = 0; x < length; x++){
+	for(x = 0; x < length; x++){
 		if(state == 0){
 			if(str[x] != '%')
 				putchar(str[x]);
@@ -32,7 +34,7 @@ void printf(const char * str,...){
 			switch(str[x]){
 				case 'd':
 					intToString(va_arg(arguments, int), num);
-					int index = 0;
+					index = 0;
 					while(num[index] != 0)
 						putchar(num[index++]);
 					state = 0;

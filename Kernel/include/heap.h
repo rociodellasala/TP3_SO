@@ -15,7 +15,7 @@ void printKernelHeap();
 p_heapPage createHeapPage();
 
 /*Finds avaible memory in kernel's heap to store structures*/
-void * findAvaiableHeapKernelPage(int);;
+void * findAvaiableHeapKernelPage(int);
 
 /*Returns a void * pointer to an amount of avaible memory in user process's heap*/
 void * malloc_heap(int);

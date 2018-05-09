@@ -10,12 +10,48 @@
 #define WIDTH 1024
 #define HEIGHT 768
 
+#define WAIT 100000000
+
+void draw(int a, int b, int q){
+	int ejex;
+	int ejey;
+	int i = 0;
+	int y;
+
+	if (a != 0){
+		for(i = -(WIDTH / 2 - HEIGHT / 2); i < WIDTH - (WIDTH / 2 - HEIGHT / 2); i++){
+			y = a * i * i + b * i + q;
+			ejex = i + (2 * (WIDTH / 2 - HEIGHT / 2) + (WIDTH / 2 - 2 * (WIDTH / 2 - HEIGHT / 2)));
+			ejey = HEIGHT / 2 - y / 25;
+			draw_pixel(ejex, ejey);
+		}
+	}else{
+		if(b == 0){
+			for(i = 0; i < WIDTH; i++){
+				draw_pixel(i, HEIGHT / 2 -  q);
+			}	
+		} else {
+			for(i = -WIDTH / 2 + (WIDTH / 2 - HEIGHT / 2); i < WIDTH - (WIDTH / 2 - HEIGHT / 2); i++){
+					y = b * i + q;
+					ejex = i + (2 * (WIDTH / 2 - HEIGHT / 2) + (WIDTH / 2 - 2 * (WIDTH / 2 - HEIGHT / 2)));
+					ejey = HEIGHT / 2 - y;
+			
+					draw_pixel(ejex, ejey);
+			}
+		}
+	}
+
+	while(i < WAIT){
+		i++;
+	}
+}
+
 int main (void){
-	clear_screen();
 	int a = 0; 
 	int b = 0;
 	int q = 0; 
-	int y;
+
+	clear_screen();
   
 	printf("f(x) = ax^2 + bx + c\n");
 	printf("Input 'a':\n");
@@ -36,37 +72,8 @@ int main (void){
 	clear_screen();
 	coordinates();
 
-	int ejex;
-	int ejey;
+	draw(a,b,q);
 
-	if (a != 0){
-		for(int i = -(WIDTH / 2 - HEIGHT / 2); i < WIDTH - (WIDTH / 2 - HEIGHT / 2); i++){
-			y = a * i * i + b * i + q;
-			ejex = i + (2 * (WIDTH / 2 - HEIGHT / 2) + (WIDTH / 2 - 2 * (WIDTH / 2 - HEIGHT / 2)));
-			ejey = HEIGHT / 2 - y / 25;
-			draw_pixel(ejex, ejey);
-		}
-	}else{
-		if(b == 0){
-			for(int i = 0; i < WIDTH; i++){
-				draw_pixel(i, HEIGHT / 2 -  q);
-			}	
-		}else{
-			for(int i = -WIDTH / 2 + (WIDTH / 2 - HEIGHT / 2); i < WIDTH - (WIDTH / 2 - HEIGHT / 2); i++){
-					y = b * i + q;
-					ejex = i + (2 * (WIDTH / 2 - HEIGHT / 2) + (WIDTH / 2 - 2 * (WIDTH / 2 - HEIGHT / 2)));
-					ejey = HEIGHT / 2 - y;
-			
-					draw_pixel(ejex, ejey);
-			}
-		}
-	}
-
-	int i = 0;
-
-	while(i < 100000000){
-		i++;
-	}
 	clear_screen();
 	clear_buffer();
 	exitProcess();
@@ -76,12 +83,13 @@ int main (void){
 void coordinates(){
 	int x = (WIDTH / 2) - 1;
 	int y = (HEIGHT / 2) - 1;
-
-	for (int j = 0; j < HEIGHT; j++){
+	int i, j;
+	
+	for (j = 0; j < HEIGHT; j++){
 		draw_pixel(x, j);
 	}
 
-	for(int i = 0; i < WIDTH; i++){
+	for(i = 0; i < WIDTH; i++){
 		draw_pixel(i, y);
 	}
 }
@@ -91,20 +99,21 @@ int getNum(int * a){
 	char c;
 	char buffer[MAX_SIZE];
 	int index = 0;
+	int k;
 
 	while(state != exit) {
 		if ((c = getchar()) != EOF){
     		if(c == '\n'){
 	      		if(index == 0){
-					return 1; //error
+					return 1; 
 				}
 	      		
 	      		buffer[index] = 0;
 				state = exit;
 
-			}else if((c < '0' || c > '9' ) && c != '-'){
-				return 1; //error
-			}else{
+			} else if((c < '0' || c > '9' ) && c != '-'){
+				return 1; 
+			} else {
 		      	buffer[index] = c;
 		      	index++;
 		   		buffer[index] = 0;
@@ -114,15 +123,15 @@ int getNum(int * a){
 	}
 
 	if(buffer[0] == '-'){
-		for(int k = 1; k < index; k++){
+		for(k = 1; k < index; k++){
 			buffer[k] = buffer[k] - '0';
 			*a = (*a) * 10 + buffer[k];
 		}
 
 		*a = (-1) * (*a);
 		return 0;
-	}else{
-		for(int k = 0; k < index; k++){
+	} else {
+		for(k = 0; k < index; k++){
 			buffer[k] = buffer[k] - '0';
 			*a = (*a) * 10 + buffer[k];
 		}

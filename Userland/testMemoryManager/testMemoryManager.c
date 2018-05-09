@@ -12,7 +12,6 @@ static void * secondPage = (void *)0x68000;
 
 
 int main() {
-	clear_screen();
 	int firstAmount;
 	int secondAmount;
 	int thirdAmount;
@@ -21,33 +20,35 @@ int main() {
 	char * secondStringPointer;
 	char * thirdStringPointer;
 	char * fourthStringPointer;
+	
+	clear_screen();
 
 	printStartTestMessage();
 
 
-	//First test, reserve memory for first pointer of the first program of All userland
+	/* First test, reserve memory for first pointer of the first program of All userland */
 	firstStringPointer = whenAskedForMemoryFirstPointer(&firstAmount);
 	thenMemoryIsReserved(firstStringPointer);
-	//sleep(30);
+	
 
-	//Second test, reserve memory for second pointer
-	//Check that both pointer are not equal
-	//Check that second pointer starts where it should
+	/* Second test, reserve memory for second pointer
+	Check that both pointer are not equal
+	Check that second pointer starts where it should */
 	secondStringPointer = whenAskedForMemorySecondPointer(&secondAmount);
 	thenBothPointersAreNotEqual(firstStringPointer, secondStringPointer);
 	thenSecondPointerStartsWhereItShould(firstAmount,firstStringPointer,secondStringPointer);
 
 
-	//Third test, reserve memory for third pointer
-	//Check that all pointers are not equal
-	//Check that third pointer starts at second page of user heap
+	/*  Third test, reserve memory for third pointer
+	Check that all pointers are not equal
+	Check that third pointer starts at second page of user heap */
 	thirdStringPointer = whenAskedForMemoryThirdPointer(&thirdAmount,firstAmount,secondAmount);
 	thenAllPointersAreNotEqual(firstStringPointer, secondStringPointer, thirdStringPointer);
 	thenThirdPointerStartsWhereItShould(thirdStringPointer);
 
-	//Fourth test, reserve memory for fourth pointer
-	//Check that all pointers are not equal
-	//Check that fourth pointer in first page
+	/* Fourth test, reserve memory for fourth pointer
+	Check that all pointers are not equal
+	Check that fourth pointer in first page */
 
 	fourthStringPointer = whenAskedForMemoryFourthPointer(&fourthAmount,firstAmount,secondAmount);
 	thenAllTestPointersAreNotEqual(firstStringPointer, secondStringPointer, thirdStringPointer, fourthStringPointer);

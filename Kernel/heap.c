@@ -56,10 +56,11 @@ p_heapPage createHeapPage(){
 
 void * findAvaiableHeapKernelPage(int size){
 	int nextPage = kernelHeader.nextPage;
+	void * address;
 	kernelHeapPage heapPageK = kernelHeader.kernelHeapPages[nextPage];
 	
 	if(heapPageK.freeBytes >= size){
-		void * address = (heapPageK.pageAddress) + (heapPageK.occupiedBytes);
+		address = (heapPageK.pageAddress) + (heapPageK.occupiedBytes);
 		kernelHeader.kernelHeapPages[nextPage].occupiedBytes += size;
 		kernelHeader.kernelHeapPages[nextPage].freeBytes -= size;
 		return address;
@@ -82,9 +83,12 @@ void * malloc_heap(int size){
 }	
 
 p_heapPage findAvaiableHeapPage(p_heapPage firstPage, int size){
+	ProcessSlot * currentProcessSlot;
+	p_heapPage currentHeapPage, previousPage;
+
 	if(firstPage == NULL){
 		firstPage = createHeapPage();
-		ProcessSlot * currentProcessSlot = searchRunningProcess();
+		currentProcessSlot = searchRunningProcess();
 		currentProcessSlot->process.heap = firstPage;
 		return firstPage;
 	}
@@ -93,8 +97,8 @@ p_heapPage findAvaiableHeapPage(p_heapPage firstPage, int size){
 		return firstPage;
 	}
 	
-	p_heapPage currentHeapPage = firstPage->nextHeapPage;
-	p_heapPage previousPage = firstPage;
+	currentHeapPage = firstPage->nextHeapPage;
+	previousPage = firstPage;
 
 	while(currentHeapPage != NULL && currentHeapPage->freeBytes < size){
 		previousPage = currentHeapPage;

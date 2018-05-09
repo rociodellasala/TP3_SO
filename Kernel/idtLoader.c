@@ -32,7 +32,7 @@ void load_idt() {
 	setup_IDT_entry (0x00, (qword)&_exception0Handler);
 	setup_IDT_entry (0x06, (qword)&_exception6Handler);
 
-	//picMasterMask(0xFC);
+	/* picMasterMask(0xFC); */
 	picSlaveMask((int *)0xFF);
         
 	_sti();

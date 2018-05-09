@@ -6,13 +6,17 @@
 
 extern void int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
-void printf(const char * str, ...){
+void printf(const char * str,...){
 	char num[12];
-	va_list arguments;
-	va_start (arguments, str);
-	int length = strlen(str);
+	int x;
 	int state = 0;
-	for(int x = 0; x < length; x++){
+	int index;
+	int length = strlen(str);
+
+	va_list arguments;
+	va_start(arguments, str);
+
+	for(x = 0; x < length; x++){
 		if(state == 0){
 			if(str[x] != '%')
 				putchar(str[x]);
@@ -22,10 +26,9 @@ void printf(const char * str, ...){
 			switch(str[x]){
 				case 'd':
 					intToString(va_arg(arguments, int), num);
-					int index = 0;
-					while(num[index] != 0){
+					index = 0;
+					while(num[index] != 0)
 						putchar(num[index++]);
-					}
 					state = 0;
 					break;
 				case 'c':
@@ -103,46 +106,48 @@ void time(){
 	int80(9, 0, 0, 0, 0, 0);
 	return;
 }
+
 int getNum(int * a){
 	int state = 0;
 	char c;
 	char buffer[MAX_SIZE];
 	int index = 0;
+	int k;
 
-	while(state != exit){
+	while(state != exit) {
 		if ((c = getchar()) != EOF){
-			if(c == '\n'){
-      			if(index == 0){
-					return 1; //error
+    		if(c == '\n'){
+	      		if(index == 0){
+					return 1; 
 				}
-      			
-      			buffer[index] = 0;
-				state = exit;
-			}else if((c < '0' || c > '9' ) && c != '-'){
-				return 1; //error
-			}else{
-	      		buffer[index] = c;
-	      		index++;
+	      		
 	      		buffer[index] = 0;
-	     		putchar(buffer[index - 1]);	
+				state = exit;
+
+			} else if((c < '0' || c > '9' ) && c != '-'){
+				return 1; 
+			} else {
+		      	buffer[index] = c;
+		      	index++;
+		   		buffer[index] = 0;
+		  		putchar(buffer[index-1]);	
 	  		}	   	
 		}	
 	}
 
 	if(buffer[0] == '-'){
-		for(int k = 1; k < index; k++){
+		for(k = 1; k < index; k++){
 			buffer[k] = buffer[k] - '0';
 			*a = (*a) * 10 + buffer[k];
 		}
 
 		*a = (-1) * (*a);
 		return 0;
-	}else{
-		for(int k = 0; k < index; k++){
+	} else {
+		for(k = 0; k < index; k++){
 			buffer[k] = buffer[k] - '0';
 			*a = (*a) * 10 + buffer[k];
 		}
-
 		return 0;
 	}
 }

@@ -11,6 +11,6 @@ boolean strcmp(char *, char *);
 boolean strncmp(char *, char *, int);
 
 /* Copy the string from source to dest*/
-char * strcpy(char *,const char *);
+char * strcpy(char *, const char *);
 
 #endif

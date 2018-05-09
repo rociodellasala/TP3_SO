@@ -21,7 +21,7 @@ void thenBothPointersAreNotEqual(void *, void *);
 
 void thenSecondPointerStartsWhereItShould(int, void *, void *);
 
-void * whenAskedForMemoryThirdPointer(int *,int,int);
+void * whenAskedForMemoryThirdPointer(int *, int, int);
 
 void thenAllPointersAreNotEqual(void *, void *, void *);
 

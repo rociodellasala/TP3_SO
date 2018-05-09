@@ -27,7 +27,4 @@ void coordinates();
 /* Reads a number */
 int getNum(int *);
 
-/*Returns string length*/
-int strlen(const char * str);
-
 #endif

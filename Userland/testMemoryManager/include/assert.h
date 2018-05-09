@@ -3,6 +3,6 @@
 
 #include "types.h"
 
-boolean assertEqualPointer(void * first, void * second);
+boolean assertEqualPointer(void *, void *);
 
 #endif

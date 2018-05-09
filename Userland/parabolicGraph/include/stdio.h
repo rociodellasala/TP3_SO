@@ -27,18 +27,18 @@ void draw_pixel(int, int);
 void backspace();
 
 /* Reads a string as an int */
-char * readInt(char * string, int * num);
+char * readInt(char *, int *);
 
 /* Reads until the end of line */
 char* readLine();
 
 /* Returns true if the character is a number */
-int isNum(char c);
+int isNum(char );
 
 /* Draws the x-axis and y-axis */
 void coordinates();
 
 /* Reads a number */
-int getNum(int * a);
+int getNum(int *);
 
 #endif

@@ -5,7 +5,7 @@
 #define exit 2
 
 /* Prints character */
-void putchar(unsigned char c);
+void putchar(unsigned char);
 
 /* Gets a character, an unsigned char, from stdin */
 char getchar();

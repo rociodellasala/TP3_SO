@@ -19,9 +19,9 @@ int getPID();
 
 int pipe(char *);
 
-int write(int ,char *, int);
+int write(int, char *, int);
 
-int read(int,char *, int);
+int read(int, char *, int);
 
 void close(int, int);
 

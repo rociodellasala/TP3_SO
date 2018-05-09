@@ -2,9 +2,9 @@
 #define STDLIB_H
 
 /* Converts an int into string */
-void intToString(int num, char * str);
+void intToString(int, char *);
 
-void printHexadecimal(void * pointer);
+void printHexadecimal(void *);
 
 /* Consumes buffer before exit */
 void clear_buffer();
@@ -12,6 +12,6 @@ void clear_buffer();
 /* Makes a syscall in order to exit */
 void exitProcess();
 
-void printMsg(int j);
+void printMsg(int);
 
 #endif

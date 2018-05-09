@@ -33,7 +33,5 @@ int changeFontColor(char *);
 
 int getNum(int *);
 
-/* Prints current time */
-void time();
 
 #endif

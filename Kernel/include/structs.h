@@ -7,6 +7,7 @@
 #define MAX_PROCESS_NAME 50
 #define PAGES_KERNEL_HEAP 96
 #define MAX_MESSAGE_LENGHT 100
+#define MAX_PIPES 10
 
 #define FOREGROUND 0
 #define BACKGROUND 1
@@ -39,8 +40,11 @@ typedef struct heapPage{
 }heapPage;
 
 typedef struct s_pipe{
+  int pipePID;
+
   int processOnePID;
   int processTwoPID;
+  char processTwoName[MAX_PROCESS_NAME];
 
   boolean processOneRead;
   boolean processOneWrite;
@@ -64,7 +68,8 @@ typedef struct Process{
     void * userStack;
     void * baseStack;
     p_heapPage heap;
-    p_pipe pipe;
+    p_pipe pipes[MAX_PIPES];
+    int pipeIndex;
 }Process;
 
 typedef struct ProcessSlot{

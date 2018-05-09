@@ -60,8 +60,7 @@ int getPID(){
 }
 
 int pipe(char * connectingProcessName){
-	int80(15,(qword) connectingProcessName,0,0,0,0);
-	return getPID();
+	return int80(15,(qword) connectingProcessName,0,0,0,0);
 }
 
 int write(int pid,char * message, int messageLenght){
@@ -69,7 +68,11 @@ int write(int pid,char * message, int messageLenght){
 }
 
 int read(int pid,char * messageDestination, int charsToRead){
-	return int80(17,pid,(qword) messageDestination,charsToRead,0,0);
+	int returnValue = 0;
+	do{
+		returnValue = int80(17,pid,(qword) messageDestination,charsToRead,0,0);
+	}while(returnValue == BLOCKPROCESS);
+	return returnValue;
 }
 
 void close(int pid, int operation){

@@ -120,14 +120,19 @@ _irq00Handler:
 	iretq
 
 restoreContext:
+	pushaq
 	call switchKernelToUser
 
 	mov rsp, rax 
 	
 	popaq
 
+	push rax
+
 	mov al, 20h ; EOI
 	out 20h, al
+	
+	pop rax
 
 	iretq
 	

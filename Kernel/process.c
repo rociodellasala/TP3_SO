@@ -48,14 +48,20 @@ int checkIfForegroundOrBackground(char * nameProcess){
 }
 
 int createProcess(void * entryPoint, char * nameProcess){
+	int i;
 	Process newProcess;
 	newProcess.PID = currentProcessId++;
-	memcpy(newProcess.processName,nameProcess,20); //deberia ser strlen de nameProcess
 	newProcess.heap = NULL;
 	newProcess.status = READY;
 	newProcess.foreground = checkIfForegroundOrBackground(nameProcess);
+	if(newProcess.foreground == BACKGROUND || strcmp(nameProcess,"shell"))
+		strcpy(newProcess.processName,nameProcess);
+	else
+		strncpy(newProcess.processName,nameProcess,strlen(nameProcess) - 1);
 	newProcess.startingPoint = entryPoint;
-	newProcess.pipe = NULL;
+	for(i = 0; i < MAX_PIPES; i++)
+		newProcess.pipes[i] = NULL;
+	newProcess.pipeIndex = 0;
 	newProcess.baseStack = allocPage();
 	newProcess.userStack = fillStackFrame(entryPoint, newProcess.baseStack);
 	addProcessToPCB(newProcess);

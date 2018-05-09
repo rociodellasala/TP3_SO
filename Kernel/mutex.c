@@ -2,7 +2,9 @@
 #include "scheduler.h"
 
 boolean wait(boolean mutex){
-	while(mutex == false);
+	if(mutex == false){
+		unblockProcess(getCurrentPid());
+	}
 	return false;
 }
 

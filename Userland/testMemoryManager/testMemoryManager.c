@@ -62,10 +62,10 @@ int main() {
 
 void printStartTestMessage(){
 	printf("----Welcome to the test of memory allocation in a single process----\n\n");
-	printf("As this is the first program to reserve memory we know that the ''program's heap'' starts at 0x64000\n\n");
-	printf("First page: 0x64000\n");
-	printf("Second page: 0x65000\n");
-	printf("Third page: 0x66000\n\n");
+	printf("As this is the first program to reserve memory we know that the ''program's heap'' starts at 0x67000\n\n");
+	printf("First page: 0x67000\n");
+	printf("Second page: 0x68000\n");
+	printf("Third page: 0x69000\n\n");
 }
 
 void * whenAskedForMemoryFirstPointer(int * firstAmount){

@@ -30,6 +30,9 @@ void removeFinishedProcess();
 void removeProcess(int);
 
 /* Blocks a process */
-void blockProcess();
+void blockProcess(int pid);
+
+/* Unblocks a process */
+void unblockProcess(int pid);
 
 #endif

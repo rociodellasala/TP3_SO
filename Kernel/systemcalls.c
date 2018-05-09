@@ -16,6 +16,8 @@ static void * processRead = (void *) 0xA00000;
 static void * testMemoryManager = (void *) 0xB00000;
 static void * processWrite = (void *) 0xC00000;
 static void * background = (void *) 0xD00000;
+static void * processReadAndWrite = (void *) 0xE00000;
+static void * processWriteAndRead = (void *) 0xF00000;
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
@@ -78,10 +80,18 @@ int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r
 		createProcess(processWrite, process);
 	} else if(strcmp(process,"processWrite&")){
 		createProcess(processWrite, process);
-	} else if(strcmp(process,"background")){
+	}  else if(strcmp(process,"background")){
 		createProcess(background, process);
 	} else if(strcmp(process,"background&")){
 		createProcess(background, process);
+	}else if(strcmp(process,"processReadAndWrite")){
+		createProcess(processReadAndWrite, process);
+	}else if(strcmp(process,"processReadAndWrite&")){
+		createProcess(processReadAndWrite, process);
+	}else if(strcmp(process,"processWriteAndRead&")){
+		createProcess(processWriteAndRead, process);
+	}else if(strcmp(process,"processWriteAndRead")){
+		createProcess(processWriteAndRead, process);
 	} else
 		return -1;
 	return 0;
@@ -94,42 +104,51 @@ void sys_ls(qword pointer, qword rdx, qword rcx, qword r8, qword r9){
 void sys_pkill(qword pid, qword rdx, qword rcx, qword r8, qword r9){
 	disableTickInter();	
 	removeProcess(getCurrentPid());
+	nextLine();
 }
 
-void sys_pipeCreate(qword connectingProcessName, qword rdx, qword rcx, qword r8, qword r9){
+qword sys_pipeCreate(qword connectingProcessName, qword rdx, qword rcx, qword r8, qword r9){
 	int connectingProcessPID = getProcessFromName((char *) connectingProcessName);
 	int callingProcessPID = getCurrentPid();
 	ProcessSlot * callingProcess = getProcessFromPid(callingProcessPID);
 
-	callingProcess->process.pipe = createPipe(callingProcessPID,connectingProcessPID);
-	return;
+	callingProcess->process.pipes[callingProcess->process.pipeIndex] = createPipe(callingProcessPID,connectingProcessPID,(char *) connectingProcessName);
+	callingProcess->process.pipeIndex++;
+	return (qword) callingProcess->process.pipes[callingProcess->process.pipeIndex - 1]->pipePID;
 }
 
 
-qword sys_pipeWrite(qword writingProcessPID, qword message, qword messageLength, qword r8, qword r9){
+qword sys_pipeWrite(qword pipePID, qword message, qword messageLength, qword r8, qword r9){
 	int charsRead;
+	int writingProcessPID = getCurrentPid();
 	char * messagePointer = (char *) message;
 	ProcessSlot * writingProcess = getProcessFromPid(writingProcessPID);
-	p_pipe pipePointer = writingProcess->process.pipe;
+	p_pipe pipePointer = searchPipeByPID(writingProcess,pipePID);
 	charsRead = write(pipePointer,messagePointer,messageLength,writingProcessPID);
 	return (qword) charsRead;
 }
 
-qword sys_pipeRead(qword readingProcessPID, qword messageDestination, qword charsToRead, qword r8, qword r9){
+qword sys_pipeRead(qword pipePID, qword messageDestination, qword charsToRead, qword r8, qword r9){
+	int readingProcessPID = getCurrentPid();
 	char * messageDestinationPointer = (char *) messageDestination;
 	ProcessSlot * readingProcess = getProcessFromPid(readingProcessPID);
-	p_pipe pipePointer = readingProcess->process.pipe;
-	return (qword) read(pipePointer,messageDestinationPointer,charsToRead,readingProcessPID);
+	p_pipe pipePointer = searchPipeByPID(readingProcess,pipePID);
+	int charsRead = read(pipePointer,messageDestinationPointer,charsToRead,readingProcessPID);
+	return (qword) charsRead;
 }
 
-void sys_pipeClose(qword callingProcessPID, qword operation, qword rcx, qword r8, qword r9){
+void sys_pipeClose(qword pipePID, qword operation, qword rcx, qword r8, qword r9){
+	int callingProcessPID = getCurrentPid();
 	ProcessSlot * callingProcess = getProcessFromPid(callingProcessPID);
-	close(callingProcess->process.pipe,operation,callingProcessPID);
+	p_pipe pipePointer = searchPipeByPID(callingProcess,pipePID);
+	close(pipePointer,operation,callingProcessPID);
 }
 
-void sys_pipeOpen(qword callingProcessPID, qword operation, qword rcx, qword r8, qword r9){
+void sys_pipeOpen(qword pipePID, qword operation, qword rcx, qword r8, qword r9){
+	int callingProcessPID = getCurrentPid();
 	ProcessSlot * callingProcess = getProcessFromPid(callingProcessPID);
-	open(callingProcess->process.pipe,operation,callingProcessPID);
+	p_pipe pipePointer = searchPipeByPID(callingProcess,pipePID);
+	open(pipePointer,operation,callingProcessPID);
 }
 
 qword sys_getPID(qword rsi, qword rdx, qword rcx, qword r8, qword r9){

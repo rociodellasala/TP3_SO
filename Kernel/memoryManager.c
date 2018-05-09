@@ -72,6 +72,7 @@ void * searchForFreePage(){
 	int search = 1;
 	int iteration = 0;
 	void * page;
+
 	
 	while(search && iteration < PAGEQUANTITY){
 		

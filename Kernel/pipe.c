@@ -8,30 +8,51 @@
 #include "video_driver.h"
 #include "process.h"
 
-p_pipe createPipe(int callingProcessPID, int connectingProcessPID){
-		ProcessSlot * connectingProcessSlot = getProcessFromPid(connectingProcessPID);
+int pipePIDs = 0;
 
+p_pipe createPipe(int callingProcessPID, int connectingProcessPID, char * connectingProcessName){
+		ProcessSlot * connectingProcessSlot = getProcessFromPid(connectingProcessPID);
+		ProcessSlot * callingProcessSlot = getProcessFromPid(callingProcessPID);
+		/*
 		if(connectingProcessSlot != NULL){
 			if(connectingProcessSlot->process.pipe != NULL){
 				connectingProcessSlot->process.pipe->processTwoPID = callingProcessPID;
 				return connectingProcessSlot->process.pipe;
 			}
 		}
-
-		s_pipe pipeStruct = createPipeStruct(callingProcessPID,connectingProcessPID);
-		p_pipe pipePointer = &pipeStruct;
-		int sizeOfPipe = sizeof(s_pipe);
-		void * destination = findAvaiableHeapKernelPage(sizeOfPipe);
-		pipePointer = memcpy(destination, pipePointer, sizeOfPipe);
+		*/
+		
+		p_pipe pipePointer = NULL;
+		if(connectingProcessSlot != NULL){
+			/*
+			print_string("El proceso al que quiero conectarme esta alive");
+			nextLine();*/
+			pipePointer = searchPipe(connectingProcessSlot,callingProcessSlot->process.processName,callingProcessPID);
+		}
+		if(pipePointer == NULL){
+			/*
+			print_string("El proceso al que quiero conectarme esta dead");
+			nextLine();
+			*/
+			s_pipe pipeStruct = createPipeStruct(callingProcessPID,-1, connectingProcessName);
+			pipePointer = &pipeStruct;
+			int sizeOfPipe = sizeof(s_pipe);
+			void * destination = findAvaiableHeapKernelPage(sizeOfPipe);
+			pipePointer = memcpy(destination, pipePointer, sizeOfPipe);
+		}
 		return pipePointer;
 }
 
-s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID){
+s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID, char * connectingProcessName){
 	s_pipe pipeStruct;
+
+	pipeStruct.pipePID = pipePIDs++;
+
 	pipeStruct.processOnePID = callingProcessPID;
 	pipeStruct.processTwoPID = connectingProcessPID;
+	strcpy(pipeStruct.processTwoName,connectingProcessName);
 
-	pipeStruct.processOneRead = true;
+	pipeStruct.processOneRead = true;	
 	pipeStruct.processOneWrite = true;
 	pipeStruct.processTwoRead = true;
 	pipeStruct.processTwoWrite = true;
@@ -43,22 +64,32 @@ s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID){
 	return pipeStruct;
 }
 
-/*
-p_pipe searchPipe(int callingProcessPID, int connectingProcessPID){
-	int i;
-	for(i = 0; i < MAX_PIPES; i++){
-		int processOnePID = pipes[i].processOnePID;
-		int processTwoPID = pipes[i].processTwoPID;
 
-		if( (processOnePID ==  callingProcessPID || processOnePID == connectingProcessPID) &&
-			(processTwoPID ==  callingProcessPID || processTwoPID == connectingProcessPID)){
-			return  pipes[i]
-		}		
+p_pipe searchPipe(ProcessSlot * connectingProcessSlot,char * callingProcessName, int callingProcessPID){
+	int i;
+	for(i = 0; i < connectingProcessSlot->process.pipeIndex; i++){
+		if(connectingProcessSlot->process.pipes[i]->processTwoPID == INVALID_PID && 
+			strcmp(connectingProcessSlot->process.pipes[i]->processTwoName,callingProcessName)){
+			connectingProcessSlot->process.pipes[i]->processTwoPID = callingProcessPID;
+			connectingProcessSlot->process.pipeIndex++;
+			return connectingProcessSlot->process.pipes[i];
+		}	
 	}
 	return NULL;
 }
 
+p_pipe searchPipeByPID(ProcessSlot * callingProcessSlot, int pipePID){
+	int pipeIndex = callingProcessSlot->process.pipeIndex;
+	int i;
 
+	for(i = 0; i < pipeIndex; i++){
+		if(callingProcessSlot->process.pipes[i]->pipePID == pipePID)
+			return callingProcessSlot->process.pipes[i];
+	}
+	return NULL;
+}
+
+/*
 void printPipeInfo(p_pipe pipe){
 	nextLine();
 	print_string("Pipe information:");
@@ -127,10 +158,12 @@ int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID){
 int read(p_pipe pipe,char * messageDestination,int charsToRead,int callingProcessPID){
 	char aux[MAX_MESSAGE_LENGHT];
 	if(charsToRead > MAX_MESSAGE_LENGHT)
-		return -1;
-
+		return 0;
 	if(pipe->processOnePID == callingProcessPID && pipe->processOneRead == true){
-		while(pipe->messageIndex == 0);
+		if(pipe->messageIndex == 0){
+			blockProcess(callingProcessPID);
+			return -1;
+		}
 		pipe->mutex = wait(pipe->mutex);
 		strncpy(messageDestination,pipe->message,charsToRead);
 		strcpy(aux,pipe->message + charsToRead);
@@ -139,7 +172,10 @@ int read(p_pipe pipe,char * messageDestination,int charsToRead,int callingProces
 		pipe->messageIndex = pipe->messageIndex - charsToRead + 1;
 		pipe->mutex = signal();
 	} else if(pipe->processTwoPID == callingProcessPID && pipe->processTwoRead == true){
-		while(pipe->messageIndex == 0);
+		if(pipe->messageIndex == 0){
+			blockProcess(callingProcessPID);
+			return -1;
+		}
 		pipe->mutex = wait(pipe->mutex);
 		strncpy(messageDestination,pipe->message,charsToRead);
 		strcpy(aux,pipe->message + charsToRead);
@@ -148,7 +184,6 @@ int read(p_pipe pipe,char * messageDestination,int charsToRead,int callingProces
 		pipe->messageIndex = pipe->messageIndex - charsToRead;
 		pipe->mutex = signal();
 	}
-
 	return charsToRead;
 
 }

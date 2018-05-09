@@ -2,7 +2,7 @@ include Makefile.inc
 
 SAMPLE_DATA=shell.bin
 
-all: terminal linearFDisp parabDisp testMem processR processW back
+all: terminal linearFDisp parabDisp testMem processR processW back processRW processWR
 
 terminal:
 	cd shell; make all
@@ -25,6 +25,12 @@ processW:
 back:
 	cd background; make all
 
+processRW:
+	cd processReadAndWrite; make all
+
+processWR:
+	cd processWriteAndRead; make all
+
 clean:
 	cd shell; make clean
 	cd linearGraph; make clean
@@ -32,6 +38,8 @@ clean:
 	cd testMemoryManager; make clean
 	cd processRead; make clean
 	cd processWrite; make clean
+	cd processReadAndWrite; make clean
+	cd processWriteAndRead; make clean
 	cd background; make clean
 	rm -rf *.bin
 

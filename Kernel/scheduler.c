@@ -32,8 +32,10 @@ void * switchKernelToUser(){
 }
 
 void runScheduler(){
-	if(currentProcess->process.PID == 0 && allProcess > 1 && allProcessForeground > 0)
+
+	if(currentProcess->process.PID == 0 && allProcess > 1 && allProcessForeground > 0){
 		currentProcess->process.status = LOCKED;
+	}
 
 	if(currentProcess == NULL) 
 		return;
@@ -42,22 +44,22 @@ void runScheduler(){
 		numberOfTicks++;
 		return;
 	}
-	
 	numberOfTicks = 0;
 
-	if(currentProcess->process.status == RUNNING)
+
+	if(currentProcess->process.status == RUNNING){
 		currentProcess->process.status = READY;
-	
+	}
+
 	currentProcess = currentProcess->next;
-	
-	while(currentProcess->process.status != READY)
+
+	while(currentProcess->process.status != READY){
+		if(currentProcess->process.status == LOCKED && currentProcess->process.PID != 0)
+			unblockProcess(currentProcess->process.PID);
 		currentProcess = currentProcess->next;
+	}
 	
 	currentProcess->process.status = RUNNING;
-	/* DESPUES ELIMINAR ESTO */
-	prints("          Cambiando de proceso : ");
-	prints(currentProcess->process.processName);
-	//printAllCurrentProcess();
 }
 
 void startProcess(void * entryPoint, char * nameProcess){
@@ -130,28 +132,6 @@ void removeProcess(int pid){
 		currentProcess = lastProcess = tableProcess = NULL;
 		return;
 	}
-
-	/* DESPUES ELIMINAR ESTO */
-	prints("\nA eliminar: ");
-	printi(pid);
-	prints("\n---------- ANTES DE ELIMINAR ----------");
-	prints("\nCurrentProcess: ");
-	prints(currentProcess->process.processName);
-	printi(currentProcess->process.PID);
-	prints(" - siguiente: ");
-	prints(currentProcess->next->process.processName);
-	printi(currentProcess->next->process.PID);
-	prints(" - lastProcess: ");
-	prints(lastProcess->process.processName);
-	printi(lastProcess->process.PID);
-	prints(" - first: ");
-	prints(tableProcess->process.processName);
-	nextLine();
-	prints("Todos los procesos: ");
-	nextLine();
-	printAllCurrentProcess();
-	nextLine();
-	
 	ProcessSlot * slot = getProcessFromPid(pid);
 	
 	if(slot->process.foreground == FOREGROUND)
@@ -169,25 +149,6 @@ void removeProcess(int pid){
 	currentProcess = currentProcess->next;
 	currentProcess->process.status = RUNNING;
 
-	/* DESPUES ELIMINAR ESTO */
-	prints("\n---------- DESPUES DE ELIMINAR ----------");
-	prints("\nCurrentProcess: ");
-	prints(currentProcess->process.processName);
-	printi(currentProcess->process.PID);
-	prints(" - siguiente: ");
-	prints(currentProcess->next->process.processName);
-	printi(currentProcess->next->process.PID);
-	prints(" - lastProcess: ");
-	prints(lastProcess->process.processName);
-	printi(lastProcess->process.PID);
-	prints(" - first: ");
-	prints(tableProcess->process.processName);
-	nextLine();
-	prints("Todos los procesos: ");
-	nextLine();
-	printAllCurrentProcess();
-	nextLine();
-	
 	enableTickInter();
 	if(slot->process.foreground == FOREGROUND)
 	print_string("Restaurando SHELL - Presione ENTER");
@@ -196,9 +157,14 @@ void removeProcess(int pid){
 }
 
 
-//falta hacer una funcion que desbloqueee!!
 void blockProcess(int pid){
 	ProcessSlot * p = getProcessFromPid(pid);
 	p->process.status = LOCKED;
+	return;
+}
+
+void unblockProcess(int pid){
+	ProcessSlot * p = getProcessFromPid(pid);
+	p->process.status = READY;
 	return;
 }

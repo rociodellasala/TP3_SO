@@ -12,12 +12,11 @@ char const * string1 = "Hola llegue";
 char const * string2 = "hola mundillo";
 
 int main (void){
+	clear_screen();
 	int start = 0;
-	int pid = getPID();
-	pipe("processWrite");
+	int pid = pipe("processWrite");
 	char * firstString;
 	char * secondString;
-	clear_screen();
 	printStaringMessageTest();
 
 	do{
@@ -29,7 +28,7 @@ int main (void){
 	whenStringIsReceived(firstString,strlen(string1),pid);
 	thenFirstStringIsReceived(firstString);
 
-	printf("Know we are gonna read another string to check if IPC supports multiple readings\n");
+	printf("\nNow we are gonna read another string to check if IPC supports multiple readings\n");
 
 	secondString = givenStringToStore(strlen(string2));
 	whenStringIsReceived(secondString,strlen(string2),pid);
@@ -37,7 +36,7 @@ int main (void){
 
 	start = 0;
 	do{
-		printf("To finilize the test please press 1 :");
+		printf("\nTo finilize the test please press 1 :");
 		getNum(&start);
 	}while(start != 1);
 	clear_screen();
@@ -61,17 +60,17 @@ void whenStringIsReceived(char * firstString, int charsToRead, int pid){
 
 void thenFirstStringIsReceived(char const * firstString){
 	if(strcmp(firstString,string1)){
-		printf("SUCCESS!!!!! --------- First string received: %s\n",firstString);
+		printf("\nSUCCESS!!!!! --------- First string received: %s\n",firstString);
 	}else{
-		printf("ERROR!!!!! --------- First string received: %s\n",firstString);
+		printf("\nERROR!!!!! --------- First string received: %s\n",firstString);
 	}
 }
 
 void thenSecondStringIsReceived(char const * secondString){
 	if(strcmp(secondString,string2)){
-		printf("SUCCESS!!!!! --------- Second string received: %s\n",secondString);
+		printf("\nSUCCESS!!!!! --------- Second string received: %s\n",secondString);
 	}else{
-		printf("ERROR!!!!! --------- Second string received: %s\n",secondString);
+		printf("\nERROR!!!!! --------- Second string received: %s\n",secondString);
 	}
 }
 

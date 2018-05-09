@@ -51,7 +51,7 @@ void ps(){
 
 void ls(){
 	nextLine();	
-	printf("linearGraph  parabolicGraph  testMemoryManager  processRead  processWrite  background");
+	printf("linearGraph  parabolicGraph  testMemoryManager  processRead  processWrite  background processReadAndWrite processWriteAndRead");
 }
 
 void time(){

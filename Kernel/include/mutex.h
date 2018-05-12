@@ -2,11 +2,32 @@
 #define MUTEX_H
 
 #include "types.h"
+#include "structs.h"
 
-/*If mutex is not true, blocks the process, otherwise makes mutex flag to be false*/
-boolean wait(boolean);
+#define MAX_MUTEX_SLOT 100
+#define INVALID_PROCESS -1
+#define INVALID_INDEX -1
+#define LOCK -1;
+#define SUCCESFUL 0;
 
-/*Makes mutex flag to be true*/
-boolean signal();
+void initiliazeMutexes();
+
+p_mutex createMutex();
+
+int getFreeMutex(char * mutexName);
+
+int getMutexByName(char * mutexName);
+
+void freeMutex(int index);
+
+int wait(int index);
+
+int signal(int index);
+
+boolean isInQueue(int * queue);
+
+void removeFromQueue(int * queue);
+
+void addToQueue(int * queue);
 
 #endif

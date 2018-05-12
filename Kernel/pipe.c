@@ -16,27 +16,12 @@ p_pipe createPipe(int callingProcessPID, int connectingProcessPID, char * connec
 		int sizeOfPipe;	
 		void * destination;
 	
-		/*
-		if(connectingProcessSlot != NULL){
-			if(connectingProcessSlot->process.pipe != NULL){
-				connectingProcessSlot->process.pipe->processTwoPID = callingProcessPID;
-				return connectingProcessSlot->process.pipe;
-			}
-		}
-		*/
-		
 		p_pipe pipePointer = NULL;
+
 		if(connectingProcessSlot != NULL){
-			/*
-			print_string("El proceso al que quiero conectarme esta alive");
-			nextLine();*/
 			pipePointer = searchPipe(connectingProcessSlot,callingProcessSlot->process.processName,callingProcessPID);
 		}
 		if(pipePointer == NULL){
-			/*
-			print_string("El proceso al que quiero conectarme esta dead");
-			nextLine();
-			*/
 			s_pipe pipeStruct = createPipeStruct(callingProcessPID,-1, connectingProcessName);
 			pipePointer = &pipeStruct;
 			sizeOfPipe = sizeof(s_pipe);
@@ -62,7 +47,7 @@ s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID, char * 
 	pipeStruct.messageIndex = 0;
 	memset(pipeStruct.message,0,MAX_MESSAGE_LENGHT);
 
-	pipeStruct.mutex = true;
+	pipeStruct.mutex = getFreeMutex(connectingProcessName);
 
 	return pipeStruct;
 }
@@ -144,15 +129,15 @@ int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID){
 		return -1;
 
 	if(pipe->processOnePID == callingProcessPID && pipe->processOneWrite == true){
-		pipe->mutex = wait(pipe->mutex);
+		wait(pipe->mutex);
 		strcpy((pipe->message) + pipe->messageIndex,messageSent);
 		pipe->messageIndex += messageSentLenght;
-		pipe->mutex = signal();
+		signal(pipe->mutex);
 	} else if(pipe->processTwoPID == callingProcessPID && pipe->processTwoWrite == true){
-		pipe->mutex = wait(pipe->mutex);
+		wait(pipe->mutex);
 		strcpy((pipe->message) + pipe->messageIndex,messageSent);
 		pipe->messageIndex += messageSentLenght;
-		pipe->mutex = signal();
+		signal(pipe->mutex);
 	} 
 
 	return msgLenght;
@@ -167,25 +152,25 @@ int read(p_pipe pipe,char * messageDestination,int charsToRead,int callingProces
 			blockProcess(callingProcessPID);
 			return -1;
 		}
-		pipe->mutex = wait(pipe->mutex);
+		wait(pipe->mutex);
 		strncpy(messageDestination,pipe->message,charsToRead);
 		strcpy(aux,pipe->message + charsToRead);
 		memset(pipe->message,0,MAX_MESSAGE_LENGHT);
 		strcpy(pipe->message,aux);
 		pipe->messageIndex = pipe->messageIndex - charsToRead + 1;
-		pipe->mutex = signal();
+		signal(pipe->mutex);
 	} else if(pipe->processTwoPID == callingProcessPID && pipe->processTwoRead == true){
 		if(pipe->messageIndex == 0){
 			blockProcess(callingProcessPID);
 			return -1;
 		}
-		pipe->mutex = wait(pipe->mutex);
+		wait(pipe->mutex);
 		strncpy(messageDestination,pipe->message,charsToRead);
 		strcpy(aux,pipe->message + charsToRead);
 		memset(pipe->message,0,MAX_MESSAGE_LENGHT);
 		strcpy(pipe->message,aux);
 		pipe->messageIndex = pipe->messageIndex - charsToRead;
-		pipe->mutex = signal();
+		signal(pipe->mutex);
 	}
 	return charsToRead;
 

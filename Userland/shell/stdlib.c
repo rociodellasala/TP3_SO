@@ -62,6 +62,9 @@ void ls(){
 	nextLine();
 	printf("      processRead      processWrite           background          processWriteAndRead");
 	nextLine();
+	nextLine();
+	printf("      producer         consumer");
+	nextLine();
 }
 
 void time(){

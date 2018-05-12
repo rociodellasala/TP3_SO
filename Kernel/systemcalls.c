@@ -9,6 +9,7 @@
 #include "time.h"
 #include "types.h"
 #include "video_driver.h"
+#include "mutex.h"
 
 static void * linearGraph = (void *) 0x800000;
 static void * parabolicGraph = (void *) 0x900000;
@@ -18,10 +19,12 @@ static void * processWrite = (void *) 0xC00000;
 static void * background = (void *) 0xD00000;
 static void * processReadAndWrite = (void *) 0xE00000;
 static void * processWriteAndRead = (void *) 0xF00000;
+static void * producer = (void *) 0xF10000;
+static void * consumer = (void *) 0xF20000;
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
-static sys sysCalls[20]; 
+static sys sysCalls[24]; 
 
 void sys_write(qword buffer, qword size, qword rcx, qword r8, qword r9) {
 	print_char(buffer);
@@ -92,6 +95,12 @@ int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r
 		createProcess(processWriteAndRead, process);
 	}else if(strcmp(process,"processWriteAndRead")){
 		createProcess(processWriteAndRead, process);
+	}else if(strcmp(process,"producer")){
+		createProcess(producer, process);
+	}else if(strcmp(process,"producer&")){
+		createProcess(producer, process);
+	}else if(strcmp(process,"consumer&")){
+		createProcess(consumer, process);
 	} else
 		return -1;
 	return 0;
@@ -155,6 +164,28 @@ qword sys_getPID(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
 	return (qword) getCurrentPid();
 }
 
+qword sys_getMutex(qword mutexName, qword rdx, qword rcx, qword r8, qword r9){
+	int index;
+
+	index = getMutexByName(mutexName);
+	if(index == INVALID_INDEX)
+		index = getFreeMutex(mutexName);
+
+	return index;
+}
+
+void sys_wait(qword index, qword rdx, qword rcx, qword r8, qword r9){
+	wait(index);
+}
+
+void sys_signal(qword index, qword rdx, qword rcx, qword r8, qword r9){
+	signal(index);
+}
+
+void sys_freeMutex(qword index, qword rdx, qword rcx, qword r8, qword r9){
+	freeMutex(index);
+}
+
 void load_systemcalls(){
 	sysCalls[1] = (sys) &sys_write;
 	sysCalls[2] = (sys) &sys_clear;
@@ -175,12 +206,16 @@ void load_systemcalls(){
 	sysCalls[17] = (sys) &sys_pipeRead;
 	sysCalls[18] = (sys) &sys_pipeClose;
 	sysCalls[19] = (sys) &sys_pipeOpen;
+	sysCalls[20] = (sys) &sys_getMutex;
+	sysCalls[21] = (sys) &sys_wait;
+	sysCalls[22] = (sys) &sys_signal;
+	sysCalls[23] = (sys) &sys_freeMutex;
 
 	setup_IDT_entry(0x80, (qword) &_irq80Handler); 
 }
 
 qword syscallHandler(qword rdi,qword rsi, qword rdx, qword rcx, qword r8, qword r9){
-	if(rdi < 0 || rdi >= 20)
+	if(rdi < 0 || rdi >= 24)
 		return 0;
 	
 	return sysCalls[rdi](rsi,rdx,rcx,r8,r9);

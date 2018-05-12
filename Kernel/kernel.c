@@ -6,6 +6,7 @@
 #include "scheduler.h"
 #include "systemcalls.h"
 #include "video_driver.h"
+#include "mutex.h"
 
 extern byte bss;
 extern byte endOfKernelBinary;
@@ -24,6 +25,8 @@ static void * processWrite = (void *) 0xC00000;
 static void * background = (void *) 0xD00000;
 static void * processReadAndWrite = (void *) 0xE00000;
 static void * processWriteAndRead = (void *) 0xF00000;
+static void * producer = (void *) 0xF10000;
+static void * consumer = (void *) 0xF20000;
 
 void clearBSS(void * bssAddress, qword bssSize){
 	memset(bssAddress, 0, bssSize);
@@ -39,7 +42,7 @@ void * getStackBase(){
 
 void * initializeKernelBinary(){
 	void * moduleAddresses[] = {shell, linearGraph, parabolicGraph, processRead, 
-		testMemoryManager, processWrite, background,processReadAndWrite,processWriteAndRead,};
+		testMemoryManager, processWrite, background,processReadAndWrite,processWriteAndRead, producer, consumer};
 	loadModules(&endOfKernelBinary, moduleAddresses);
 	clearBSS(&bss, &endOfKernel - &bss);
 	return getStackBase();
@@ -59,6 +62,7 @@ int main(){
 	initializeMemoryManager();
 	initializeKernelHeap();
 	initializeKernelStack();
+	initiliazeMutexes();
 
 	startProcess(shell, "shell");
 	return 0;

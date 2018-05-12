@@ -8,6 +8,8 @@
 #define PAGES_KERNEL_HEAP 96
 #define MAX_MESSAGE_LENGHT 100
 #define MAX_PIPES 10
+#define MAX_QUEUED_PROCESS 20
+#define MAX_MUTEX_NAME 20
 
 #define FOREGROUND 0
 #define BACKGROUND 1
@@ -53,8 +55,19 @@ typedef struct s_pipe{
   char message[MAX_MESSAGE_LENGHT];
   int messageIndex;
 
-  boolean mutex;
+  int mutex;
 }s_pipe;
+
+typedef struct s_mutex
+{
+  boolean avaiable;
+  boolean mutexValue;
+  char idName[MAX_MUTEX_NAME];
+  int pidQueueWait[MAX_QUEUED_PROCESS];
+  int pidQueueSignal[MAX_QUEUED_PROCESS];
+}s_mutex;
+
+typedef s_mutex * p_mutex;
 
 typedef s_pipe * p_pipe;
 

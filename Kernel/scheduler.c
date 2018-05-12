@@ -5,6 +5,7 @@
 #include "string.h"
 #include "time.h"
 #include "video_driver.h"
+#include "mutex.h"
 
 #define QUANTUM 10
 #define WAIT 60000000
@@ -54,11 +55,12 @@ void runScheduler(){
 	currentProcess = currentProcess->next;
 
 	while(currentProcess->process.status != READY){
-		if(currentProcess->process.status == LOCKED && currentProcess->process.PID != 0)
+		if(currentProcess->process.status == LOCKED && currentProcess->process.PID != 0){
 			unblockProcess(currentProcess->process.PID);
+			break;
+		}
 		currentProcess = currentProcess->next;
 	}
-	
 	currentProcess->process.status = RUNNING;
 }
 
@@ -86,6 +88,8 @@ int getCurrentPid(){
 void removeFinishedProcess() {
 	ProcessSlot * aux;
 	ProcessSlot * prev;
+	int i;
+	int pipeLastIndex;
 
 	if(tableProcess->process.status == FINISHED){
 		releasePage(tableProcess->process);
@@ -102,6 +106,10 @@ void removeFinishedProcess() {
 			if(lastProcess == aux)
 				lastProcess = prev;
 			
+			pipeLastIndex = aux->process.pipeIndex;
+			for(i = 0; i < pipeLastIndex; i++){
+				freeMutex(aux->process.pipes[i]->mutex);
+			}
 			releasePage(aux->process);
 			prev->next = aux->next;
 			return;
@@ -166,6 +174,7 @@ void removeProcess(int pid){
 void blockProcess(int pid){
 	ProcessSlot * p = getProcessFromPid(pid);
 	p->process.status = LOCKED;
+	numberOfTicks = QUANTUM;
 	return;
 }
 

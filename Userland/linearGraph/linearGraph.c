@@ -33,7 +33,6 @@ void draw(int a, int b){
 			draw_pixel(ejex  , ejey);
 		}
 	}
-
 	while(i < WAIT){
 		i++;
 	}

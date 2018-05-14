@@ -29,6 +29,9 @@ void removeFinishedProcess();
 /* Sets the pointer in order to run the next process. Removes from the table process the one that has already finished */
 void removeProcess(int);
 
+/* Same as removeProcess but by terminal */
+void removeProcessFromTerminal(int);
+
 /* Blocks a process */
 void blockProcess(int pid);
 

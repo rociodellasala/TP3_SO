@@ -15,9 +15,11 @@ int main (void){
 	
 	messageToSend = "Hola mundo alegre";
 	messageToReceive = malloc(strlen(messageToSend) + 1);
-	
+	printf("Comenzando processWriteAndRead\n");
+	printf("Escribiendo...\n");
 	pidPipe1 = pipe("processReadAndWrite");
 	write(pidPipe1,messageToSend,strlen(messageToSend));
+	printf("Leyendo...\n");
 	pidPipe2 = pipe("processReadAndWrite");
 	read(pidPipe2,messageToReceive,strlen(messageToSend));
 	printf("El mensaje que llego es: %s\n",messageToReceive);

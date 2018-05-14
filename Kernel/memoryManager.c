@@ -26,10 +26,10 @@ void splitMemory(){
 }
 
 void markOccupiedPages(){
-	memoryPages[0].occupied = 1;
-	memoryPages[1].occupied = 1;
-	memoryPages[2].occupied = 1;
-	memoryPages[3].occupied = 1;
+	int i;
+	for(i = 0; i < 19; i++){
+		memoryPages[i].occupied = 1;
+	}
 }
 
 void printMemoryPages(){

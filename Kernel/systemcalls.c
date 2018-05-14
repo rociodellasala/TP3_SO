@@ -24,7 +24,7 @@ static void * consumer = (void *) 0xF20000;
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
-static sys sysCalls[24]; 
+static sys sysCalls[26]; 
 
 void sys_write(qword buffer, qword size, qword rcx, qword r8, qword r9) {
 	print_char(buffer);
@@ -186,6 +186,16 @@ void sys_freeMutex(qword index, qword rdx, qword rcx, qword r8, qword r9){
 	freeMutex(index);
 }
 
+void sys_kernelHeader(qword index, qword rdx, qword rcx, qword r8, qword r9){
+	printHeaderInfo();
+}
+
+void sys_killPID(qword pid, qword rdx, qword rcx, qword r8, qword r9){
+	disableTickInter();	
+	removeProcessFromTerminal(pid);
+	nextLine();
+}
+
 void load_systemcalls(){
 	sysCalls[1] = (sys) &sys_write;
 	sysCalls[2] = (sys) &sys_clear;
@@ -210,12 +220,14 @@ void load_systemcalls(){
 	sysCalls[21] = (sys) &sys_wait;
 	sysCalls[22] = (sys) &sys_signal;
 	sysCalls[23] = (sys) &sys_freeMutex;
+	sysCalls[24] = (sys) &sys_kernelHeader;
+	sysCalls[25] = (sys) &sys_killPID;
 
 	setup_IDT_entry(0x80, (qword) &_irq80Handler); 
 }
 
 qword syscallHandler(qword rdi,qword rsi, qword rdx, qword rcx, qword r8, qword r9){
-	if(rdi < 0 || rdi >= 24)
+	if(rdi < 0 || rdi >= 26)
 		return 0;
 	
 	return sysCalls[rdi](rsi,rdx,rcx,r8,r9);

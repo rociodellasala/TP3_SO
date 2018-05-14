@@ -7,7 +7,6 @@
 #define MAX_PROCESS_NAME 50
 #define PAGES_KERNEL_HEAP 96
 #define MAX_MESSAGE_LENGHT 100
-#define MAX_PIPES 10
 #define MAX_QUEUED_PROCESS 20
 #define MAX_MUTEX_NAME 20
 
@@ -19,27 +18,23 @@
 #define LOCKED 4
 #define FINISHED 5
 
+#define MAX_PROCESS_SLOT 100
+#define MAX_MUTEX_SLOT 200
+#define MAX_PIPES 10
+#define MAX_HEAP_SLOT 20
+#define MAX_FREE 10
+#define INVALID_LAST_FREE_SLOT -1
+
 typedef int (*EntryPoint)();
 
-typedef struct kernelHeapPage{
-	int occupiedBytes;
-	int freeBytes;
-	void * pageAddress;
-}kernelHeapPage;
+typedef struct s_heapPage * p_heapPage;
 
-typedef struct kernelHeapHeader{
-	int nextPage;
-	kernelHeapPage kernelHeapPages[PAGES_KERNEL_HEAP];
-}kernelHeapHeader;
-
-typedef struct heapPage * p_heapPage;
-
-typedef struct heapPage{
+typedef struct s_heapPage{
   void * currentPage;
   int occupiedBytes;
   int freeBytes;
   p_heapPage nextHeapPage;
-}heapPage;
+}s_heapPage;
 
 typedef struct s_pipe{
   int pipePID;
@@ -89,5 +84,22 @@ typedef struct ProcessSlot{
     struct ProcessSlot * next;
     Process process;
 }ProcessSlot;
+
+typedef struct kernelHeapHeader{
+  void * startingAddress;
+  int pages;
+  int lastProcessSlot;
+  int lastProcessSlotFree[MAX_FREE];
+  ProcessSlot allProcessSlots[MAX_PROCESS_SLOT];
+  int lastMutexSlot;
+  int lastMutexSlotFree[MAX_FREE];
+  s_mutex allMutex[MAX_MUTEX_SLOT];
+  int lastPipeSlot;
+  int lastPipeSlotFree[MAX_FREE];
+  s_pipe allPipesSlots[MAX_PIPES * MAX_PROCESS_SLOT];
+  int lastHeapSlot;
+  int lastHeapSlotFree[MAX_FREE];
+  s_heapPage allHeapSlots[MAX_HEAP_SLOT * MAX_PROCESS_SLOT];
+}kernelHeapHeader;
 
 #endif

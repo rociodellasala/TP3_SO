@@ -4,7 +4,7 @@
 #include "types.h"
 #include "structs.h"
 
-#define MAX_MUTEX_SLOT 100
+
 #define INVALID_PROCESS -1
 #define INVALID_INDEX -1
 #define LOCK -1;

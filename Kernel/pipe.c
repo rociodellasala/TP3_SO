@@ -8,6 +8,8 @@
 #include "video_driver.h"
 #include "process.h"
 
+extern kernelHeapHeader * kernelHeader;
+
 int pipePIDs = 0;
 
 p_pipe createPipe(int callingProcessPID, int connectingProcessPID, char * connectingProcessName){
@@ -48,7 +50,6 @@ s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID, char * 
 	memset(pipeStruct.message,0,MAX_MESSAGE_LENGHT);
 
 	pipeStruct.mutex = getFreeMutex(connectingProcessName);
-
 	return pipeStruct;
 }
 
@@ -59,7 +60,6 @@ p_pipe searchPipe(ProcessSlot * connectingProcessSlot,char * callingProcessName,
 		if(connectingProcessSlot->process.pipes[i]->processTwoPID == INVALID_PID && 
 			strcmp(connectingProcessSlot->process.pipes[i]->processTwoName,callingProcessName)){
 			connectingProcessSlot->process.pipes[i]->processTwoPID = callingProcessPID;
-			connectingProcessSlot->process.pipeIndex++;
 			return connectingProcessSlot->process.pipes[i];
 		}	
 	}
@@ -77,7 +77,7 @@ p_pipe searchPipeByPID(ProcessSlot * callingProcessSlot, int pipePID){
 	return NULL;
 }
 
-/*
+
 void printPipeInfo(p_pipe pipe){
 	nextLine();
 	print_string("Pipe information:");
@@ -98,7 +98,10 @@ void printPipeInfo(p_pipe pipe){
 		print_int(pid2);
 		nextLine();
 	}
-	print_string("Process 1 permission to read: ");
+	print_string("Expected process: ");
+	print_string(pipe->processTwoName);
+	nextLine();
+	/*print_string("Process 1 permission to read: ");
 	print_int(pipe->processOneRead);
 	nextLine();
 	print_string("Process 2 permission to read: ");
@@ -109,7 +112,7 @@ void printPipeInfo(p_pipe pipe){
 	nextLine();
 	print_string("Process 2 permission to write: ");
 	print_int(pipe->processTwoWrite);
-	nextLine();
+	nextLine();*/
 	print_string("Actual message:");
 	print_string(pipe->message);
 	nextLine();
@@ -122,7 +125,7 @@ void printPipeInfo(p_pipe pipe){
 	nextLine();
 	nextLine();
 }
-*/
+
 int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID){
 	int messageSentLenght = strlen(messageSent);
 	if(messageSentLenght > MAX_MESSAGE_LENGHT - pipe->messageIndex)

@@ -5,41 +5,127 @@
 #include "scheduler.h"
 #include "structs.h"
 #include "video_driver.h"
+#include "mutex.h"
+#include "process.h"
 
 extern ProcessSlot * tableProcess;
 
-kernelHeapHeader kernelHeader;
+kernelHeapHeader * kernelHeader;
 
 void initializeKernelHeap(){
+	kernelHeapHeader kernelHeaderStruct;
+	int heapSize = sizeof(kernelHeapHeader);
 	int i;
+
+	kernelHeaderStruct.startingAddress = allocPage();
+	kernelHeaderStruct.pages = 1;
+	heapSize -= PAGE_SIZE;
+
+	while(heapSize > 0){
+		allocPage();
+		heapSize -= PAGE_SIZE;
+		kernelHeaderStruct.pages++;
+	}
+
 	
-	kernelHeader.nextPage = 0;
+	for(i = 0; i < MAX_FREE; i++){
+		kernelHeaderStruct.lastProcessSlotFree[i] = INVALID_LAST_FREE_SLOT;
+		kernelHeaderStruct.lastMutexSlotFree[i] = INVALID_LAST_FREE_SLOT;
+		kernelHeaderStruct.lastPipeSlotFree[i] = INVALID_LAST_FREE_SLOT;
+		kernelHeaderStruct.lastHeapSlotFree[i] = INVALID_LAST_FREE_SLOT;
+	}
+
+	kernelHeaderStruct.lastProcessSlot = 0;
+	kernelHeaderStruct.lastMutexSlot = 0;
+	kernelHeaderStruct.lastPipeSlot = 0;
+	kernelHeaderStruct.lastHeapSlot = 0;
 	
-	for(i = 0; i < PAGES_KERNEL_HEAP; i++){
-		kernelHeapPage heapPageK;
-		heapPageK.occupiedBytes = 0;
-		heapPageK.freeBytes = PAGE_SIZE;
-		heapPageK.pageAddress = allocPage();
-		kernelHeader.kernelHeapPages[i] = heapPageK;
+	kernelHeader = memcpy(kernelHeaderStruct.startingAddress,&kernelHeaderStruct,sizeof(kernelHeapHeader));
+	return;
+}
+
+
+
+void printHeaderInfo(){
+	int i;
+	nextLine();
+	print_string("Kernel heap address: ");
+	printHex(kernelHeader->startingAddress);
+	print_string("	Amount of pages: ");
+	print_int(kernelHeader->pages);
+	nextLine();
+	nextLine();
+	print_string("Procesos: ");
+	nextLine();
+	nextLine();
+	for(i = 0; i < kernelHeader->lastProcessSlot; i++){
+		print_string("Process: ");
+		print_string(kernelHeader->allProcessSlots[i].process.processName);
+		print_string("	PID: ");
+		print_int(kernelHeader->allProcessSlots[i].process.PID);
+		nextLine();
+	}
+	print_string("Slots de procesos libres: ");
+	nextLine();
+	for(i = 0; i < MAX_FREE; i++){
+		if(kernelHeader->lastProcessSlotFree[i] != INVALID_LAST_FREE_SLOT){
+			print_string("Index liberado: ");
+			print_int(kernelHeader->lastProcessSlotFree[i]);
+			print_string("	en posicion: ");
+			print_int(i);
+			nextLine();
+		}
+	}
+	nextLine();
+	print_string("Pipes: ");
+	nextLine();
+	nextLine();
+	for(i = 0; i < kernelHeader->lastPipeSlot; i++){
+		print_string("Process PID creator: ");
+		print_int(kernelHeader->allPipesSlots[i].processOnePID);
+		nextLine();
+		print_string("Process expected: ");
+		print_string(kernelHeader->allPipesSlots[i].processTwoName);
+		nextLine();
+	}
+	print_string("Slots de pipes libres: ");
+	nextLine();
+	for(i = 0; i < MAX_FREE; i++){
+		if(kernelHeader->lastPipeSlotFree[i] != INVALID_LAST_FREE_SLOT){
+			print_string("Index liberado: ");
+			print_int(kernelHeader->lastPipeSlotFree[i]);
+			print_string("	en posicion: ");
+			print_int(i);
+			nextLine();
+		}
+	}
+	nextLine();
+	print_string("User heap's: ");
+	nextLine();
+	nextLine();
+		for(i = 0; i < kernelHeader->lastHeapSlot; i++){
+			print_string("Heap page: 0x");
+			printHex(kernelHeader->allHeapSlots[i].currentPage);
+			nextLine();
+	}
+	print_string("Slots de heaps libres: ");
+	nextLine();
+	for(i = 0; i < MAX_FREE; i++){
+		if(kernelHeader->lastHeapSlotFree[i] != INVALID_LAST_FREE_SLOT){
+			print_string("Index liberado: ");
+			print_int(kernelHeader->lastHeapSlotFree[i]);
+			print_string("	en posicion: ");
+			print_int(i);
+			nextLine();
+		}
 	}
 }
 
-void printKernelHeap(){
-	int i;
-	
-	for(i = 0; i < PAGES_KERNEL_HEAP; i++){
-		print_string("Pagina ");
-		print_int(i);
-		print_string(" del heap kernel: ");
-		printHex((qword) kernelHeader.kernelHeapPages[i].pageAddress);
-		nextLine();
-	}
-}
 
 p_heapPage createHeapPage(){
 	int sizeNewHeapStruct;
 	void * kernelHeapPage;
-	heapPage newHeap;
+	s_heapPage newHeap;
 	p_heapPage newHeapPointer;
 
 	newHeap.currentPage = allocPage();
@@ -48,30 +134,152 @@ p_heapPage createHeapPage(){
 	newHeap.freeBytes = PAGE_SIZE;
 	newHeapPointer = &newHeap;
 	
-	sizeNewHeapStruct = sizeof(heapPage);
+	sizeNewHeapStruct = sizeof(s_heapPage);
 	kernelHeapPage = findAvaiableHeapKernelPage(sizeNewHeapStruct);
 	newHeapPointer = memcpy(kernelHeapPage, newHeapPointer, sizeNewHeapStruct);
 	return newHeapPointer;
 }
 
 void * findAvaiableHeapKernelPage(int size){
-	int nextPage = kernelHeader.nextPage;
-	void * address;
-	kernelHeapPage heapPageK = kernelHeader.kernelHeapPages[nextPage];
-	
-	if(heapPageK.freeBytes >= size){
-		address = (heapPageK.pageAddress) + (heapPageK.occupiedBytes);
-		kernelHeader.kernelHeapPages[nextPage].occupiedBytes += size;
-		kernelHeader.kernelHeapPages[nextPage].freeBytes -= size;
-		return address;
-	} else {
-		heapPageK = kernelHeader.kernelHeapPages[nextPage + 1];
-		kernelHeader.nextPage++;
-		kernelHeader.kernelHeapPages[nextPage + 1].occupiedBytes += size;
-		kernelHeader.kernelHeapPages[nextPage + 1].freeBytes -= size;
-		return heapPageK.pageAddress;
+	void * pointerToReturn;
+	int sizeProcesSlot = sizeof(ProcessSlot);
+	int sizePipe = sizeof(s_pipe);
+	int sizeMutex = sizeof(s_mutex);
+	int sizeHeap = sizeof(s_heapPage);
+	if(size == sizeProcesSlot){
+		if(kernelHeader->lastProcessSlotFree[0] == INVALID_LAST_FREE_SLOT)
+			return (void *) &kernelHeader->allProcessSlots[kernelHeader->lastProcessSlot++];
+		else{
+			pointerToReturn = (void *) &kernelHeader->allProcessSlots[kernelHeader->lastProcessSlotFree[0]];
+			moveFreeArray(kernelHeader->lastProcessSlotFree);
+			return pointerToReturn;
+			}
+	}else if(size == sizePipe){
+		if(kernelHeader->lastPipeSlotFree[0] == INVALID_LAST_FREE_SLOT)
+			return (void *) &kernelHeader->allPipesSlots[kernelHeader->lastPipeSlot++];
+		else{
+			pointerToReturn = (void *) &kernelHeader->allPipesSlots[kernelHeader->lastPipeSlotFree[0]];
+			moveFreeArray(kernelHeader->lastPipeSlotFree);
+			return pointerToReturn;
+		}
+	}else if(size == sizeMutex){
+		if(kernelHeader->lastMutexSlotFree[0] == INVALID_LAST_FREE_SLOT)
+			return (void *) &kernelHeader->allMutex[kernelHeader->lastMutexSlot++];
+		else{
+			pointerToReturn = (void *) &kernelHeader->allMutex[kernelHeader->lastMutexSlotFree[0]];
+			moveFreeArray(kernelHeader->lastMutexSlotFree);
+			return pointerToReturn;
+		}
+	}else{
+		if(kernelHeader->lastHeapSlotFree[0] == INVALID_LAST_FREE_SLOT)
+			return (void *) &kernelHeader->allHeapSlots[kernelHeader->lastHeapSlot++];
+		else{
+			pointerToReturn = (void *) &kernelHeader->allHeapSlots[kernelHeader->lastHeapSlotFree[0]];
+			moveFreeArray(kernelHeader->lastHeapSlotFree);
+			return pointerToReturn;
+		}	
+	}	
+}
+
+void moveFreeArray(int * freeArray){
+	int i;
+
+	for(i = 0; i < MAX_FREE - 1; i++){
+		freeArray[i] = freeArray[i+1];
+	}
+	freeArray[i] = INVALID_LAST_FREE_SLOT;
+}
+
+void releaseStructs(ProcessSlot * slot){
+	releaseProcessHeap(slot);
+	releasePipeSlot(slot);
+	releaseProcessSlot(slot);
+}
+
+void releaseProcessSlot(ProcessSlot * slot){
+	int i;
+	int indexFree;
+
+	for(i = 0; i < MAX_PROCESS_SLOT; i++){
+		if(&kernelHeader->allProcessSlots[i] == slot){
+			indexFree = i;
+			break;
+		}
+	}
+
+	for(i = 0; i < MAX_FREE; i++){
+		if(kernelHeader->lastProcessSlotFree[i] == INVALID_LAST_FREE_SLOT){
+			kernelHeader->lastProcessSlotFree[i] = indexFree;
+			break;
+		}
 	}
 }
+
+void releaseProcessHeap(ProcessSlot * slot){
+	p_heapPage currentHeapPage = slot->process.heap;
+
+	while(currentHeapPage != NULL){
+		releaseHeapStruct(currentHeapPage);
+		currentHeapPage = currentHeapPage->nextHeapPage;
+	}
+
+}
+
+void releaseHeapStruct(p_heapPage heap){
+	int i;
+	int indexFree;
+
+	for(i = 0; i < MAX_HEAP_SLOT * MAX_PROCESS_SLOT; i++){
+		if(heap == &kernelHeader->allHeapSlots[i]){
+			indexFree = i;
+			break;
+		}
+	}
+
+	for(i = 0; i < MAX_FREE; i++){
+		if(kernelHeader->lastHeapSlotFree[i] == INVALID_LAST_FREE_SLOT){
+			kernelHeader->lastHeapSlotFree[i] = indexFree;
+			break;
+		}
+	}
+}
+
+void releasePipeSlot(ProcessSlot * slot){
+	int i;
+
+	for(i = 0; i < slot->process.pipeIndex; i++){
+		releasePipeStruct(slot->process.pipes[i]);
+	}
+}
+
+void releasePipeStruct(p_pipe pipe){
+	ProcessSlot * connectingProcess = getProcessFromPid(pipe->processTwoPID);
+	ProcessSlot * callingProcess = getProcessFromPid(pipe->processOnePID);
+	int i;
+	int indexFree;
+
+
+
+	if(callingProcess != NULL && connectingProcess != NULL)
+		return;
+
+	for(i = 0; i < MAX_PIPES * MAX_PROCESS_SLOT; i++){
+		if(pipe == &kernelHeader->allPipesSlots[i]){
+			indexFree = i;
+			break;
+		}
+	}
+	for(i = 0; i < MAX_FREE; i++){
+		if(kernelHeader->lastPipeSlotFree[i] == INVALID_LAST_FREE_SLOT){
+			kernelHeader->lastPipeSlotFree[i] = indexFree;
+			break;
+		}
+	}
+
+	freeMutex(pipe->mutex);
+
+}
+
 
 void * malloc_heap(int size){
 	ProcessSlot * currentProcessSlot = searchRunningProcess();

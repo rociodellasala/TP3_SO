@@ -60,8 +60,8 @@ int main(){
 	_sti();
 
 	initializeMemoryManager();
-	initializeKernelHeap();
 	initializeKernelStack();
+	initializeKernelHeap();
 	initiliazeMutexes();
 
 	startProcess(shell, "shell");

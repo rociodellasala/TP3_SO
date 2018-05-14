@@ -26,5 +26,23 @@ p_heapPage findAvaiableHeapPage(p_heapPage, int);
 /*Returns a void * pointer in a heap page that has X bytes free of memory*/
 void * findFreePointer(p_heapPage);
 
+void printHeaderInfo();
+
+void moveFreeArray(int * freeArray);
+
+void releaseStructs(ProcessSlot * slot);
+
+void releaseProcessSlot(ProcessSlot * slot);
+
+void releaseProcessHeap(ProcessSlot * slot);
+
+void releaseHeapStruct(p_heapPage heap);
+
+void releasePipeSlot(ProcessSlot * slot);
+
+void releasePipeStruct(p_pipe pipe);
+
+
+
 #endif
 

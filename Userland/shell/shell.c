@@ -120,10 +120,16 @@ int call_command(char * function, char * parameter){
 	} else if(strcmp(function, "ls")){
 		ls();
 		return 0;	
+	} else if(strncmp(function, "kill ", 5)){
+		killProgram(stringToInt(function + 5));
+		return 0;	
+	}else if(strcmp(function,"header")){
+		printHeader();
 	} else if(strcmp(function, "exit")){
-		return 2;	
-	}
+		return 0;	/*cambiar*/
+	} else
 		return 1;
+	
 }
 
 void printHelp(){
@@ -139,6 +145,7 @@ void printHelp(){
 	printf("ls:                     Displays runnable programs\n");
 	printf("ps:                     Displays a snapshot of the status of currently running processes.\n");
 	printf("time:                   Displays the current time.\n");
+	printf("kill pid                Terminates a specific process by PID\n");
 }
 
 

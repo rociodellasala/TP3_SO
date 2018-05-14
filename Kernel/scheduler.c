@@ -3,6 +3,7 @@
 #include "process.h"
 #include "scheduler.h"
 #include "string.h"
+#include "heap.h"
 #include "time.h"
 #include "video_driver.h"
 #include "mutex.h"
@@ -107,10 +108,8 @@ void removeFinishedProcess() {
 				lastProcess = prev;
 			
 			pipeLastIndex = aux->process.pipeIndex;
-			for(i = 0; i < pipeLastIndex; i++){
-				freeMutex(aux->process.pipes[i]->mutex);
-			}
 			releasePage(aux->process);
+			releaseStructs(aux);
 			prev->next = aux->next;
 			return;
 		}
@@ -170,6 +169,36 @@ void removeProcess(int pid){
 	restoreContext();
 }
 
+void removeProcessFromTerminal(int pid){
+	ProcessSlot * slot;
+
+	if(pid == 0){
+		exitMessage();
+		currentProcess = lastProcess = tableProcess = NULL;
+		return;
+	}
+
+	if(slot == NULL){
+		nextLine();
+		print_string("Proceso no encontrado");
+		nextLine();
+		nextLine();
+		print_string("Restaurando SHELL - Presione ENTER");
+		return;
+	}
+
+	slot = getProcessFromPid(pid);
+	
+	if(slot->process.foreground == FOREGROUND)
+		allProcessForeground--;
+	else
+		allProcessBackground--;
+
+	slot->process.status = FINISHED;
+	allProcess--;
+	removeFinishedProcess();
+	enableTickInter();
+}
 
 void blockProcess(int pid){
 	ProcessSlot * p = getProcessFromPid(pid);

@@ -5,14 +5,13 @@
 #include "string.h"
 #include "heap.h"
 
-p_mutex allMutex[MAX_MUTEX_SLOT];
-
+extern kernelHeapHeader * kernelHeader;
 
 void initiliazeMutexes(){
 	int i;
 
 	for(i = 0; i < MAX_MUTEX_SLOT; i++){
-		allMutex[i] = createMutex();
+		createMutex();
 	}
 }
 
@@ -41,7 +40,7 @@ int getFreeMutex(char * mutexName){
 	int i;
 	p_mutex mutex;
 	for(i = 0; i < MAX_MUTEX_SLOT; i++){
-		mutex = allMutex[i];
+		mutex = &kernelHeader->allMutex[i];
 		if(mutex->avaiable == true)
 			break;
 	}
@@ -50,11 +49,6 @@ int getFreeMutex(char * mutexName){
 
 	mutex->avaiable = false;
 	strcpy(mutex->idName,mutexName);
-	/*
-	print_string("Retornando: ");
-	print_int(i);
-	nextLine();
-	*/
 	return i;
 }
 
@@ -62,7 +56,7 @@ int getMutexByName(char * mutexName){
 	int i;
 	
 	for(i = 0; i < MAX_MUTEX_SLOT; i++){
-		if(strcmp(allMutex[i]->idName,mutexName))
+		if(strcmp(kernelHeader->allMutex[i].idName,mutexName))
 			break;
 	}
 
@@ -78,7 +72,7 @@ void freeMutex(int index){
 	if(index >= MAX_QUEUED_PROCESS)
 		return;
 
-	p_mutex mutex = allMutex[index];
+	p_mutex mutex = &kernelHeader->allMutex[index];
 	mutex->avaiable = true;
 	mutex->mutexValue = true;
 
@@ -111,7 +105,7 @@ void wait(int index){
 */
 
 int wait(int index){
-	p_mutex mutex = allMutex[index];
+	p_mutex mutex = &kernelHeader->allMutex[index];
 
 	if(mutex->mutexValue == true){
 		mutex->mutexValue = false;
@@ -131,7 +125,6 @@ int wait(int index){
 		mutex->mutexValue = false;
 		return SUCCESFUL;
 	}else{
-		print_string("Blocking");
 		blockProcess(getCurrentPid());
 		return LOCK;
 	}
@@ -158,7 +151,7 @@ void signal(int index){
 */
 
 int signal(int index){
-	p_mutex mutex = allMutex[index];
+	p_mutex mutex = &kernelHeader->allMutex[index];
 
 	if(mutex->mutexValue == false){
 		mutex->mutexValue = true;

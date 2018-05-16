@@ -26,20 +26,28 @@ p_heapPage findAvaiableHeapPage(p_heapPage, int);
 /*Returns a void * pointer in a heap page that has X bytes free of memory*/
 void * findFreePointer(p_heapPage);
 
+/*Shows vital information of scheduling and OS modifications*/
 void printHeaderInfo();
 
+/*Moves all the array one position to left*/
 void moveFreeArray(int * freeArray);
 
+/*Release all kernel structs use for scheduling, memory managment and IPC*/
 void releaseStructs(ProcessSlot * slot);
 
+/*Release struct used for scheduling*/
 void releaseProcessSlot(ProcessSlot * slot);
 
+/*Release struct used for memory managment of a process*/
 void releaseProcessHeap(ProcessSlot * slot);
 
+/*Release all structs used for memory managment of a process*/
 void releaseHeapStruct(p_heapPage heap);
 
+/*Release struct used for IPC of a process*/
 void releasePipeSlot(ProcessSlot * slot);
 
+/*Release all structs used for IPC of a process*/
 void releasePipeStruct(p_pipe pipe);
 
 

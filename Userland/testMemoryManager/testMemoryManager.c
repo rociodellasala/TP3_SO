@@ -7,9 +7,8 @@
 
 extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
-static void * firstPage = (void *)0x67000;
-static void * secondPage = (void *)0x68000;
-
+static void * firstPage;
+static void * secondPage;
 
 int main() {
 	int firstAmount;
@@ -28,6 +27,7 @@ int main() {
 
 	/* First test, reserve memory for first pointer of the first program of All userland */
 	firstStringPointer = whenAskedForMemoryFirstPointer(&firstAmount);
+	firstPage = firstStringPointer;
 	thenMemoryIsReserved(firstStringPointer);
 	
 
@@ -43,6 +43,7 @@ int main() {
 	Check that all pointers are not equal
 	Check that third pointer starts at second page of user heap */
 	thirdStringPointer = whenAskedForMemoryThirdPointer(&thirdAmount,firstAmount,secondAmount);
+	secondPage = thirdStringPointer;
 	thenAllPointersAreNotEqual(firstStringPointer, secondStringPointer, thirdStringPointer);
 	thenThirdPointerStartsWhereItShould(thirdStringPointer);
 
@@ -63,10 +64,6 @@ int main() {
 
 void printStartTestMessage(){
 	printf("----Welcome to the test of memory allocation in a single process----\n\n");
-	printf("As this is the first program to reserve memory we know that the ''program's heap'' starts at 0x67000\n\n");
-	printf("First page: 0x67000\n");
-	printf("Second page: 0x68000\n");
-	printf("Third page: 0x69000\n\n");
 }
 
 void * whenAskedForMemoryFirstPointer(int * firstAmount){

@@ -79,6 +79,7 @@ p_pipe searchPipeByPID(ProcessSlot * callingProcessSlot, int pipePID){
 
 
 void printPipeInfo(p_pipe pipe){
+	int pid2 = pipe->processTwoPID;
 	nextLine();
 	print_string("Pipe information:");
 	nextLine();
@@ -88,7 +89,7 @@ void printPipeInfo(p_pipe pipe){
 	print_string("PID 1: ");
 	print_int(pipe->processOnePID);
 	nextLine();
-	int pid2 = pipe->processTwoPID;
+	
 	print_string("PID 2: ");
 	if(pid2 < 0){
 		print_string("-");

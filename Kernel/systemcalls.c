@@ -81,25 +81,19 @@ int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r
 		createProcess(testMemoryManager, process);
 	} else if(strcmp(process,"processWrite")){
 		createProcess(processWrite, process);
-	} else if(strcmp(process,"processWrite&")){
-		createProcess(processWrite, process);
-	}  else if(strcmp(process,"background")){
+	} else if(strcmp(process,"background")){
 		createProcess(background, process);
 	} else if(strcmp(process,"background&")){
 		createProcess(background, process);
-	}else if(strcmp(process,"processReadAndWrite")){
+	} else if(strcmp(process,"processReadAndWrite")){
 		createProcess(processReadAndWrite, process);
-	}else if(strcmp(process,"processReadAndWrite&")){
-		createProcess(processReadAndWrite, process);
-	}else if(strcmp(process,"processWriteAndRead&")){
+	} else if(strcmp(process,"processWriteAndRead&")){
 		createProcess(processWriteAndRead, process);
-	}else if(strcmp(process,"processWriteAndRead")){
+	} else if(strcmp(process,"processWriteAndRead")){
 		createProcess(processWriteAndRead, process);
-	}else if(strcmp(process,"producer")){
+	} else if(strcmp(process,"producer")){
 		createProcess(producer, process);
-	}else if(strcmp(process,"producer&")){
-		createProcess(producer, process);
-	}else if(strcmp(process,"consumer&")){
+	} else if(strcmp(process,"consumer&")){
 		createProcess(consumer, process);
 	} else
 		return -1;
@@ -167,9 +161,9 @@ qword sys_getPID(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
 qword sys_getMutex(qword mutexName, qword rdx, qword rcx, qword r8, qword r9){
 	int index;
 
-	index = getMutexByName(mutexName);
+	index = getMutexByName((char *) mutexName);
 	if(index == INVALID_INDEX)
-		index = getFreeMutex(mutexName);
+		index = getFreeMutex((char *) mutexName);
 
 	return index;
 }

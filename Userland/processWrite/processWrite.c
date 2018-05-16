@@ -10,7 +10,6 @@ int main (void){
 	char * message;
 	char * message2;
 
-	clear_screen();
 	PID = pipe("processRead");
 	message = "Hola llegue";
 	message2 = "hola mundillo";

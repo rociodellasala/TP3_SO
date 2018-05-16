@@ -18,8 +18,8 @@
 #define LOCKED 4
 #define FINISHED 5
 
-#define MAX_PROCESS_SLOT 100
-#define MAX_MUTEX_SLOT 200
+#define MAX_PROCESS_SLOT 50
+#define MAX_MUTEX_SLOT 100
 #define MAX_PIPES 10
 #define MAX_HEAP_SLOT 20
 #define MAX_FREE 10
@@ -86,13 +86,11 @@ typedef struct ProcessSlot{
 }ProcessSlot;
 
 typedef struct kernelHeapHeader{
-  void * startingAddress;
   int pages;
   int lastProcessSlot;
   int lastProcessSlotFree[MAX_FREE];
   ProcessSlot allProcessSlots[MAX_PROCESS_SLOT];
   int lastMutexSlot;
-  int lastMutexSlotFree[MAX_FREE];
   s_mutex allMutex[MAX_MUTEX_SLOT];
   int lastPipeSlot;
   int lastPipeSlotFree[MAX_FREE];

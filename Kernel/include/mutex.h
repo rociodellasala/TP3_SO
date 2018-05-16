@@ -30,4 +30,6 @@ void removeFromQueue(int * queue);
 
 void addToQueue(int * queue);
 
+void printQueue(int * queue);
+
 #endif

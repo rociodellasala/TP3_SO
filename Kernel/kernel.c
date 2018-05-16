@@ -42,14 +42,22 @@ void * getStackBase(){
 
 void * initializeKernelBinary(){
 	void * moduleAddresses[] = {shell, linearGraph, parabolicGraph, processRead, 
-		testMemoryManager, processWrite, background,processReadAndWrite,processWriteAndRead, producer, consumer};
+		testMemoryManager, processWrite, background,processReadAndWrite,processWriteAndRead, producer, consumer,};
 	loadModules(&endOfKernelBinary, moduleAddresses);
 	clearBSS(&bss, &endOfKernel - &bss);
 	return getStackBase();
 }
 
 void initializeKernelStack(){
-	kernelStack = (void *) allocPage();
+	kernelStack = (void *) allocPage(PAGE_SIZE * 2);
+}
+
+void initializeKernelMemory(){
+	allocPage(20 * PAGE_SIZE);
+}
+
+void reserveMemoryForMemoryManager(){
+	allocPage(sizeof(memoryManager));
 }
 
 int main(){
@@ -60,10 +68,11 @@ int main(){
 	_sti();
 
 	initializeMemoryManager();
+	initializeKernelMemory();
 	initializeKernelStack();
+	reserveMemoryForMemoryManager();
 	initializeKernelHeap();
 	initiliazeMutexes();
-
 	startProcess(shell, "shell");
 	return 0;
 }

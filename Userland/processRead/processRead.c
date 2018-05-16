@@ -39,7 +39,7 @@ int main (void){
 
 	start = 0;
 	do{
-		printf("\nTo finilize the test please press 1 :");
+		printf("\nTo finilize the test please press 1 : ");
 		getNum(&start);
 	}while(start != 1);
 	clear_screen();

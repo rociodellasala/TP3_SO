@@ -89,8 +89,6 @@ int getCurrentPid(){
 void removeFinishedProcess() {
 	ProcessSlot * aux;
 	ProcessSlot * prev;
-	int i;
-	int pipeLastIndex;
 
 	if(tableProcess->process.status == FINISHED){
 		releasePage(tableProcess->process);
@@ -101,13 +99,11 @@ void removeFinishedProcess() {
 
 	aux = tableProcess->next;
 	prev = tableProcess;
-	
 	while(aux != tableProcess){
 		if(aux->process.status == FINISHED) {
 			if(lastProcess == aux)
 				lastProcess = prev;
 			
-			pipeLastIndex = aux->process.pipeIndex;
 			releasePage(aux->process);
 			releaseStructs(aux);
 			prev->next = aux->next;
@@ -142,6 +138,7 @@ void removeProcess(int pid){
 	if(pid == 0){
 		exitMessage();
 		currentProcess = lastProcess = tableProcess = NULL;
+		while(1);
 		return;
 	}
 	
@@ -166,15 +163,18 @@ void removeProcess(int pid){
 	if(slot->process.foreground == FOREGROUND)
 	print_string("Restaurando SHELL - Presione ENTER");
 	
+	
 	restoreContext();
 }
 
 void removeProcessFromTerminal(int pid){
 	ProcessSlot * slot;
 
+	slot = getProcessFromPid(pid);
 	if(pid == 0){
 		exitMessage();
 		currentProcess = lastProcess = tableProcess = NULL;
+		while(1);
 		return;
 	}
 
@@ -187,7 +187,7 @@ void removeProcessFromTerminal(int pid){
 		return;
 	}
 
-	slot = getProcessFromPid(pid);
+	
 	
 	if(slot->process.foreground == FOREGROUND)
 		allProcessForeground--;
@@ -202,13 +202,17 @@ void removeProcessFromTerminal(int pid){
 
 void blockProcess(int pid){
 	ProcessSlot * p = getProcessFromPid(pid);
-	p->process.status = LOCKED;
-	numberOfTicks = QUANTUM;
+	if(p != NULL){
+		p->process.status = LOCKED;
+		numberOfTicks = QUANTUM;
+	}
+
 	return;
 }
 
 void unblockProcess(int pid){
 	ProcessSlot * p = getProcessFromPid(pid);
-	p->process.status = READY;
+	if(p != NULL)
+		p->process.status = READY;
 	return;
 }

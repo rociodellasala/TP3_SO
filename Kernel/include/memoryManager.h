@@ -2,48 +2,69 @@
 #define MEMORYMANAGER_H
 
 #include "structs.h"
+#include "types.h"
 
 #define FREEPAGES 300
 #define PAGEQUANTITY 262144 /* 1GB divided into 4KB */
 
-struct memoryPage{
-     void * startingMemory;
-     int occupied;
-};
+#define PAGE_SIZE 4096
+#define MAX_NODES 2049
+#define MAX_FREE_NODES 300
+#define INVALID_INDEX -1
 
-struct memoryFreeStack{
-     void * memoryFree[FREEPAGES];
-     int size;
-};
+typedef struct s_node * p_node;
+
+typedef struct s_node{
+	int size;
+	boolean avaiable;
+	void * address;
+	p_node left;
+	p_node right;
+}s_node;
+
+
+typedef struct memoryManager
+{
+	int lastIndex;
+	s_node nodes[MAX_NODES];
+	int freeNodes[MAX_FREE_NODES];
+}memoryManager;
 
 /* Initialize memory manager by splitting the memory in pages of 4KB and initialize stack for released pages */ 
 void initializeMemoryManager();
 
-/*  Splits memory in pages of 4KB */
-void splitMemory();
+/*Creates the struct of a s_node*/
+s_node createNode(void * address, int size);
 
-/*Initialize all the pages that are occupied by kernel and Modules*/
-void markOccupiedPages();
+/*Adds node to memory manager and returns it's pointer*/
+p_node addNode(void * address, int size);
 
-/*Just prints all the starting addresses of the pages*/
-void printMemoryPages();
+/*Moves all the array one position*/
+void moveFreeArrayNodes(int * array);
 
-/*Just prints all the starting addresses of the released pages*/
-void printFreePages();
+/* Returns an unused partition */
+void * allocPage(int sizeToAlloc);
 
-/* Returns an unused page */
-void * allocPage();
+/*Search for a free partition recursively*/
+void * recursiveAlloc(int sizeToAlloc, p_node currentNode);
 
-/* Search for a free page */
-void * searchForFreePage();
+/*Return true if currentNode has sons, otherwise returns false*/
+boolean hasSons(p_node currentNode);
 
-/* Puts the released page in stack for optimization */
-void releasePage(Process);
+/*Transforms size into a multiple of 2*/
+int transformSize(int size);
 
-/*Release the especefic page that was reserved for user program stack memory*/
-void releaseStack(void *);
+/*Release all pages reserved for a program's heap and stack*/
+void releasePage(Process process);
 
-/*Release all the pages reserved for the heap memory of the user program*/
-void recursiveRealeseHeap();
+/*Search for node location*/
+boolean recursiveRelease(p_node currentNode,void * address, int size);
+
+/*Search for all heap's of user's program*/
+void recursiveSearchHeap(p_heapPage heap);
+
+/*Add node Index to array of free nodes, to reuse it's structure*/
+void addToFreeNodes(p_node currentNode);
+
 
 #endif

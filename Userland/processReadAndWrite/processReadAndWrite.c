@@ -10,8 +10,6 @@ int main (void){
 	char * message;
 	int pidPipe2;
 	
-	clear_screen();	
-	printf("Comenzando processReadAndWrite\n");
 	pidPipe1 = pipe("processWriteAndRead");
 	message = malloc(20);
 	read(pidPipe1,message,17);

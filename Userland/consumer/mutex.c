@@ -5,23 +5,23 @@ extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r
 
 
 int mutex(char * mutexName){
-	return int80(20,mutexName,0,0,0,0);
+	return int80(20,(qword) mutexName,0,0,0,0);
 }
 
 void wait(int index){
 	int flag;
 	do{
-		flag = int80(21,index,0,0,0,0);
+		flag = int80(21,(qword) index,0,0,0,0);
 	}while(flag == LOCK);
 }
 
 void signal(int index){
 	int flag;
 	do{
-		flag = int80(22,index,0,0,0,0);
+		flag = int80(22,(qword) index,0,0,0,0);
 	}while(flag == LOCK);
 }
 
 void freeMutex(index){
-	int80(23,index,0,0,0,0);
+	int80(23,(qword) index,0,0,0,0);
 }

@@ -68,7 +68,7 @@ int createProcess(void * entryPoint, char * nameProcess){
 		newProcess.pipes[i] = NULL;
 
 	newProcess.pipeIndex = 0;
-	newProcess.baseStack = allocPage();
+	newProcess.baseStack = allocPage(PAGE_SIZE);
 	newProcess.userStack = fillStackFrame(entryPoint, newProcess.baseStack);
 	addProcessToPCB(newProcess);
 	return newProcess.PID;

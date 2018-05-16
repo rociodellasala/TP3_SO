@@ -29,6 +29,7 @@ int main (void){
 		getNum(&exits);
 	}while(exits != 1);
 
+	clear_screen();
 	exitProcess();
 	return 0;
 }

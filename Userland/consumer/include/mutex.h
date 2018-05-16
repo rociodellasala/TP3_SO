@@ -10,6 +10,6 @@ void wait(int index);
 
 void signal(int index);
 
-void freeMutex(index);
+void freeMutex(int index);
 
 #endif

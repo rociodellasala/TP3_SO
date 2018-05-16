@@ -125,11 +125,11 @@ int call_command(char * function, char * parameter){
 		return 0;	
 	}else if(strcmp(function,"header")){
 		printHeader();
+		return 0;
 	} else if(strcmp(function, "exit")){
-		return 0;	/*cambiar*/
-	} else
-		return 1;
-	
+		return 2;
+	}
+	return 1;
 }
 
 void printHelp(){

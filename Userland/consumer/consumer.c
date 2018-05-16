@@ -3,18 +3,22 @@
 #include "mutex.h"
 #include "types.h"
 
-#define PAYLOAD 20
+#define PAYLOADS 20
 
 extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
 int main (void){
+	int payload;
+	int mutexPID;
+	int iteration;
+	int flag;
+
 	clear_screen();
 
-
-	int payload = PAYLOAD;
-	int mutexPID = mutex("ProdCons");
-	int iteration = 1;
-	int flag = -1;
+	payload = PAYLOADS;
+	mutexPID = mutex("ProdCons");
+	iteration = 1;
+	flag = -1;
 
 	printf("Starting consumer with mutex PID: %d \n", mutexPID);
 
@@ -34,6 +38,7 @@ int main (void){
 	}while(flag == -1);
 
 	freeMutex(mutexPID);
+	clear_screen();
 	exitProcess();
 	return 0;
 }

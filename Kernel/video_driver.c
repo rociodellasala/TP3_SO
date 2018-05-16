@@ -64,17 +64,15 @@ void start_video_mode(){
  	currColor = 0xFFFFFF;
 }
 
-void draw_pixel(int x, int y){
-	if(currentProcess->process.foreground == FOREGROUND){		
+void draw_pixel(int x, int y){		
 		unsigned pos = x * pixel_width + y * pitch;
 	    	screen[pos] = currColor & 255;              
 	    	screen[pos + 1] = (currColor >> 8) & 255;   
 	    	screen[pos + 2] = (currColor >> 16) & 255; 
-	}
+	
 }
 
-void draw_char(unsigned char c, int x, int y){
-	if(currentProcess->process.foreground == FOREGROUND){		
+void draw_char(unsigned char c, int x, int y){	
 		int cx, cy;
 		int mask[8] = {1, 2, 4, 8, 16, 32, 64, 128};
 		unsigned char * glyph = font[c - 32];
@@ -86,22 +84,20 @@ void draw_char(unsigned char c, int x, int y){
 				}
 			}
 		}
-	}
+	
 }
 
-void draw_string(char * str, int x, int y){
-	if(currentProcess->process.foreground == FOREGROUND){		
+void draw_string(char * str, int x, int y){		
 		int i = 0;
 
 		while(str[i] != '\0'){
 			draw_char(str[i], x + (10 * i), y);
 	   	 	i++;
 		}
-	}
+	
 }
 
 void draw_filled_rectangle(int x1, int y1, int x2, int y2, int color){
-	if(currentProcess->process.foreground == FOREGROUND){	
 		int i, j;
 		byte blue = color & 255;
 		byte green = (color >> 8 ) & 255;
@@ -116,11 +112,10 @@ void draw_filled_rectangle(int x1, int y1, int x2, int y2, int color){
 		    draw[pixel_width * j + 2] = red;
 		  } draw += pitch;
 		}
-	}
+	
 }
 
-void clear_screen(){
-	if(currentProcess->process.foreground == FOREGROUND){  	
+void clear_screen(){ 	
 		int i, j;
 	 	byte * draw = screen;
 	  	buffer_position = 0;
@@ -132,11 +127,10 @@ void clear_screen(){
 		    draw[pixel_width * j + 2 ] = 0;
 		  } draw += pitch;
 		}
-	}
+	
 }
 
 void print_char(unsigned char c){
-  	if(currentProcess->process.foreground == FOREGROUND){
   		if(c == '\n'){
     		nextLine();
     		return;
@@ -151,7 +145,7 @@ void print_char(unsigned char c){
 	  	}
 	  
 		buffer_position++;
-	}
+	
 }
 
 void print_string(const char * str){
@@ -165,15 +159,14 @@ void print_string(const char * str){
 	}
 }
 
-void delete(){
-	if(currentProcess->process.foreground == FOREGROUND){	  	
+void delete(){  	
 		if (buffer_position > 0){
 			int x = ((buffer_position - 1) % buffer_max_per_line) * FONT_WIDTH;
 		   	int y = ((buffer_position - 1) / buffer_max_per_line) * FONT_HEIGHT;
 		    draw_filled_rectangle(x, y, x + FONT_WIDTH, y + FONT_HEIGHT, 0x000000);
 		    buffer_position--;
 	  	}
-	}
+	
 }
 
 void deleteLine(int line){
@@ -181,20 +174,17 @@ void deleteLine(int line){
   	buffer_position -= (buffer_position % buffer_max_per_line);
 }
 
-void nextLine(){
-	if(currentProcess->process.foreground == FOREGROUND){	
-		if(currentProcess->process.foreground == FOREGROUND){	
+void nextLine(){		
 			if (buffer_position / buffer_max_per_line == (buffer_max_per_column - 3)){
 				move_screen();
 		  	} else {
 				buffer_position += buffer_max_per_line - buffer_position % buffer_max_per_line;
 			}
-		}
-	}
+		
+	
 }
 
-void move_screen(){
-	if(currentProcess->process.foreground == FOREGROUND){		
+void move_screen(){		
 		int i;
 		int pos1 = 0;
 	 	int pos2 = FONT_HEIGHT * pitch;
@@ -208,15 +198,14 @@ void move_screen(){
 	 	}
 
 		deleteLine(buffer_position / buffer_max_per_line);
-	}
+	
 }
 
 void changeFontColor(int color){
   	currColor = color;
 }
 
-void print_int(qword n){
-	if(currentProcess->process.foreground == FOREGROUND){	
+void print_int(qword n){	
 		char s[16] = {0};
 		int digits = countDigits(n) - 1;
 
@@ -227,7 +216,7 @@ void print_int(qword n){
 		}
 
 		print_string(s);
-	}
+	
 }
 
 int countDigits(qword n){

@@ -13,46 +13,30 @@ extern ProcessSlot * tableProcess;
 kernelHeapHeader * kernelHeader;
 
 void initializeKernelHeap(){
-	kernelHeapHeader kernelHeaderStruct;
 	int heapSize = sizeof(kernelHeapHeader);
 	int i;
-
-	kernelHeaderStruct.startingAddress = allocPage();
-	kernelHeaderStruct.pages = 1;
-	heapSize -= PAGE_SIZE;
-
-	while(heapSize > 0){
-		allocPage();
-		heapSize -= PAGE_SIZE;
-		kernelHeaderStruct.pages++;
-	}
-
+	kernelHeader = allocPage(heapSize);
 	
 	for(i = 0; i < MAX_FREE; i++){
-		kernelHeaderStruct.lastProcessSlotFree[i] = INVALID_LAST_FREE_SLOT;
-		kernelHeaderStruct.lastMutexSlotFree[i] = INVALID_LAST_FREE_SLOT;
-		kernelHeaderStruct.lastPipeSlotFree[i] = INVALID_LAST_FREE_SLOT;
-		kernelHeaderStruct.lastHeapSlotFree[i] = INVALID_LAST_FREE_SLOT;
+		kernelHeader->lastProcessSlotFree[i] = INVALID_LAST_FREE_SLOT;
+		kernelHeader->lastPipeSlotFree[i] = INVALID_LAST_FREE_SLOT;
+		kernelHeader->lastHeapSlotFree[i] = INVALID_LAST_FREE_SLOT;
 	}
 
-	kernelHeaderStruct.lastProcessSlot = 0;
-	kernelHeaderStruct.lastMutexSlot = 0;
-	kernelHeaderStruct.lastPipeSlot = 0;
-	kernelHeaderStruct.lastHeapSlot = 0;
-	
-	kernelHeader = memcpy(kernelHeaderStruct.startingAddress,&kernelHeaderStruct,sizeof(kernelHeapHeader));
+	kernelHeader->lastProcessSlot = 0;
+	kernelHeader->lastMutexSlot = 0;
+	kernelHeader->lastPipeSlot = 0;
+	kernelHeader->lastHeapSlot = 0;
+
+
 	return;
 }
 
 
-
+/*Funcion de debuggeo, no prestarle atencion*/
 void printHeaderInfo(){
 	int i;
 	nextLine();
-	print_string("Kernel heap address: ");
-	printHex(kernelHeader->startingAddress);
-	print_string("	Amount of pages: ");
-	print_int(kernelHeader->pages);
 	nextLine();
 	nextLine();
 	print_string("Procesos: ");
@@ -103,11 +87,6 @@ void printHeaderInfo(){
 	print_string("User heap's: ");
 	nextLine();
 	nextLine();
-		for(i = 0; i < kernelHeader->lastHeapSlot; i++){
-			print_string("Heap page: 0x");
-			printHex(kernelHeader->allHeapSlots[i].currentPage);
-			nextLine();
-	}
 	print_string("Slots de heaps libres: ");
 	nextLine();
 	for(i = 0; i < MAX_FREE; i++){
@@ -128,12 +107,11 @@ p_heapPage createHeapPage(){
 	s_heapPage newHeap;
 	p_heapPage newHeapPointer;
 
-	newHeap.currentPage = allocPage();
+	newHeap.currentPage = allocPage(PAGE_SIZE);
 	newHeap.occupiedBytes = 0;
 	newHeap.nextHeapPage = NULL;
 	newHeap.freeBytes = PAGE_SIZE;
 	newHeapPointer = &newHeap;
-	
 	sizeNewHeapStruct = sizeof(s_heapPage);
 	kernelHeapPage = findAvaiableHeapKernelPage(sizeNewHeapStruct);
 	newHeapPointer = memcpy(kernelHeapPage, newHeapPointer, sizeNewHeapStruct);
@@ -145,7 +123,6 @@ void * findAvaiableHeapKernelPage(int size){
 	int sizeProcesSlot = sizeof(ProcessSlot);
 	int sizePipe = sizeof(s_pipe);
 	int sizeMutex = sizeof(s_mutex);
-	int sizeHeap = sizeof(s_heapPage);
 	if(size == sizeProcesSlot){
 		if(kernelHeader->lastProcessSlotFree[0] == INVALID_LAST_FREE_SLOT)
 			return (void *) &kernelHeader->allProcessSlots[kernelHeader->lastProcessSlot++];
@@ -163,16 +140,11 @@ void * findAvaiableHeapKernelPage(int size){
 			return pointerToReturn;
 		}
 	}else if(size == sizeMutex){
-		if(kernelHeader->lastMutexSlotFree[0] == INVALID_LAST_FREE_SLOT)
 			return (void *) &kernelHeader->allMutex[kernelHeader->lastMutexSlot++];
-		else{
-			pointerToReturn = (void *) &kernelHeader->allMutex[kernelHeader->lastMutexSlotFree[0]];
-			moveFreeArray(kernelHeader->lastMutexSlotFree);
-			return pointerToReturn;
-		}
 	}else{
-		if(kernelHeader->lastHeapSlotFree[0] == INVALID_LAST_FREE_SLOT)
+		if(kernelHeader->lastHeapSlotFree[0] == INVALID_LAST_FREE_SLOT){
 			return (void *) &kernelHeader->allHeapSlots[kernelHeader->lastHeapSlot++];
+		}
 		else{
 			pointerToReturn = (void *) &kernelHeader->allHeapSlots[kernelHeader->lastHeapSlotFree[0]];
 			moveFreeArray(kernelHeader->lastHeapSlotFree);

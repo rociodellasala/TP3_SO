@@ -68,11 +68,11 @@ int getMutexByName(char * mutexName){
 
 void freeMutex(int index){
 	int i;
-
+	p_mutex mutex = &kernelHeader->allMutex[index];
+	
 	if(index >= MAX_QUEUED_PROCESS)
 		return;
 
-	p_mutex mutex = &kernelHeader->allMutex[index];
 	mutex->avaiable = true;
 	mutex->mutexValue = true;
 
@@ -82,27 +82,6 @@ void freeMutex(int index){
 	}
 	return;
 }
-
-/*
-
-void wait(int index){
-	p_mutex mutex = allMutex[index];
-	int nextPid;
-
-	if(mutex->mutexValue == false){
-		addToQueue(mutex->pidQueue);
-		do{
-			blockProcess(getCurrentPid());
-			nextPid = mutex->pidQueue[0];
-		}while(nextPid != getCurrentPid() || mutex->mutexValue != true);
-		removeFromQueue(mutex->pidQueue);
-	}
-	
-
-	mutex->mutexValue = false;
-}
-
-*/
 
 int wait(int index){
 	p_mutex mutex = &kernelHeader->allMutex[index];
@@ -129,26 +108,6 @@ int wait(int index){
 		return LOCK;
 	}
 }
-
-/*
-
-void signal(int index){
-	p_mutex mutex = allMutex[index];
-	int nextPid;
-
-	if(mutex->mutexValue == true){
-		addToQueue(mutex->pidQueue);
-		do{
-			print_string("Bloquenado programa");
-			nextLine();
-			blockProcess(getCurrentPid());
-			nextPid = mutex->pidQueue[0];
-		}while(nextPid != getCurrentPid() || mutex->mutexValue != false);
-		removeFromQueue(mutex->pidQueue);
-	}
-	mutex->mutexValue = true;
-}
-*/
 
 int signal(int index){
 	p_mutex mutex = &kernelHeader->allMutex[index];
@@ -180,7 +139,7 @@ void addToQueue(int * queue){
 	int i;
 
 	for(i = 0; i < MAX_QUEUED_PROCESS; i++){
-		if(queue[i] != INVALID_PROCESS){
+		if(queue[i] == INVALID_PROCESS){
 			queue[i] = getCurrentPid();
 			break;
 		}

@@ -129,19 +129,26 @@ void printPipeInfo(p_pipe pipe){
 
 int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID){
 	int messageSentLenght = strlen(messageSent);
+	int mutexLock;
 	if(messageSentLenght > MAX_MESSAGE_LENGHT - pipe->messageIndex)
 		return -1;
 
 	if(pipe->processOnePID == callingProcessPID && pipe->processOneWrite == true){
-		wait(pipe->mutex);
+		mutexLock = wait(pipe->mutex);
+		if(mutexLock == LOCK)
+			return LOCK;
 		strcpy((pipe->message) + pipe->messageIndex,messageSent);
 		pipe->messageIndex += messageSentLenght;
 		signal(pipe->mutex);
+		unblockProcess(pipe->processTwoPID);
 	} else if(pipe->processTwoPID == callingProcessPID && pipe->processTwoWrite == true){
-		wait(pipe->mutex);
+		mutexLock = wait(pipe->mutex);
+		if(mutexLock == LOCK)
+			return LOCK;
 		strcpy((pipe->message) + pipe->messageIndex,messageSent);
 		pipe->messageIndex += messageSentLenght;
 		signal(pipe->mutex);
+		unblockProcess(pipe->processOnePID);
 	} 
 
 	return msgLenght;
@@ -149,14 +156,17 @@ int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID){
 
 int read(p_pipe pipe,char * messageDestination,int charsToRead,int callingProcessPID){
 	char aux[MAX_MESSAGE_LENGHT];
+	int mutexLock;
 	if(charsToRead > MAX_MESSAGE_LENGHT)
 		return 0;
 	if(pipe->processOnePID == callingProcessPID && pipe->processOneRead == true){
 		if(pipe->messageIndex == 0){
 			blockProcess(callingProcessPID);
-			return -1;
+			return LOCK;
 		}
-		wait(pipe->mutex);
+		mutexLock = wait(pipe->mutex);
+		if(mutexLock == LOCK)
+			return LOCK;
 		strncpy(messageDestination,pipe->message,charsToRead);
 		strcpy(aux,pipe->message + charsToRead);
 		memset(pipe->message,0,MAX_MESSAGE_LENGHT);
@@ -168,7 +178,9 @@ int read(p_pipe pipe,char * messageDestination,int charsToRead,int callingProces
 			blockProcess(callingProcessPID);
 			return -1;
 		}
-		wait(pipe->mutex);
+		mutexLock = wait(pipe->mutex);
+		if(mutexLock == LOCK)
+			return LOCK;
 		strncpy(messageDestination,pipe->message,charsToRead);
 		strcpy(aux,pipe->message + charsToRead);
 		memset(pipe->message,0,MAX_MESSAGE_LENGHT);

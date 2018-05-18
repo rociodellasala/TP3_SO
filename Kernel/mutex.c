@@ -87,8 +87,20 @@ int wait(int index){
 	p_mutex mutex = &kernelHeader->allMutex[index];
 
 	if(mutex->mutexValue == true){
-		mutex->mutexValue = false;
-		return SUCCESFUL;
+		if(mutex->pidQueueWait[0] == getCurrentPid() || mutex->pidQueueWait[0] == INVALID_INDEX){
+			mutex->mutexValue = false;
+			removeFromQueue(mutex->pidQueueWait);
+			unblockProcess(mutex->pidQueueSignal[0]);
+			return SUCCESFUL;
+		}else{
+			if(isInQueue(mutex->pidQueueWait)){
+				blockProcess(getCurrentPid());
+			}else{
+				addToQueue(mutex->pidQueueWait);
+				blockProcess(getCurrentPid());
+			}
+		return LOCK;
+		}
 	}
 
 	if(mutex->mutexValue == false){
@@ -99,13 +111,6 @@ int wait(int index){
 			blockProcess(getCurrentPid());
 		}
 		return LOCK;
-	}else if(mutex->pidQueueWait[0] == getCurrentPid()){
-		removeFromQueue(mutex->pidQueueWait);
-		mutex->mutexValue = false;
-		return SUCCESFUL;
-	}else{
-		blockProcess(getCurrentPid());
-		return LOCK;
 	}
 }
 
@@ -113,8 +118,20 @@ int signal(int index){
 	p_mutex mutex = &kernelHeader->allMutex[index];
 
 	if(mutex->mutexValue == false){
-		mutex->mutexValue = true;
-		return SUCCESFUL;
+		if(mutex->pidQueueSignal[0] == getCurrentPid() || mutex->pidQueueSignal[0] == INVALID_INDEX){
+			mutex->mutexValue = true;
+			removeFromQueue(mutex->pidQueueSignal);
+			unblockProcess(mutex->pidQueueWait[0]);
+			return SUCCESFUL;
+		}else{
+			if(isInQueue(mutex->pidQueueSignal)){
+				blockProcess(getCurrentPid());
+			}else{
+				addToQueue(mutex->pidQueueSignal);
+				blockProcess(getCurrentPid());
+			}
+		return LOCK;
+		}
 	}
 
 	if(mutex->mutexValue == true){
@@ -124,13 +141,6 @@ int signal(int index){
 			addToQueue(mutex->pidQueueSignal);
 			blockProcess(getCurrentPid());
 		}
-		return LOCK;
-	}else if(mutex->pidQueueSignal[0] == getCurrentPid()){
-		removeFromQueue(mutex->pidQueueSignal);
-		mutex->mutexValue = true;
-		return SUCCESFUL;
-	}else{
-		blockProcess(getCurrentPid());
 		return LOCK;
 	}
 }

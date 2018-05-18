@@ -7,8 +7,8 @@
 
 #define INVALID_PROCESS -1
 #define INVALID_INDEX -1
-#define LOCK -1;
-#define SUCCESFUL 0;
+#define LOCK -1
+#define SUCCESFUL 0
 
 /*Creates all the structs of mutexes*/
 void initiliazeMutexes();

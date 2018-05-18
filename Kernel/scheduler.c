@@ -56,12 +56,9 @@ void runScheduler(){
 	currentProcess = currentProcess->next;
 
 	while(currentProcess->process.status != READY){
-		if(currentProcess->process.status == LOCKED && currentProcess->process.PID != 0){
-			unblockProcess(currentProcess->process.PID);
-			break;
-		}
 		currentProcess = currentProcess->next;
 	}
+	
 	currentProcess->process.status = RUNNING;
 }
 
@@ -206,7 +203,6 @@ void blockProcess(int pid){
 		p->process.status = LOCKED;
 		numberOfTicks = QUANTUM;
 	}
-
 	return;
 }
 

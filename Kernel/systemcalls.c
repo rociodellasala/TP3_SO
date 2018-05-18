@@ -93,7 +93,9 @@ int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r
 		createProcess(processWriteAndRead, process);
 	} else if(strcmp(process,"producer")){
 		createProcess(producer, process);
-	} else if(strcmp(process,"consumer&")){
+	} else if(strcmp(process,"consumer")){
+		createProcess(consumer, process);
+	} else if(strcmp(process,"consumer")){
 		createProcess(consumer, process);
 	} else
 		return -1;

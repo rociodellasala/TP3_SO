@@ -35,7 +35,7 @@ int main (void){
 
 	while(1){
 		/*printf("Estoy consumiendo buffer con consumer: %d\n", consumer);*/
-        if (*index == 0) 
+        if (*index == 0 || *index < 0) 
         {
         	/*printf("El buffer esta vacio\n");*/
             wait(mutexConsumer);

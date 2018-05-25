@@ -32,7 +32,7 @@ s_node createNode(void * address, int size){
 	s_node newNode;
 
 	newNode.size = size;
-	newNode.avaiable = true;
+	newNode.state = EMPTY;
 	newNode.address = address;
 	newNode.left = NULL;
 	newNode.right = NULL;
@@ -78,28 +78,41 @@ void * allocPage(int sizeToAlloc){
 
 void * recursiveAlloc(int sizeToAlloc, p_node currentNode){
 	void * addressToReturn = NULL;
-	if(currentNode->avaiable == false)
+	if(currentNode->state == FULL)
 		return NULL;
 
 	if(hasSons(currentNode)){
 		addressToReturn = recursiveAlloc(sizeToAlloc,currentNode->left);
 		if(addressToReturn == NULL)
 			addressToReturn = recursiveAlloc(sizeToAlloc,currentNode->right);
-		if(currentNode->left->avaiable == false && currentNode->right->avaiable == false)
-			currentNode->avaiable = false;
+		updateNodeState(currentNode);
 		return addressToReturn;
 	}else{
 		if(currentNode->size < sizeToAlloc)
 			return NULL;
 		else if(currentNode->size / 2 >= sizeToAlloc){
-			currentNode->left = addNode(currentNode->address,currentNode->size / 2);
-			currentNode->right = addNode(currentNode->address + currentNode->size / 2,currentNode->size / 2);
+			splitBlock(currentNode);
 			return recursiveAlloc(sizeToAlloc,currentNode->left);
 		}else{
-			currentNode->avaiable = false;
+			currentNode->state = FULL;
 			return currentNode->address;
 		}
 	}
+}
+
+void updateNodeState(p_node currentNode){
+	if(currentNode->left->state == FULL && currentNode->right->state == FULL)
+		currentNode->state = FULL;
+	else if(currentNode->left->state == PARTIALLY || currentNode->right->state == PARTIALLY)
+		currentNode->state = PARTIALLY;
+	else
+		currentNode->state = EMPTY;
+}
+
+void splitBlock(p_node currentNode){
+	currentNode->left = addNode(currentNode->address,currentNode->size / 2);
+	currentNode->right = addNode(currentNode->address + currentNode->size / 2,currentNode->size / 2);
+	currentNode->state = PARTIALLY;
 }
 
 boolean hasSons(p_node currentNode){
@@ -110,17 +123,11 @@ boolean hasSons(p_node currentNode){
 }
 
 int transformSize(int size){
-	int module[22] = {1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,65536,131072,262144,524288,1048576,2097152};
-	int i;
+	int returnSize = 1;
 
-	for(i = 0; i < 21; i++){
-		if(module[i] == size)
-			return size;
-		else if(module[i] > size)
-			return module[i];
-	}
-
-	return size;
+	while(returnSize < size)
+		returnSize *= 2;
+	return returnSize;
 }
 
 void releasePage(Process process){
@@ -128,33 +135,27 @@ void releasePage(Process process){
 	recursiveSearchHeap(process.heap);
 }
 
-boolean recursiveRelease(p_node currentNode,void * address, int size){
-	boolean join = true;
-	if(currentNode == NULL)
-		return true;
 
-	if(! hasSons(currentNode) && (address != currentNode->address || size != currentNode->size))
-		return false;
+void recursiveRelease(p_node currentNode,void * address, int size){
 
-	if(! hasSons(currentNode) && address == currentNode->address && size == currentNode->size){
-		currentNode->avaiable = true;
-		return true;
-	}
+	if(hasSons(currentNode)){
+		if(address < currentNode->right->address)
+			recursiveRelease(currentNode->left,address,size);
+		else
+			recursiveRelease(currentNode->right,address,size);
+		updateNodeState(currentNode);
+		if(currentNode->state == EMPTY)
+			releaseSons(currentNode);
+	}else
+		currentNode->state = EMPTY;
+	return;
+}
 
-	if(address != currentNode->address || size != currentNode->size){
-		join = recursiveRelease(currentNode->left,address,size) & recursiveRelease(currentNode->right,address,size);
-		if(currentNode->left->avaiable == true || currentNode->right->avaiable == true)
-			currentNode->avaiable = true;
-		if(join == true){
-			addToFreeNodes(currentNode->left);
-			addToFreeNodes(currentNode->right);
-			currentNode->left = NULL;
-			currentNode->right = NULL;
-			currentNode->avaiable = true;
-		}
-		return join;
-	}
-	return false;
+void releaseSons(p_node currentNode){
+	addToFreeNodes(currentNode->left);
+	addToFreeNodes(currentNode->right);
+	currentNode->left = NULL;
+	currentNode->right = NULL;
 }
 
 void recursiveSearchHeap(p_heapPage heap){
@@ -182,4 +183,43 @@ void addToFreeNodes(p_node currentNode){
 	}
 
 	return;
+}
+
+
+void printTree(){
+	nextLine();
+	print_stringColor("                           ------------MEMORY INFORMATION STATE------------", "blue");
+	nextLine();
+	recursivePrint(&memoryManagerPointer->nodes[0],0);
+}
+
+void recursivePrint(p_node currentNode, int lines){
+	char * color;
+	if(currentNode == NULL)
+		return;
+	color = getColorByState(currentNode);
+	printLines(lines);
+	print_stringColor("STATE", color);
+	nextLine();
+	recursivePrint(currentNode->left, lines + 2);
+	recursivePrint(currentNode->right, lines + 2);
+}
+
+char * getColorByState(p_node currentNode){
+	if(currentNode->state == EMPTY)
+		return "green";
+	else if(currentNode->state == PARTIALLY)
+		return "yellow";
+	else
+		return "red";
+}
+
+void printLines(int lines){
+	int i;
+
+	for(i = 0; i < lines; i++){
+		print_string("  ");
+		if(i == lines - 1)
+			print_string("L");
+	}
 }

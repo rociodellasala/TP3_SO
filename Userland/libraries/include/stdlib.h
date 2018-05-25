@@ -43,6 +43,7 @@ void printHeader();
 /* Kill a program by pid */
 void killProgram(int pid);
 
-
+/* Call sys call to print memory tree information */
+void printMemoryInformation();
 
 #endif

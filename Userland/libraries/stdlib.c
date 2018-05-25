@@ -127,3 +127,7 @@ void printHeader(){
 void killProgram(int pid){
 	int80(25, pid, 0, 0, 0, 0);
 }
+
+void printMemoryInformation(){
+	int80(26, 0, 0, 0, 0, 0);
+}

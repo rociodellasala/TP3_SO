@@ -3,6 +3,7 @@
 #include "scheduler.h"
 #include "types.h"
 #include "video_driver.h"
+#include "string.h"
 
 #define FONT_WIDTH 10
 #define FONT_HEIGHT 16
@@ -64,19 +65,20 @@ void start_video_mode(){
  	currColor = 0xFFFFFF;
 }
 
-void draw_pixel(int x, int y){		
+void draw_pixel(int x, int y){
+	if(currentProcess->process.foreground == FOREGROUND){
 		unsigned pos = x * pixel_width + y * pitch;
 	    	screen[pos] = currColor & 255;              
 	    	screen[pos + 1] = (currColor >> 8) & 255;   
 	    	screen[pos + 2] = (currColor >> 16) & 255; 
-	
+	}
 }
 
 void draw_char(unsigned char c, int x, int y){	
-		int cx, cy;
-		int mask[8] = {1, 2, 4, 8, 16, 32, 64, 128};
-		unsigned char * glyph = font[c - 32];
-
+	int cx, cy;
+	int mask[8] = {1, 2, 4, 8, 16, 32, 64, 128};
+	unsigned char * glyph = font[c - 32];
+	if(currentProcess->process.foreground == FOREGROUND){
 		for(cy = 0; cy < 13; cy++){
 			for(cx = 0; cx < 8; cx++){
 				if(glyph[cy] & mask[cx]){
@@ -84,27 +86,29 @@ void draw_char(unsigned char c, int x, int y){
 				}
 			}
 		}
-	
+	}
 }
 
 void draw_string(char * str, int x, int y){		
-		int i = 0;
+	int i = 0;
 
+	if(currentProcess->process.foreground == FOREGROUND){
 		while(str[i] != '\0'){
 			draw_char(str[i], x + (10 * i), y);
 	   	 	i++;
 		}
-	
+	}
 }
 
 void draw_filled_rectangle(int x1, int y1, int x2, int y2, int color){
-		int i, j;
-		byte blue = color & 255;
-		byte green = (color >> 8 ) & 255;
-		byte red = (color >> 16) & 255;
-		int pos1 = x1 * pixel_width + y1 * pitch;
-		byte * draw = &screen[pos1];
+	int i, j;
+	byte blue = color & 255;
+	byte green = (color >> 8 ) & 255;
+	byte red = (color >> 16) & 255;
+	int pos1 = x1 * pixel_width + y1 * pitch;
+	byte * draw = &screen[pos1];
 
+	if(currentProcess->process.foreground == FOREGROUND){
 		for (i = 0; i <= y2 - y1; i++){
 		  for (j = 0 ;j <= x2 - x1; j++){
 		    draw[pixel_width * j] = blue;
@@ -112,14 +116,15 @@ void draw_filled_rectangle(int x1, int y1, int x2, int y2, int color){
 		    draw[pixel_width * j + 2] = red;
 		  } draw += pitch;
 		}
-	
+	}
 }
 
 void clear_screen(){ 	
-		int i, j;
-	 	byte * draw = screen;
-	  	buffer_position = 0;
+	int i, j;
+	byte * draw = screen;
+	buffer_position = 0;
 	
+	if(currentProcess->process.foreground == FOREGROUND){
 		for ( i = 0; i <= yres; i++){
 		  for( j = 0; j <= xres; j++){
 		    draw[pixel_width * j] = 0;
@@ -127,15 +132,16 @@ void clear_screen(){
 		    draw[pixel_width * j + 2 ] = 0;
 		  } draw += pitch;
 		}
-	
+	}
 }
 
 void print_char(unsigned char c){
+
+	if(currentProcess->process.foreground == FOREGROUND){
   		if(c == '\n'){
     		nextLine();
     		return;
   		}
-  
 		draw_char(c, (buffer_position % buffer_max_per_line) * FONT_WIDTH, 
 			(buffer_position / buffer_max_per_line) * FONT_HEIGHT);
 	  
@@ -145,7 +151,7 @@ void print_char(unsigned char c){
 	  	}
 	  
 		buffer_position++;
-	
+	}
 }
 
 void print_string(const char * str){
@@ -174,13 +180,14 @@ void deleteLine(int line){
   	buffer_position -= (buffer_position % buffer_max_per_line);
 }
 
-void nextLine(){		
-			if (buffer_position / buffer_max_per_line == (buffer_max_per_column - 3)){
-				move_screen();
-		  	} else {
-				buffer_position += buffer_max_per_line - buffer_position % buffer_max_per_line;
-			}
-		
+void nextLine(){
+	if(currentProcess->process.foreground == FOREGROUND){		
+		if (buffer_position / buffer_max_per_line == (buffer_max_per_column - 3)){
+			move_screen();
+		} else {
+			buffer_position += buffer_max_per_line - buffer_position % buffer_max_per_line;
+		}
+	}
 	
 }
 
@@ -228,4 +235,69 @@ int countDigits(qword n){
 	}
 
 	return i;
+}
+
+int getColorHex(const char * color){
+	if(strcmp(color, "blue")) {
+		return 0x0000FF;
+	} else if(strcmp(color, "red")){
+		return 0xFF0000;
+	} else if(strcmp(color, "violet")){
+		return 0x9900FF;
+	} else if(strcmp(color, "white")){
+		return 0xFFFFFF;
+	} else if(strcmp(color, "yellow")){
+		return 0xFFFF00;
+	} else if(strcmp(color, "green")){
+		return 0x00FF00;
+	} else
+		return 0xFFFFFF;
+}
+
+void print_stringColor(const char * str, const char * color){ 	
+		int i = 0;
+		 	
+		while(str[i] != '\0'){
+		    	print_charColor(str[i], getColorHex(color));
+		    	i++;
+		}	
+}
+
+void print_charColor(unsigned char c, int color){
+  		if(c == '\n'){
+    		nextLine();
+    		return;
+  		}
+  
+		draw_charColor(c, (buffer_position % buffer_max_per_line) * FONT_WIDTH, 
+			(buffer_position / buffer_max_per_line) * FONT_HEIGHT, color);
+	  
+		if ( buffer_position / buffer_max_per_line == (buffer_max_per_column) ){
+	   		move_screen();
+	    	buffer_position -= buffer_max_per_line;
+	  	}
+	  
+		buffer_position++;
+}
+
+void draw_charColor(unsigned char c, int x, int y, int color){	
+		int cx, cy;
+		int mask[8] = {1, 2, 4, 8, 16, 32, 64, 128};
+		unsigned char * glyph = font[c - 32];
+
+		for(cy = 0; cy < 13; cy++){
+			for(cx = 0; cx < 8; cx++){
+				if(glyph[cy] & mask[cx]){
+					draw_pixelColor(x + 8 - cx, y + 13 - cy, color);
+				}
+			}
+		}
+}
+
+void draw_pixelColor(int x, int y, int color){		
+		unsigned pos = x * pixel_width + y * pitch;
+	    	screen[pos] = color & 255;              
+	    	screen[pos + 1] = (color >> 8) & 255;   
+	    	screen[pos + 2] = (color >> 16) & 255; 
+	
 }

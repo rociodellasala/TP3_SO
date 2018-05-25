@@ -11,12 +11,15 @@
 #define MAX_NODES 2049
 #define MAX_FREE_NODES 300
 #define INVALID_INDEX -1
+#define EMPTY 0
+#define PARTIALLY 1
+#define FULL 2
 
 typedef struct s_node * p_node;
 
 typedef struct s_node{
 	int size;
-	boolean avaiable;
+	int state;
 	void * address;
 	p_node left;
 	p_node right;
@@ -51,6 +54,12 @@ void * recursiveAlloc(int sizeToAlloc, p_node currentNode);
 /*Return true if currentNode has sons, otherwise returns false*/
 boolean hasSons(p_node currentNode);
 
+/*Updates the node's state checking the states of the sons*/
+void updateNodeState(p_node currentNode);
+
+/*Splits memory block into 2 blocks*/
+void splitBlock(p_node currentNode);
+
 /*Transforms size into a multiple of 2*/
 int transformSize(int size);
 
@@ -58,7 +67,7 @@ int transformSize(int size);
 void releasePage(Process process);
 
 /*Search for node location*/
-boolean recursiveRelease(p_node currentNode,void * address, int size);
+void recursiveRelease(p_node currentNode,void * address, int size);
 
 /*Search for all heap's of user's program*/
 void recursiveSearchHeap(p_heapPage heap);
@@ -66,5 +75,13 @@ void recursiveSearchHeap(p_heapPage heap);
 /*Add node Index to array of free nodes, to reuse it's structure*/
 void addToFreeNodes(p_node currentNode);
 
+/* Prints the actual buddy allocator tree information */
+void printTree();
+
+void recursivePrint(p_node currentNode, int lines);
+
+char * getColorByState(p_node currentNode);
+
+void printLines(int lines);
 
 #endif

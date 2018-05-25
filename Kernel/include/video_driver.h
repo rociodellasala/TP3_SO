@@ -48,4 +48,19 @@ void print_int(qword);
 /* Returns the number of digits in an int */
 int countDigits(qword);
 
+/* Returns hex value of a color */
+int getColorHex(const char * color);
+
+/* Prints string with a specified color */
+void print_stringColor(const char * str, const char * color);
+
+/* Prints char with a specified color */
+void print_charColor(unsigned char c, int color);
+
+/* Puts char in the received coordinates with a specified color */
+void draw_charColor(unsigned char c, int x, int y, int color);
+
+/* Puts pixel in the received coordinates with a specified color */
+void draw_pixelColor(int x, int y, int color);
+
 #endif

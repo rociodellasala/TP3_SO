@@ -1,21 +1,23 @@
 include ../Makefile.inc
 
 MODULE=linearGraph.bin
-ASMSOURCES= $(wildcard asm/*.asm)
+ASMSOURCES= $(wildcard ../libraries/asm/*.asm)
 SOURCES=$(wildcard [^_]*.c)
+LIBRARYSOURCES=$(wildcard ../libraries/[^_]*.c)
+LIBRARYOBJECTS=$(LIBRARYSOURCES:.c=.o)
 ASMOBJECTS=$(ASMSOURCES:.asm=.o)
 COBJECTS=$(SOURCES:.c=.o)
 
 %.o: %.c
-	$(GCC) $(GCCFLAGS) -I./include -c _loader.c $(SOURCES) -pedantic -ansi -Wall
+	$(GCC) $(GCCFLAGS) -I ../libraries/include -c _loader.c $(SOURCES) $(LIBRARYSOURCES) -pedantic -ansi -Wall
 
 %.o: %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
 
 all: $(MODULE)
 
-$(MODULE): $(ASMOBJECTS) $(COBJECTS)
-	$(LD) -T linearGraph.ld _loader.o $(COBJECTS) $(ASMOBJECTS) -o ../$(MODULE)
+$(MODULE): $(ASMOBJECTS) $(COBJECTS) $(LIBRARYOBJECTS)
+	$(LD) -T linearGraph.ld _loader.o $(COBJECTS) $(ASMOBJECTS) $(LIBRARYOBJECTS) -o ../$(MODULE)
 
 clean:
 	rm -rf *.o

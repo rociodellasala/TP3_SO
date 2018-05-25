@@ -1,7 +1,8 @@
-#include "types.h"
-#include "stdio.h"
-#include "string.h"
-#include "stdlib.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <pipe.h>
+#include <types.h>
 
 int main (void){
 	char * messageToSend;

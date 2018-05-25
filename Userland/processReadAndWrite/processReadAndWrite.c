@@ -1,9 +1,7 @@
-#include "types.h"
-#include "stdio.h"
-#include "string.h"
-#include "stdlib.h"
-
-extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <pipe.h>
 
 int main (void){
 	int pidPipe1;

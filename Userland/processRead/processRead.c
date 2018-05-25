@@ -1,15 +1,12 @@
-#include "stdarg.h"
-#include "stdint.h"
-#include "stdlib.h"
-#include "stdio.h"
-#include "types.h"
-#include "string.h"
-#include "processRead.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <types.h>
+#include <string.h>
+#include <pipe.h>
+#include "./include/processRead.h"
 
-extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
-
-char const * string1 = "Hola llegue";
-char const * string2 = "hola mundillo";
+char * string1 = "Hola llegue";
+char * string2 = "hola mundillo";
 
 int main (void){
 	int start = 0;
@@ -61,7 +58,7 @@ void whenStringIsReceived(char * firstString, int charsToRead, int pid){
 	read(pid,firstString,charsToRead);
 }
 
-void thenFirstStringIsReceived(char const * firstString){
+void thenFirstStringIsReceived(char * firstString){
 	if(strcmp(firstString,string1)){
 		printf("\nSUCCESS!!!!! --------- First string received: %s\n",firstString);
 	}else{
@@ -69,7 +66,7 @@ void thenFirstStringIsReceived(char const * firstString){
 	}
 }
 
-void thenSecondStringIsReceived(char const * secondString){
+void thenSecondStringIsReceived(char * secondString){
 	if(strcmp(secondString,string2)){
 		printf("\nSUCCESS!!!!! --------- Second string received: %s\n",secondString);
 	}else{

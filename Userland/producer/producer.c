@@ -1,12 +1,10 @@
-#include "stdlib.h"
-#include "mutex.h"
-#include "types.h"
-#include "stdio.h"
+#include <stdlib.h>
+#include <mutex.h>
+#include <types.h>
+#include <stdio.h>
 
 #define INITIALIZED 1
 #define BUFFER_SIZE 25
-
-extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
 static char * buffer = (void *) 0x700060;
 static int * index = (void *) 0x700050;

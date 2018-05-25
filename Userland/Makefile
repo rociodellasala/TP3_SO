@@ -2,7 +2,7 @@ include Makefile.inc
 
 SAMPLE_DATA=shell.bin
 
-all: terminal linearFDisp parabDisp testMem processR processW back processRW processWR prod cons
+all: lib terminal linearFDisp parabDisp testMem processR processW back processRW processWR prod cons 
 
 terminal:
 	cd shell; make all
@@ -37,7 +37,11 @@ prod:
 cons:
 	cd consumer; make all
 
+lib:
+	cd libraries; make all
+
 clean:
+	cd libraries; make clean
 	cd shell; make clean
 	cd linearGraph; make clean
 	cd parabolicGraph; make clean

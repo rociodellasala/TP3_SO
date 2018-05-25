@@ -1,30 +1,25 @@
 include ../Makefile.inc
 
 MODULE=testMemoryManager.bin
+ASMSOURCES= $(wildcard ../libraries/asm/*.asm)
 SOURCES=$(wildcard [^_]*.c)
-SOURCES_ASM=$(wildcard asm/*.asm)
-OBJECTS=$(SOURCES:.c=.o)
-OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
-LOADERSRC=_loader.c
+LIBRARYSOURCES=$(wildcard ../libraries/[^_]*.c)
+LIBRARYOBJECTS=$(LIBRARYSOURCES:.c=.o)
+ASMOBJECTS=$(ASMSOURCES:.asm=.o)
+COBJECTS=$(SOURCES:.c=.o)
 
-LOADEROBJECT=$(LOADERSRC:.c=.o)
-STATICLIBS=
+%.o: %.c
+	$(GCC) $(GCCFLAGS) -I ../libraries/include -c _loader.c $(SOURCES) $(LIBRARYSOURCES) -pedantic -ansi -Wall
+
+%.o: %.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
 
 all: $(MODULE)
 
-$(MODULE): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM)
-	$(LD) $(LDFLAGS) -T testMemoryManager.ld -o ../$(MODULE) $(LOADEROBJECT) $(OBJECTS) $(OBJECTS_ASM) $(STATICLIBS)
-
-%.o: %.c
-	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@ -pedantic -ansi -Wall
-
-%.o : %.asm
-	$(ASM) $(ASMFLAGS) $< -o $@
-
-$(LOADEROBJECT):
-	$(GCC) $(GCCFLAGS) $(LOADERSRC) -c -o $(LOADEROBJECT) -pedantic -ansi -Wall
+$(MODULE): $(ASMOBJECTS) $(COBJECTS) $(LIBRARYOBJECTS)
+	$(LD) -T testMemoryManager.ld _loader.o $(COBJECTS) $(ASMOBJECTS) $(LIBRARYOBJECTS) -o ../$(MODULE)
 
 clean:
-	rm -rf asm/*.o *.o
+	rm -rf *.o
 
-.PHONY: all clean print
+.PHONY: all clean

@@ -51,6 +51,5 @@ void thenFourthPointerStartsWhereItShould(void *, int, int);
 
 void exitTest();
 
-void exitProgram();
 
 #endif

@@ -1,11 +1,9 @@
-#include "types.h"
-#include "stdio.h"
-#include "string.h"
-#include "stdlib.h"
-#include "testMemoryManager.h"
-#include "assert.h"
-
-extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
+#include "./include/testMemoryManager.h"
+#include <assert.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <types.h>
 
 static void * firstPage;
 static void * secondPage;
@@ -58,7 +56,7 @@ int main() {
 	exitTest();
 	clear_screen();
 	clear_buffer();
-	exitProgram();
+	exitProcess();
 	return 0;
 }
 
@@ -204,9 +202,5 @@ void exitTest(){
 		printf("\nButton pressed: ");
 		getNum(&buttonPressed);
 	}while(buttonPressed != 0);
-}
-
-void exitProgram(){
-	int80(14,0,0,0,0,0);
 }
 

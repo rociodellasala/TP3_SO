@@ -11,9 +11,9 @@ char * givenStringToStore(int);
 void whenStringIsReceived(char *, int, int);
 
 /*Checks if first test is succesful */
-void thenFirstStringIsReceived(char const *);
+void thenFirstStringIsReceived(char *);
 
 /*Checks if second test is succesful */
-void thenSecondStringIsReceived(char const *);
+void thenSecondStringIsReceived(char *);
 
 #endif

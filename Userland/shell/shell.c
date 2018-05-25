@@ -1,9 +1,9 @@
-#include "exception.h"
-#include "types.h"
-#include "shell.h"
-#include "stdio.h"
-#include "string.h"
-#include "stdlib.h"
+#include "./include/exception.h"
+#include "./include/shell.h"
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <types.h>
 
 int main(){	
 	clear_terminal();

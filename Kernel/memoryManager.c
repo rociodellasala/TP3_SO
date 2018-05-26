@@ -105,6 +105,8 @@ void updateNodeState(p_node currentNode){
 		currentNode->state = FULL;
 	else if(currentNode->left->state == PARTIALLY || currentNode->right->state == PARTIALLY)
 		currentNode->state = PARTIALLY;
+	else if(currentNode->left->state == FULL || currentNode->right->state == FULL)
+		currentNode->state = PARTIALLY;
 	else
 		currentNode->state = EMPTY;
 }
@@ -190,19 +192,21 @@ void printTree(){
 	nextLine();
 	print_stringColor("                           ------------MEMORY INFORMATION STATE------------", "blue");
 	nextLine();
-	recursivePrint(&memoryManagerPointer->nodes[0],0);
+	recursivePrint(&memoryManagerPointer->nodes[0],0,0);
 }
 
-void recursivePrint(p_node currentNode, int lines){
+void recursivePrint(p_node currentNode, int lines, int level){
 	char * color;
 	if(currentNode == NULL)
 		return;
 	color = getColorByState(currentNode);
-	printLines(lines);
-	print_stringColor("STATE", color);
+	printLines(lines,level);
+	print_stringColor("STATE  ", color);
+	print_string(" 0x");
+	printHex(currentNode->address);
 	nextLine();
-	recursivePrint(currentNode->left, lines + 2);
-	recursivePrint(currentNode->right, lines + 2);
+	recursivePrint(currentNode->left, lines + 2,level + 1);
+	recursivePrint(currentNode->right, lines + 2,level + 1);
 }
 
 char * getColorByState(p_node currentNode){
@@ -214,12 +218,43 @@ char * getColorByState(p_node currentNode){
 		return "red";
 }
 
-void printLines(int lines){
+void printLines(int lines, int level){
 	int i;
+
+	if(lines == 0){
+		print_int(level);
+		print_string(")");
+	}
 
 	for(i = 0; i < lines; i++){
 		print_string("  ");
-		if(i == lines - 1)
-			print_string("L");
+		if(i == lines - 1){
+			print_int(level);
+			print_string(")");
+		}
 	}
 }
+
+void printVerticalMemory(){
+	nextLine();
+	print_stringColor("                           ------------MEMORY INFORMATION STATE------------", "green");
+	nextLine();
+	verticalRecursivePrint(&memoryManagerPointer->nodes[0]);
+}
+
+void verticalRecursivePrint(p_node currentNode){
+	if(currentNode == NULL)
+		return;
+
+	if(! hasSons(currentNode)){
+		print_stringColor("$$$$$$$  ",getColorByState(currentNode));
+		print_string("0x");
+		printHex(currentNode->address);
+		print_string(" Process:");
+		nextLine();
+	}
+
+	verticalRecursivePrint(currentNode->left);
+	verticalRecursivePrint(currentNode->right);
+}
+

@@ -24,7 +24,7 @@ static void * consumer = (void *) 0xF20000;
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
-static sys sysCalls[27]; 
+static sys sysCalls[28]; 
 
 void sys_write(qword buffer, qword size, qword rcx, qword r8, qword r9) {
 	print_char(buffer);
@@ -196,6 +196,10 @@ qword sys_printMemoryTree(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
 	printTree();
 }
 
+qword sys_printMemoryVertical(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
+	printVerticalMemory();
+}
+
 
 void load_systemcalls(){
 	sysCalls[1] = (sys) &sys_write;
@@ -224,12 +228,13 @@ void load_systemcalls(){
 	sysCalls[24] = (sys) &sys_kernelHeader;
 	sysCalls[25] = (sys) &sys_killPID;
 	sysCalls[26] = (sys) &sys_printMemoryTree;
+	sysCalls[27] = (sys) &sys_printMemoryVertical;
 
 	setup_IDT_entry(0x80, (qword) &_irq80Handler); 
 }
 
 qword syscallHandler(qword rdi,qword rsi, qword rdx, qword rcx, qword r8, qword r9){
-	if(rdi < 0 || rdi >= 27)
+	if(rdi < 0 || rdi >= 28)
 		return 0;
 	
 	return sysCalls[rdi](rsi,rdx,rcx,r8,r9);

@@ -129,6 +129,9 @@ int call_command(char * function, char * parameter){
 	} else if(strcmp(function,"memInfo")){
 		printMemoryInformation();
 		return 0;
+	} else if(strcmp(function,"memInfoVertical")){
+		printMemoryInformationVertical();
+		return 0;
 	} else if(strcmp(function, "exit")){
 		return 2;
 	}
@@ -150,6 +153,7 @@ void printHelp(){
 	printf("time:                   Displays the current time.\n");
 	printf("kill pid                Terminates a specific process by PID\n");
 	printf("memInfo                 Prints buddy allocator tree\n");
+	printf("memInfoVertical         Prints memory state\n");
 }
 
 

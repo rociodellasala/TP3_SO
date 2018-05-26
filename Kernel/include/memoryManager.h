@@ -78,10 +78,14 @@ void addToFreeNodes(p_node currentNode);
 /* Prints the actual buddy allocator tree information */
 void printTree();
 
-void recursivePrint(p_node currentNode, int lines);
+void recursivePrint(p_node currentNode, int lines, int level);
 
 char * getColorByState(p_node currentNode);
 
-void printLines(int lines);
+void printLines(int lines, int level);
+
+void printVerticalMemory();
+
+void verticalRecursivePrint(p_node currentNode);
 
 #endif

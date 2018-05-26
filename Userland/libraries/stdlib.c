@@ -131,3 +131,7 @@ void killProgram(int pid){
 void printMemoryInformation(){
 	int80(26, 0, 0, 0, 0, 0);
 }
+
+void printMemoryInformationVertical(){
+	int80(27, 0, 0, 0, 0, 0);
+}

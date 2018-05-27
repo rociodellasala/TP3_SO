@@ -237,7 +237,7 @@ int countDigits(qword n){
 	return i;
 }
 
-int getColorHex(const char * color){
+int getColorHex(char * color){
 	if(strcmp(color, "blue")) {
 		return 0x0000FF;
 	} else if(strcmp(color, "red")){
@@ -254,7 +254,7 @@ int getColorHex(const char * color){
 		return 0xFFFFFF;
 }
 
-void print_stringColor(const char * str, const char * color){ 	
+void print_stringColor(const char * str, char * color){ 	
 		int i = 0;
 		 	
 		while(str[i] != '\0'){

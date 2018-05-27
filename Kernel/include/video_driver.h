@@ -49,10 +49,10 @@ void print_int(qword);
 int countDigits(qword);
 
 /* Returns hex value of a color */
-int getColorHex(const char * color);
+int getColorHex(char * color);
 
 /* Prints string with a specified color */
-void print_stringColor(const char * str, const char * color);
+void print_stringColor(const char * str, char * color);
 
 /* Prints char with a specified color */
 void print_charColor(unsigned char c, int color);

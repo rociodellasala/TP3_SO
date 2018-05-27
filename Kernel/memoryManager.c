@@ -192,21 +192,28 @@ void printTree(){
 	nextLine();
 	print_stringColor("                           ------------MEMORY INFORMATION STATE------------", "blue");
 	nextLine();
-	recursivePrint(&memoryManagerPointer->nodes[0],0,0);
+	boolean doLines[18] = {0};
+	recursivePrint(&memoryManagerPointer->nodes[0],0,doLines,false);
 }
 
-void recursivePrint(p_node currentNode, int lines, int level){
+void recursivePrint(p_node currentNode,int level,boolean * doLines,boolean isLeft){
 	char * color;
 	if(currentNode == NULL)
 		return;
+
+	if(isLeft){
+		doLines[level - 1] = true;
+	}else{
+		doLines[level - 1] = false;
+	}
 	color = getColorByState(currentNode);
-	printLines(lines,level);
-	print_stringColor("STATE  ", color);
+	printLines(level,doLines);
+	print_stringColor("STATE ", color);
 	print_string(" 0x");
 	printHex(currentNode->address);
 	nextLine();
-	recursivePrint(currentNode->left, lines + 2,level + 1);
-	recursivePrint(currentNode->right, lines + 2,level + 1);
+	recursivePrint(currentNode->left,level + 1,doLines,true);
+	recursivePrint(currentNode->right,level + 1,doLines,false);
 }
 
 char * getColorByState(p_node currentNode){
@@ -218,21 +225,23 @@ char * getColorByState(p_node currentNode){
 		return "red";
 }
 
-void printLines(int lines, int level){
-	int i;
-
-	if(lines == 0){
-		print_int(level);
-		print_string(")");
-	}
-
-	for(i = 0; i < lines; i++){
-		print_string("  ");
-		if(i == lines - 1){
-			print_int(level);
-			print_string(")");
-		}
-	}
+void printLines(int level,boolean * doLines){
+    int i;
+    int doLinesIndex = 0;
+    for(i = 1; i < level * 4 + 1; i++){
+        if(i == level * 4){
+                print_string("|_");
+        }
+        else if(i % 4 == 0 && doLines[doLinesIndex] == true){
+            print_string("|");
+            doLinesIndex++;
+        }
+        else if(i % 4 == 0 && doLines[doLinesIndex] == false){
+            print_string(" ");
+            doLinesIndex++;
+        }else
+        	print_string(" ");
+    }
 }
 
 void printVerticalMemory(){

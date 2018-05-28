@@ -230,10 +230,10 @@ void printLines(int level,boolean * doLines){
     int doLinesIndex = 0;
     for(i = 1; i < level * 4 + 1; i++){
         if(i == level * 4){
-                print_string("|_");
+               print_char('└');
         }
         else if(i % 4 == 0 && doLines[doLinesIndex] == true){
-            print_string("|");
+            print_char('│');
             doLinesIndex++;
         }
         else if(i % 4 == 0 && doLines[doLinesIndex] == false){

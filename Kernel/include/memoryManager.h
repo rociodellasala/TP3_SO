@@ -82,10 +82,12 @@ void recursivePrint(p_node currentNode,int level,boolean * doLines,boolean isLef
 
 char * getColorByState(p_node currentNode);
 
-void printLines(int level,boolean * doLines);
+void printLines(int level,boolean * doLines, boolean isLeft);
 
 void printVerticalMemory();
 
 void verticalRecursivePrint(p_node currentNode);
+
+void printMemory(char * color);
 
 #endif

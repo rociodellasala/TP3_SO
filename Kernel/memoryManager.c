@@ -173,15 +173,20 @@ void recursiveSearchHeap(p_heapPage heap){
 
 void addToFreeNodes(p_node currentNode){
 	int i;
+	int indexFree;
 
 	for(i = 0; i < MAX_NODES; i++){
-		if(&memoryManagerPointer->nodes[i] == currentNode)
+		if(&memoryManagerPointer->nodes[i] == currentNode){
+			indexFree = i;
 			break;
+		}
 	}
 
 	for(i = 0; i < MAX_FREE_NODES; i++){
-		if(memoryManagerPointer->freeNodes[i] == INVALID_INDEX)
-			memoryManagerPointer->freeNodes[i] = i;
+		if(memoryManagerPointer->freeNodes[i] == INVALID_INDEX){
+			memoryManagerPointer->freeNodes[i] = indexFree;
+			break;
+		}
 	}
 
 	return;
@@ -207,7 +212,7 @@ void recursivePrint(p_node currentNode,int level,boolean * doLines,boolean isLef
 		doLines[level - 1] = false;
 	}
 	color = getColorByState(currentNode);
-	printLines(level,doLines);
+	printLines(level,doLines,isLeft);
 	print_stringColor("STATE ", color);
 	print_string(" 0x");
 	printHex(currentNode->address);
@@ -225,12 +230,17 @@ char * getColorByState(p_node currentNode){
 		return "red";
 }
 
-void printLines(int level,boolean * doLines){
+void printLines(int level,boolean * doLines, boolean isLeft){
     int i;
     int doLinesIndex = 0;
     for(i = 1; i < level * 4 + 1; i++){
-        if(i == level * 4){
+        if(i == level * 4 && ! isLeft){
                print_char('└');
+               print_char('─');
+        }
+        else if(i == level * 4 && isLeft){
+               print_char('├');
+               print_char('─');	
         }
         else if(i % 4 == 0 && doLines[doLinesIndex] == true){
             print_char('│');
@@ -256,7 +266,7 @@ void verticalRecursivePrint(p_node currentNode){
 		return;
 
 	if(! hasSons(currentNode)){
-		print_stringColor("$$$$$$$  ",getColorByState(currentNode));
+		printMemory(getColorByState(currentNode));
 		print_string("0x");
 		printHex(currentNode->address);
 		print_string(" Process:");
@@ -267,3 +277,13 @@ void verticalRecursivePrint(p_node currentNode){
 	verticalRecursivePrint(currentNode->right);
 }
 
+
+void printMemory(char * color){
+	int i;
+	int hexColor = getColorHex(color);
+	for(i = 0; i < 11; i++){
+		print_charColor('█',hexColor);
+	}
+
+	print_string("  ");
+}

@@ -126,10 +126,10 @@ int call_command(char * function, char * parameter){
 	} else if(strcmp(function,"header")){
 		printHeader();
 		return 0;
-	} else if(strcmp(function,"memInfo")){
+	} else if(strcmp(function,"buddyInfo")){
 		printMemoryInformation();
 		return 0;
-	} else if(strcmp(function,"memInfoVertical")){
+	} else if(strcmp(function,"memInfo")){
 		printMemoryInformationVertical();
 		return 0;
 	} else if(strcmp(function, "exit")){
@@ -152,8 +152,8 @@ void printHelp(){
 	printf("ps:                     Displays a snapshot of the status of currently running processes.\n");
 	printf("time:                   Displays the current time.\n");
 	printf("kill pid                Terminates a specific process by PID\n");
-	printf("memInfo                 Prints buddy allocator tree\n");
-	printf("memInfoVertical         Prints memory state\n");
+	printf("buddyInfo                 Prints buddy allocator tree\n");
+	printf("memInfo         Prints memory state\n");
 }
 
 

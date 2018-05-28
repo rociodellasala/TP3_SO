@@ -5,8 +5,8 @@
 #include "video_driver.h"
 #include "string.h"
 
-#define FONT_WIDTH 8
-#define FONT_HEIGHT 13
+#define FONT_WIDTH 10
+#define FONT_HEIGHT 15
 
 #pragma pack(push)
 #pragma pack(1)

@@ -13,6 +13,11 @@ void addProcessToPCB(Process);
 /* Creates a slot in order to insert a new process into the table process */
 ProcessSlot * createSlot(Process);
 
+/* NEW */
+ThreadSlot * createThread(void * entryPoint);
+
+ThreadSlot * createThreadSlot(Thread thread);
+
 /* Displays all the current process existing on the table process */
 void printAllCurrentProcess();
 

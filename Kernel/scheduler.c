@@ -25,12 +25,12 @@ extern ProcessSlot * tableProcess;
 extern void * kernelStack;
 
 void * switchUserToKernel(void * esp){
-	currentProcess->process.userStack = esp;
+	currentProcess->process.currentThread->thread.userStack = esp;
 	return kernelStack;
 }
 
 void * switchKernelToUser(){
-	return currentProcess->process.userStack;
+	return currentProcess->process.currentThread->thread.userStack;
 }
 
 void runScheduler(){
@@ -46,6 +46,7 @@ void runScheduler(){
 		numberOfTicks++;
 		return;
 	}
+
 	numberOfTicks = 0;
 
 
@@ -65,8 +66,9 @@ void runScheduler(){
 void startProcess(void * entryPoint, char * nameProcess){
 	createProcess(entryPoint, nameProcess);
 	currentProcess->process.status = RUNNING;
+	currentProcess->process.currentThread->thread.status = RUNNING;
 	enableTickInter();
-	((EntryPoint)currentProcess->process.startingPoint)();
+	((EntryPoint)currentProcess->process.currentThread->thread.startingPoint)();
 }
 
 ProcessSlot * searchRunningProcess(){

@@ -66,23 +66,38 @@ typedef s_mutex * p_mutex;
 
 typedef s_pipe * p_pipe;
 
+typedef struct Thread{
+  void * startingPoint;
+  void * userStack;
+  void * baseStack;
+  int status;
+}Thread;
+
+typedef struct ThreadSlot{
+  struct ThreadSlot * next;
+  Thread thread;
+}ThreadSlot;
+
 typedef struct Process{
-    int PID;
-    int status;
-    int foreground;
-    char processName[MAX_PROCESS_NAME];
-    void * pages[MAX_PAGES];
-    void * startingPoint;
-    void * userStack;
-    void * baseStack;
-    p_heapPage heap;
-    p_pipe pipes[MAX_PIPES];
-    int pipeIndex;
+  int PID;
+  int status;
+  int foreground;
+  char processName[MAX_PROCESS_NAME];
+  void * pages[MAX_PAGES];
+  int threadSize;
+  ThreadSlot * threads;
+  ThreadSlot * currentThread;
+  /*void * startingPoint;
+  void * userStack;
+  void * baseStack;*/
+  p_heapPage heap;
+  p_pipe pipes[MAX_PIPES];
+  int pipeIndex;
 }Process;
 
 typedef struct ProcessSlot{
-    struct ProcessSlot * next;
-    Process process;
+  struct ProcessSlot * next;
+  Process process;
 }ProcessSlot;
 
 typedef struct kernelHeapHeader{

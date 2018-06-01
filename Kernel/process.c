@@ -29,7 +29,7 @@ ProcessSlot * createSlot(Process newProcess){
 	newSlotStruct.next = NULL;
 	newSlot = &newSlotStruct;
 	sizeNewProcessSlotStruct = sizeof(ProcessSlot);
-	destination = findAvaiableHeapKernelPage(sizeNewProcessSlotStruct);
+	destination = findAvaiableHeapKernelPage(sizeNewProcessSlotStruct); /* ARI: ¿Esto lo estamos liberando en releasePage ? idem para createThreadSlot!! */
 	newSlot = memcpy(destination, newSlot, sizeNewProcessSlotStruct);
 	return newSlot;
 }
@@ -62,16 +62,44 @@ int createProcess(void * entryPoint, char * nameProcess){
 		strcpy(newProcess.processName,nameProcess);
 	else
 		strncpy(newProcess.processName,nameProcess,strlen(nameProcess) - 1);
-	newProcess.startingPoint = entryPoint;
 	
 	for(i = 0; i < MAX_PIPES; i++)
 		newProcess.pipes[i] = NULL;
 
 	newProcess.pipeIndex = 0;
-	newProcess.baseStack = allocPage(PAGE_SIZE);
-	newProcess.userStack = fillStackFrame(entryPoint, newProcess.baseStack);
+	
+	newProcess.threadSize = 1;
+	newProcess.threads = newProcess.currentThread = createThread(entryPoint);
+	
 	addProcessToPCB(newProcess);
 	return newProcess.PID;
+}
+
+
+ThreadSlot * createThreadSlot(Thread thread){
+	ThreadSlot newThreadSlotStruct;
+	ThreadSlot * newThreadSlot;
+	int sizeNewThreadSlotStruct;	
+	void * destination;
+
+	newThreadSlotStruct.thread = thread;
+	newThreadSlotStruct.next = NULL;
+	newThreadSlot = &newThreadSlotStruct;
+	sizeNewThreadSlotStruct = sizeof(ThreadSlot);
+	destination = findAvaiableHeapKernelPage(sizeNewThreadSlotStruct);
+	newThreadSlot = memcpy(destination, newThreadSlot, sizeNewThreadSlotStruct);
+	return newThreadSlot;
+}
+
+ThreadSlot * createThread(void * entryPoint){
+	Thread thread;
+	thread.baseStack = allocPage(PAGE_SIZE);
+	thread.userStack = fillStackFrame(entryPoint, thread.baseStack);
+	thread.startingPoint = entryPoint;
+	thread.status = READY;
+
+	ThreadSlot * threadSlot = createThreadSlot(thread);
+	return threadSlot;
 }
 
 void addProcessToPCB(Process newProcess){
@@ -100,10 +128,10 @@ void printAllCurrentProcess(){
 		print_string("  -  PID: ");
 		print_int(aux->process.PID);
 		if(aux->process.heap == NULL)
-			print_string("	-  Heap: No heap avaiable");
+			print_string(" -  Heap: No heap avaiable");
 		else
-			print_string("	-  Heap: There is a heap");
-		print_string("  -  Status: ");
+			print_string("  -  Heap: There is a heap");
+		print_string(" -  Status: ");
 		
 		if((aux->process.status) == RUNNING) 
 			print_string("RUNNING");

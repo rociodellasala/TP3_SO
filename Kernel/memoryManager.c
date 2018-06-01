@@ -133,7 +133,7 @@ int transformSize(int size){
 }
 
 void releasePage(Process process){
-	recursiveRelease(&memoryManagerPointer->nodes[0],process.baseStack,PAGE_SIZE);
+	recursiveRelease(&memoryManagerPointer->nodes[0],process.currentThread->thread.baseStack,PAGE_SIZE);
 	recursiveSearchHeap(process.heap);
 }
 

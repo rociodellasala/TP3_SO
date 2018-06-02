@@ -29,7 +29,7 @@ ProcessSlot * createSlot(Process newProcess){
 	newSlotStruct.next = NULL;
 	newSlot = &newSlotStruct;
 	sizeNewProcessSlotStruct = sizeof(ProcessSlot);
-	destination = findAvaiableHeapKernelPage(sizeNewProcessSlotStruct); /* ARI: ¿Esto lo estamos liberando en releasePage ? idem para createThreadSlot!! */
+	destination = findAvaiableHeapKernelPage(sizeNewProcessSlotStruct);
 	newSlot = memcpy(destination, newSlot, sizeNewProcessSlotStruct);
 	return newSlot;
 }

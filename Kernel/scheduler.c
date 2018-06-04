@@ -9,6 +9,7 @@
 #include "mutex.h"
 
 #define QUANTUM 10
+#define THREADQUANTUM 3
 #define WAIT 60000000
 
 static int numberOfTicks = 0;
@@ -34,7 +35,6 @@ void * switchKernelToUser(){
 }
 
 void runScheduler(){
-
 	if(currentProcess->process.PID == 0 && allProcess > 1 && allProcessForeground > 0){
 		currentProcess->process.status = LOCKED;
 	}
@@ -43,10 +43,15 @@ void runScheduler(){
 		return;
 
 	if(numberOfTicks < QUANTUM) {
+			
 		numberOfTicks++;
+		disableTickInter();
+		checkIfThreadChange();
+		enableTickInter();
 		return;
 	}
-
+	
+	
 	numberOfTicks = 0;
 
 
@@ -160,13 +165,13 @@ void removeProcess(int pid){
 
 	enableTickInter();
 	if(slot->process.foreground == FOREGROUND)
-	print_string("Restaurando SHELL - Presione ENTER");
+	print_string("Restoring SHELL - Press ENTER to continue");
 	
 	
 	restoreContext();
 }
 
-void removeProcessFromTerminal(int pid){
+int removeProcessFromTerminal(int pid){
 	ProcessSlot * slot;
 
 	slot = getProcessFromPid(pid);
@@ -178,13 +183,8 @@ void removeProcessFromTerminal(int pid){
 	}
 
 	if(slot == NULL){
-		nextLine();
-		print_string("Proceso no encontrado");
-		nextLine();
-		nextLine();
-		print_string("Restaurando SHELL - Presione ENTER");
-		return;
-	}
+		return -1;
+	} 
 
 	
 	
@@ -192,11 +192,12 @@ void removeProcessFromTerminal(int pid){
 		allProcessForeground--;
 	else
 		allProcessBackground--;
-
+	
 	slot->process.status = FINISHED;
 	allProcess--;
 	removeFinishedProcess();
 	enableTickInter();
+	return 1;
 }
 
 void blockProcess(int pid){
@@ -213,4 +214,61 @@ void unblockProcess(int pid){
 	if(p != NULL)
 		p->process.status = READY;
 	return;
+}
+
+Process deleteThreadFromProcess(Process process){
+	ThreadSlot * thread = process.threads;
+	ThreadSlot * prev;
+	
+	if(process.currentThread->thread.TID == thread->thread.TID){
+		process.threadSize--;
+		process.threads = thread->next;
+		return;
+	} 
+
+	while(thread->thread.TID != process.currentThread->thread.TID){
+		prev = thread;
+		thread = thread->next;
+	}
+	
+	prev->next = thread->next;
+	
+	process.threadSize--;
+	
+	return process;
+}
+
+void checkIfThreadChange(){
+	if(currentProcess->process.currentThread->thread.threadQuantum < THREADQUANTUM){
+		currentProcess->process.currentThread->thread.threadQuantum++;
+		return;
+	}
+	
+	currentProcess->process.currentThread->thread.threadQuantum = 0;
+	nextThread();
+}
+
+
+void nextThread() {
+	if(currentProcess->process.currentThread->thread.status == RUNNING) {
+		currentProcess->process.currentThread->thread.status = READY;
+	}
+	
+	if(currentProcess->process.currentThread->next == NULL){
+		
+		currentProcess->process.currentThread = currentProcess->process.threads;
+		
+		if(currentProcess->process.currentThread->thread.status == READY){
+			currentProcess->process.currentThread->thread.status = RUNNING;
+			return;
+		}
+	}
+		
+	while(currentProcess->process.currentThread->next->thread.status != READY) {
+		currentProcess->process.currentThread = currentProcess->process.currentThread->next;	
+	}
+
+	currentProcess->process.currentThread = currentProcess->process.currentThread->next;
+	currentProcess->process.currentThread->thread.status = RUNNING;
+
 }

@@ -11,6 +11,10 @@
 #include "video_driver.h"
 #include "mutex.h"
 
+#define SYSCALLS 32
+
+extern ProcessSlot * currentProcess;
+
 static void * linearGraph = (void *) 0x800000;
 static void * parabolicGraph = (void *) 0x900000;
 static void * processRead = (void *) 0xA00000;
@@ -21,10 +25,11 @@ static void * processReadAndWrite = (void *) 0xE00000;
 static void * processWriteAndRead = (void *) 0xF00000;
 static void * producer = (void *) 0xF10000;
 static void * consumer = (void *) 0xF20000;
+static void * threadTest = (void *) 0xF30000;
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
-static sys sysCalls[28]; 
+static sys sysCalls[SYSCALLS]; 
 
 void sys_write(qword buffer, qword size, qword rcx, qword r8, qword r9) {
 	print_char(buffer);
@@ -69,6 +74,7 @@ void sys_printHex(qword pointer, qword rdx, qword rcx, qword r8, qword r9){
 
 int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r9){
 	char * process = (char *) processName;
+	disableTickInter();
 	if(strcmp(process,"linearGraph&")){
 		createProcess(linearGraph, process);
 	} else if(strcmp(process,"parabolicGraph&")){
@@ -95,8 +101,11 @@ int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r
 		createProcess(producer, process);
 	} else if(strcmp(process,"consumer")){
 		createProcess(consumer, process);
+	} else if(strcmp(process,"threadTest&")){
+		createProcess(threadTest, process);
 	} else
 		return -1;
+	enableTickInter();
 	return 0;
 }
 
@@ -184,10 +193,8 @@ void sys_kernelHeader(qword index, qword rdx, qword rcx, qword r8, qword r9){
 	printHeaderInfo();
 }
 
-void sys_killPID(qword pid, qword rdx, qword rcx, qword r8, qword r9){
-	disableTickInter();	
-	removeProcessFromTerminal(pid);
-	nextLine();
+int sys_killPID(qword pid, qword rdx, qword rcx, qword r8, qword r9){
+	return removeProcessFromTerminal(pid);
 }
 
 qword sys_printMemoryTree(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
@@ -198,6 +205,34 @@ qword sys_printMemoryVertical(qword rsi, qword rdx, qword rcx, qword r8, qword r
 	printVerticalMemory();
 }
 
+
+void sys_threadCreate(qword entryPoint, qword rdx, qword rcx, qword r8, qword r9){
+	disableTickInter();	
+	int callingProcessPID = getCurrentPid();
+	currentProcess->process = addThreadToProcess(callingProcessPID, entryPoint);
+	enableTickInter();
+}
+
+void sys_threadRemove(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
+	disableTickInter();
+	
+	currentProcess->process = deleteThreadFromProcess(currentProcess->process);
+	
+	enableTickInter();
+	nextThread();
+	restoreContext();
+}
+
+qword sys_threadWait(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
+	if(currentProcess->process.threadSize == 1)
+		return -1;
+	else
+		return currentProcess->process.threadSize;
+}
+
+void sys_writeColor(qword buffer, qword size, qword color, qword r8, qword r9) {
+	print_charColor(buffer,color);
+}
 
 void load_systemcalls(){
 	sysCalls[1] = (sys) &sys_write;
@@ -227,12 +262,16 @@ void load_systemcalls(){
 	sysCalls[25] = (sys) &sys_killPID;
 	sysCalls[26] = (sys) &sys_printMemoryTree;
 	sysCalls[27] = (sys) &sys_printMemoryVertical;
+	sysCalls[28] = (sys) &sys_threadCreate;
+	sysCalls[29] = (sys) &sys_threadRemove;
+	sysCalls[30] = (sys) &sys_threadWait;
+	sysCalls[31] = (sys) &sys_writeColor;
 
 	setup_IDT_entry(0x80, (qword) &_irq80Handler); 
 }
 
 qword syscallHandler(qword rdi,qword rsi, qword rdx, qword rcx, qword r8, qword r9){
-	if(rdi < 0 || rdi >= 28)
+	if(rdi < 0 || rdi >= SYSCALLS)
 		return 0;
 	
 	return sysCalls[rdi](rsi,rdx,rcx,r8,r9);

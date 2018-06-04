@@ -7,6 +7,7 @@
 #include "stack.h"
 #include "string.h"
 #include "video_driver.h"
+#include "converter.h"
 
 int currentProcessId = 0; 
 int allProcess = 0;
@@ -31,6 +32,7 @@ ProcessSlot * createSlot(Process newProcess){
 	sizeNewProcessSlotStruct = sizeof(ProcessSlot);
 	destination = findAvaiableHeapKernelPage(sizeNewProcessSlotStruct);
 	newSlot = memcpy(destination, newSlot, sizeNewProcessSlotStruct);
+
 	return newSlot;
 }
 
@@ -69,37 +71,39 @@ int createProcess(void * entryPoint, char * nameProcess){
 	newProcess.pipeIndex = 0;
 	
 	newProcess.threadSize = 1;
-	newProcess.threads = newProcess.currentThread = createThread(entryPoint);
+	newProcess.threads = newProcess.currentThread = createThread(entryPoint, newProcess.threadSize);
 	
 	addProcessToPCB(newProcess);
 	return newProcess.PID;
 }
 
 
-ThreadSlot * createThreadSlot(Thread thread){
+ThreadSlot * createThreadSlot(Thread newThread){
 	ThreadSlot newThreadSlotStruct;
 	ThreadSlot * newThreadSlot;
 	int sizeNewThreadSlotStruct;	
 	void * destination;
-
-	newThreadSlotStruct.thread = thread;
+	
+	newThreadSlotStruct.thread = newThread;
 	newThreadSlotStruct.next = NULL;
 	newThreadSlot = &newThreadSlotStruct;
 	sizeNewThreadSlotStruct = sizeof(ThreadSlot);
 	destination = findAvaiableHeapKernelPage(sizeNewThreadSlotStruct);
 	newThreadSlot = memcpy(destination, newThreadSlot, sizeNewThreadSlotStruct);
+
 	return newThreadSlot;
 }
 
-ThreadSlot * createThread(void * entryPoint){
+ThreadSlot * createThread(void * entryPoint, int threadSize){
 	Thread thread;
+	thread.TID = threadSize;
+	thread.status = READY;
+	thread.threadQuantum = 0;
 	thread.baseStack = allocPage(PAGE_SIZE);
 	thread.userStack = fillStackFrame(entryPoint, thread.baseStack);
 	thread.startingPoint = entryPoint;
-	thread.status = READY;
-
-	ThreadSlot * threadSlot = createThreadSlot(thread);
-	return threadSlot;
+	
+	return createThreadSlot(thread);
 }
 
 void addProcessToPCB(Process newProcess){
@@ -128,7 +132,7 @@ void printAllCurrentProcess(){
 		print_string("  -  PID: ");
 		print_int(aux->process.PID);
 		if(aux->process.heap == NULL)
-			print_string(" -  Heap: No heap avaiable");
+			print_string("  -  Heap: No heap avaiable");
 		else
 			print_string("  -  Heap: There is a heap");
 		print_string(" -  Status: ");
@@ -146,7 +150,7 @@ void printAllCurrentProcess(){
 		else if((aux->process.foreground) == BACKGROUND)
 		print_string("  -  BACKGROUND");
 		nextLine();
-		
+
 		i++;
 		aux = aux->next;
 
@@ -186,3 +190,26 @@ ProcessSlot * getProcessFromPid(int pid){
 
 	return aux;
 }
+
+ThreadSlot * getLastThreadFromProcess(Process auxProcess){
+	ThreadSlot * auxThread = auxProcess.threads;
+
+	while(auxThread->next != NULL){
+		auxThread = auxThread->next;
+	}
+
+	return auxThread;
+}
+
+Process addThreadToProcess(int pid, void * exec){
+	ProcessSlot * aux = getProcessFromPid(pid);
+	Process process = aux->process;
+
+	process.threadSize++;
+	ThreadSlot * newThread = createThread(exec, process.threadSize);
+	ThreadSlot * lastThreadProcess = getLastThreadFromProcess(process);
+
+	lastThreadProcess->next = newThread;
+	return process;
+}
+

@@ -73,6 +73,10 @@ void exitProcess(){
 	int80(14,0,0,0,0,0);
 }
 
+void exitThread(){
+	int80(29,0,0,0,0,0);
+}
+
 void * malloc(int size){
 	return ((void *)int80(10,size,0,0,0,0));
 }
@@ -81,8 +85,16 @@ void printHexadecimal(void * pointer){
 	int80(11,(qword) pointer,0,0,0,0);
 }
 
+int waitThread(){
+	return int80(30,0,0,0,0,0);
+}
+
 int getPID(){
 	return int80(6,0,0,0,0,0);
+}
+
+void thread(void * entryPoint){
+	int80(28,entryPoint,0,0,0,0);
 }
 
 int startProcess(char * program){
@@ -94,7 +106,7 @@ int startProcess(char * program){
 
 void echo(char * string){
 	nextLine();
-	printf("%s\n", string);
+	printf("%s", string);
 }
 
 void ps(){
@@ -108,10 +120,10 @@ void ls(){
 	printf("      linearGraph      parabolicGraph      testMemoryManager      processReadAndWrite");
 	nextLine();
 	nextLine();
-	printf("      processRead      processWrite           background          processWriteAndRead");
+	printf("      processRead       processWrite          background          processWriteAndRead");
 	nextLine();
 	nextLine();
-	printf("      producer         consumer");
+	printf("       producer           consumer            threadTest");
 	nextLine();
 }
 
@@ -125,7 +137,12 @@ void printHeader(){
 }
 
 void killProgram(int pid){
-	int80(25, pid, 0, 0, 0, 0);
+	int ret = int80(25, pid, 0, 0, 0, 0);
+	nextLine();		
+	if(ret == -1)
+		printf("The process with pid %d doesn't exist. Please exec 'ps' command to check.", pid);
+	else
+		printf("The process with pid %d was successfully removed!", pid);
 }
 
 void printMemoryInformation(){

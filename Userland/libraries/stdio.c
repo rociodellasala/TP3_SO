@@ -51,6 +51,56 @@ void printf(const char * str,...){
 	va_end(arguments);
 }
 
+void printfColor(int color, const char * str,...){
+	char num[12];
+	int x;
+	int state = 0;
+	int index;
+	int length = strlen(str);
+
+	va_list arguments;
+	va_start(arguments, str);
+
+	for(x = 0; x < length; x++){
+		if(state == 0){
+			if(str[x] != '%')
+				putcharColor(color, str[x]);
+			else
+				state = 1;
+		}else{
+			switch(str[x]){
+				case 'd':
+					intToString(va_arg(arguments, int), num);
+					index = 0;
+					while(num[index] != 0)
+						putcharColor(color, num[index++]);
+					state = 0;
+					break;
+				case 'c':
+					putcharColor(color, (char)(va_arg(arguments, int)));
+					state = 0;
+					break;
+				case 's':
+					printfColor(color, va_arg(arguments, char *));
+					state = 0;
+					break;
+				default:	
+					putchar('%');
+					putcharColor(color, str[x]);
+					state = 0;
+					break;
+			}
+		}
+	}
+
+	va_end(arguments);
+}
+
+
+void putcharColor(int color, unsigned char c) {
+	int80(31, c, 1, color, 0, 0);
+}
+
 void draw_pixel(int x, int y){
 	int80(8, x, y, 0, 0, 0);
 }

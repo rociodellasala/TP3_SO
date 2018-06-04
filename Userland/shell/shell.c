@@ -80,7 +80,7 @@ int get_command(char * buffer){
 	int x = 0;
 	char function[MAX_COMMAND_SIZE];
 
-	while(buffer[x] != '-' && buffer[x] != 0){
+	while(buffer[x] != ' ' && buffer[x] != 0){
 		function[x] = buffer[x];
 		x++;
 		if(x > MAX_COMMAND_SIZE)
@@ -120,8 +120,8 @@ int call_command(char * function, char * parameter){
 	} else if(strcmp(function, "ls")){
 		ls();
 		return 0;	
-	} else if(strncmp(function, "kill ", 5)){
-		killProgram(stringToInt(function + 5));
+	} else if(strncmp(function, "kill", 4)){
+		killProgram(stringToInt(parameter));
 		return 0;	
 	} else if(strcmp(function,"header")){
 		printHeader();
@@ -140,20 +140,20 @@ int call_command(char * function, char * parameter){
 
 void printHelp(){
 	clear_screen();
-	printf("HELP -- Manual to interact with the terminal: \n\n");
+	printf("--- HELP --- Manual to interact with the terminal: \n\n");
 	printf("cls:                    Clears screen.\n");	
 	printf("divideByZero:           Makes an integer division to show how zero exception works.\n");
-	printf("echo-[message]:         Prints message.\n");
+	printf("echo [message]:         Prints message.\n");
 	printf("exit:                   Goes back and displays the menu.\n");
-	printf("font-[color]:           Changes font color, ex: blue, red, yellow, white or violet.\n");	
+	printf("font [color]:           Changes font color, ex: blue, red, yellow, white or violet.\n");	
 	printf("help:                   Displays manual.\n");
 	printf("invalidOpcode:          Shows how invalid opcode exception works by calling an undefined instruction.\n");
 	printf("ls:                     Displays runnable programs\n");
 	printf("ps:                     Displays a snapshot of the status of currently running processes.\n");
 	printf("time:                   Displays the current time.\n");
-	printf("kill pid                Terminates a specific process by PID\n");
-	printf("buddyInfo                 Prints buddy allocator tree\n");
-	printf("memInfo         Prints memory state\n");
+	printf("kill [pid]:             Terminates a specific process by PID\n");
+	printf("buddyInfo               Prints buddy allocator tree\n");
+	printf("memInfo                 Prints memory state\n");
 }
 
 

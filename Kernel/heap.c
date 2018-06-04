@@ -19,11 +19,13 @@ void initializeKernelHeap(){
 	
 	for(i = 0; i < MAX_FREE; i++){
 		kernelHeader->lastProcessSlotFree[i] = INVALID_LAST_FREE_SLOT;
+		kernelHeader->lastThreadSlotFree[i] = INVALID_LAST_FREE_SLOT;
 		kernelHeader->lastPipeSlotFree[i] = INVALID_LAST_FREE_SLOT;
 		kernelHeader->lastHeapSlotFree[i] = INVALID_LAST_FREE_SLOT;
 	}
 
 	kernelHeader->lastProcessSlot = 0;
+	kernelHeader->lastThreadSlot = 0;
 	kernelHeader->lastMutexSlot = 0;
 	kernelHeader->lastPipeSlot = 0;
 	kernelHeader->lastHeapSlot = 0;
@@ -121,6 +123,7 @@ p_heapPage createHeapPage(){
 void * findAvaiableHeapKernelPage(int size){
 	void * pointerToReturn;
 	int sizeProcesSlot = sizeof(ProcessSlot);
+	int sizeThreadSlot = sizeof(ThreadSlot);
 	int sizePipe = sizeof(s_pipe);
 	int sizeMutex = sizeof(s_mutex);
 	if(size == sizeProcesSlot){
@@ -131,7 +134,15 @@ void * findAvaiableHeapKernelPage(int size){
 			moveFreeArray(kernelHeader->lastProcessSlotFree);
 			return pointerToReturn;
 			}
-	}else if(size == sizePipe){
+	} else if(size == sizeThreadSlot){
+		if(kernelHeader->lastThreadSlotFree[0] == INVALID_LAST_FREE_SLOT)
+			return (void *) &kernelHeader->allThreadSlots[kernelHeader->lastThreadSlot++];
+		else{
+			pointerToReturn = (void *) &kernelHeader->allThreadSlots[kernelHeader->lastThreadSlotFree[0]];
+			moveFreeArray(kernelHeader->lastThreadSlotFree);
+			return pointerToReturn;
+			}
+	} else if(size == sizePipe){
 		if(kernelHeader->lastPipeSlotFree[0] == INVALID_LAST_FREE_SLOT)
 			return (void *) &kernelHeader->allPipesSlots[kernelHeader->lastPipeSlot++];
 		else{
@@ -186,6 +197,8 @@ void releaseProcessSlot(ProcessSlot * slot){
 		}
 	}
 }
+
+/* HACER RELEASE PARA THREADS */
 
 void releaseProcessHeap(ProcessSlot * slot){
 	p_heapPage currentHeapPage = slot->process.heap;

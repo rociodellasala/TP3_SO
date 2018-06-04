@@ -19,6 +19,7 @@
 #define FINISHED 5
 
 #define MAX_PROCESS_SLOT 50
+#define MAX_THREAD_SLOT 100
 #define MAX_MUTEX_SLOT 100
 #define MAX_PIPES 10
 #define MAX_HEAP_SLOT 20
@@ -67,10 +68,12 @@ typedef s_mutex * p_mutex;
 typedef s_pipe * p_pipe;
 
 typedef struct Thread{
+  int TID;
   void * startingPoint;
   void * userStack;
   void * baseStack;
   int status;
+  int threadQuantum;
 }Thread;
 
 typedef struct ThreadSlot{
@@ -105,6 +108,9 @@ typedef struct kernelHeapHeader{
   int lastProcessSlot;
   int lastProcessSlotFree[MAX_FREE];
   ProcessSlot allProcessSlots[MAX_PROCESS_SLOT];
+  int lastThreadSlot;
+  int lastThreadSlotFree[MAX_FREE];
+  ThreadSlot allThreadSlots[MAX_THREAD_SLOT];
   int lastMutexSlot;
   s_mutex allMutex[MAX_MUTEX_SLOT];
   int lastPipeSlot;

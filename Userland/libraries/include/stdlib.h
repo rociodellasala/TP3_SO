@@ -16,14 +16,21 @@ int startProcess(char * program);
 /* Call system call to terminate process */
 void exitProcess();
 
+void exitThread();
+
 /* Returns void * pointer to an amount of reserved memory */
 void * malloc(int);
 
 /* Print the hexadecimal number of a pointer */
 void printHexadecimal(void *);
 
+int waitThread();
+
 /* Call system call to get process ID */
 int getPID();
+
+/* Creates a new thread on the calling process */
+void thread();
 
 /* Prints a string in console */
 void echo(char * string);

@@ -30,12 +30,18 @@ void removeFinishedProcess();
 void removeProcess(int);
 
 /* Same as removeProcess but by terminal */
-void removeProcessFromTerminal(int);
+int removeProcessFromTerminal(int);
 
 /* Blocks a process */
 void blockProcess(int pid);
 
 /* Unblocks a process */
 void unblockProcess(int pid);
+
+void checkIfThreadChange();
+
+void nextThread();
+
+Process deleteThreadFromProcess(Process);
 
 #endif

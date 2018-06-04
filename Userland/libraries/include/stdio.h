@@ -7,11 +7,15 @@
 /* Prints string with format */
 void printf(const char *, ...);
 
+void printfColor(int color, const char *, ...);
+
 /* Call system call to draw pixel in console */
 void draw_pixel(int x, int y);
 
 /* Prints character */
 void putchar(unsigned char);
+
+void putcharColor(int color, unsigned char);
 
 /* Gets a character, an unsigned char, from stdin */
 char getchar();

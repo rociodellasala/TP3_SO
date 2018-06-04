@@ -17,16 +17,16 @@ void * memcpy(void * destination, const void * source, qword length){
 		&& (qword)source % sizeof(dword) == 0 && length % sizeof(dword) == 0){
 		dword * d = (dword *) destination;
 		const dword * s = (const dword *)source;
-
+		
 		for (i = 0; i < length / sizeof(dword); i++)
 			d[i] = s[i];
 	} else {
 		byte * d = (byte *)destination;
 		const byte * s = (const byte *)source;
-
+		
 		for (i = 0; i < length; i++)
 			d[i] = s[i];
 	}
-
+	
 	return destination;
 }

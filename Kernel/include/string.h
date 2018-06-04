@@ -18,7 +18,13 @@ char * strcpy(char *, const char *);
 /* Copy n chars from source to dest */
 char * strncpy(char *, const char *, int);
 
+/* Concatenates two strings */
+char * strcat(char * dest, const char * source);
+
 /* Returns the char located at the position i of the specified string */
 char charAtPos(char *, int);
+
+/* Concatenates important information for memoryManager nodes */
+void getNodeInfo(char * vector, char * processName, int pid, char * processInfo);
 
 #endif

@@ -223,7 +223,6 @@ void print_int(qword n){
 		}
 
 		print_string(s);
-	
 }
 
 int countDigits(qword n){
@@ -254,6 +253,15 @@ int getColorHex(char * color){
 		return 0xFFFFFF;
 }
 
+void nextLineAnyway(){	
+	if (buffer_position / buffer_max_per_line == (buffer_max_per_column - 3)){
+		move_screen();
+	} else {
+		buffer_position += buffer_max_per_line - buffer_position % buffer_max_per_line;
+	}
+	
+}
+
 void print_stringColor(const char * str, char * color){ 	
 		int i = 0;
 		 	
@@ -265,7 +273,7 @@ void print_stringColor(const char * str, char * color){
 
 void print_charColor(unsigned char c, int color){
   		if(c == '\n'){
-    		nextLine();
+    		nextLineAnyway();
     		return;
   		}
   
@@ -300,4 +308,17 @@ void draw_pixelColor(int x, int y, int color){
 	    	screen[pos + 1] = (color >> 8) & 255;   
 	    	screen[pos + 2] = (color >> 16) & 255; 
 	
+}
+
+void print_intColor(qword n, char * color){	
+		char s[16] = {0};
+		int digits = countDigits(n) - 1;
+
+		while(digits >= 0){
+			s[digits] = n % 10 + '0';
+			n /= 10;
+			digits--;
+		}
+
+		print_stringColor(s,color);
 }

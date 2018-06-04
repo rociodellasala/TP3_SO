@@ -93,15 +93,17 @@ int getPID(){
 	return int80(6,0,0,0,0,0);
 }
 
+int getFatherPID(){
+	return int80(33,0,0,0,0,0);
+}
+
 void thread(void * entryPoint){
 	int80(28,entryPoint,0,0,0,0);
 }
 
 int startProcess(char * program){
 	int i = int80(12, (qword) program,0,0,0,0);
-	if(i == -1)
-		return 1;
-	return 3;
+	return i;
 }
 
 void echo(char * string){

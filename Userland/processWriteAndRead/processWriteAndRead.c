@@ -11,17 +11,20 @@ int main (void){
 	int exits = 0;
 
 	int pidPipe1, pidPipe2;
-
+	int childPID;
 	clear_screen();
 	
+	printf("Comenzando processWriteAndRead\n");
+	childPID = startProcess("processReadAndWrite");
+	printf("PID processWriteAndRead: %d\n\n",childPID);
 	messageToSend = "Hola mundo alegre";
 	messageToReceive = malloc(strlen(messageToSend) + 1);
-	printf("Comenzando processWriteAndRead\n");
+
 	printf("Escribiendo...\n");
-	pidPipe1 = pipe("processReadAndWrite");
+	pidPipe1 = pipe(childPID);
 	write(pidPipe1,messageToSend,strlen(messageToSend));
 	printf("Leyendo...\n");
-	pidPipe2 = pipe("processReadAndWrite");
+	pidPipe2 = pipe(childPID);
 	read(pidPipe2,messageToReceive,strlen(messageToSend));
 	printf("El mensaje que llego es: %s\n",messageToReceive);
 	

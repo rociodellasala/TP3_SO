@@ -53,12 +53,22 @@ int checkIfForegroundOrBackground(char * nameProcess){
 }
 
 int createProcess(void * entryPoint, char * nameProcess){
-	int i;
+	int i;int j;
 	Process newProcess;
 	newProcess.PID = currentProcessId++;
 	newProcess.heap = NULL;
 	newProcess.status = READY;
 	newProcess.foreground = checkIfForegroundOrBackground(nameProcess);
+
+	if(! strcmp(nameProcess,"shell"))
+		newProcess.fatherPID = getCurrentPid();
+	else
+		newProcess.fatherPID = INVALID_PROCESS_PID;
+
+	addChild(newProcess.PID,getProcessFromPid(getCurrentPid()));
+
+	for(j = 0; j < MAX_CHILDS; j++)
+		newProcess.childsPID[j] = INVALID_PROCESS_PID;
 	
 	if(newProcess.foreground == BACKGROUND || strcmp(nameProcess,"shell"))
 		strcpy(newProcess.processName,nameProcess);
@@ -71,12 +81,20 @@ int createProcess(void * entryPoint, char * nameProcess){
 	newProcess.pipeIndex = 0;
 	
 	newProcess.threadSize = 1;
-	newProcess.threads = newProcess.currentThread = createThread(entryPoint, newProcess.threadSize);
+	newProcess.threads = newProcess.currentThread = createThread(entryPoint, newProcess.threadSize,newProcess.processName,newProcess.PID);
 	
 	addProcessToPCB(newProcess);
 	return newProcess.PID;
 }
 
+void addChild(int childPID, ProcessSlot * slot){
+	int i;
+
+	for(i = 0; i < MAX_CHILDS; i++){
+		if(slot->process.childsPID[i] == INVALID_PROCESS_PID)
+			slot->process.childsPID[i] = childPID;
+	}
+}
 
 ThreadSlot * createThreadSlot(Thread newThread){
 	ThreadSlot newThreadSlotStruct;
@@ -94,12 +112,14 @@ ThreadSlot * createThreadSlot(Thread newThread){
 	return newThreadSlot;
 }
 
-ThreadSlot * createThread(void * entryPoint, int threadSize){
+ThreadSlot * createThread(void * entryPoint, int threadSize,char * nameProcess,int processPID){
+	char information[60] = {0};
+	getNodeInfo(information,nameProcess,processPID,"Stack of ");
 	Thread thread;
 	thread.TID = threadSize;
 	thread.status = READY;
 	thread.threadQuantum = 0;
-	thread.baseStack = allocPage(PAGE_SIZE);
+	thread.baseStack = allocPage(PAGE_SIZE,information);
 	thread.userStack = fillStackFrame(entryPoint, thread.baseStack);
 	thread.startingPoint = entryPoint;
 	
@@ -157,6 +177,20 @@ void printAllCurrentProcess(){
 	}
 }
 
+void printProcessTree(ProcessSlot * currentSlot, int lines){
+	int i;int j;
+
+	for(i = 0; i < lines; i++)
+		print_stringColor(" ","white");
+	print_stringColor(currentSlot->process.processName,"white");
+	print_stringColor(": ","white");
+
+	for(j = 0; j < MAX_CHILDS; j++)
+		if(currentSlot->process.childsPID[j] != INVALID_PROCESS_PID)
+			printProcessTree(currentSlot->process.childsPID[j], lines + 8);
+
+}
+
 int getProcessFromName(char * procesName){
 	ProcessSlot * aux = tableProcess;
 
@@ -191,6 +225,11 @@ ProcessSlot * getProcessFromPid(int pid){
 	return aux;
 }
 
+char * getProcessNameFromPid(int pid){
+	ProcessSlot * slot = getProcessFromPid(pid);
+	return slot->process.processName;
+}
+
 ThreadSlot * getLastThreadFromProcess(Process auxProcess){
 	ThreadSlot * auxThread = auxProcess.threads;
 
@@ -206,7 +245,7 @@ Process addThreadToProcess(int pid, void * exec){
 	Process process = aux->process;
 
 	process.threadSize++;
-	ThreadSlot * newThread = createThread(exec, process.threadSize);
+	ThreadSlot * newThread = createThread(exec, process.threadSize,process.processName,process.PID);
 	ThreadSlot * lastThreadProcess = getLastThreadFromProcess(process);
 
 	lastThreadProcess->next = newThread;

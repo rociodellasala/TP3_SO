@@ -14,7 +14,7 @@ void addProcessToPCB(Process);
 ProcessSlot * createSlot(Process);
 
 /* NEW */
-ThreadSlot * createThread(void *, int);
+ThreadSlot * createThread(void * entryPoint, int threadSize,char * nameProcess,int processPID);
 
 /* NEW */
 ThreadSlot * createThreadSlot(Thread);
@@ -25,6 +25,9 @@ void printAllCurrentProcess();
 /* Returns PID of the specified name */
 int getProcessFromName(char *);
 
+/* Returns name process of the specified PID */
+char * getProcessNameFromPid(int pid);
+
 /* Returns the slot of the specified PID */
 ProcessSlot * getProcessFromPid(int);
 
@@ -33,5 +36,9 @@ ThreadSlot * getLastThreadFromProcess(Process);
 
 /* NEW */
 Process addThreadToProcess(int, void *);
+
+void addChild(int childPID, ProcessSlot * slot);
+
+void printProcessTree(ProcessSlot * currentSlot, int lines);
 
 #endif

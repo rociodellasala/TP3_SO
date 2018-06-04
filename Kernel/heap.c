@@ -15,7 +15,7 @@ kernelHeapHeader * kernelHeader;
 void initializeKernelHeap(){
 	int heapSize = sizeof(kernelHeapHeader);
 	int i;
-	kernelHeader = allocPage(heapSize);
+	kernelHeader = allocPage(heapSize,"Kernel Heap");
 	
 	for(i = 0; i < MAX_FREE; i++){
 		kernelHeader->lastProcessSlotFree[i] = INVALID_LAST_FREE_SLOT;
@@ -71,7 +71,7 @@ void printHeaderInfo(){
 		print_int(kernelHeader->allPipesSlots[i].processOnePID);
 		nextLine();
 		print_string("Process expected: ");
-		print_string(kernelHeader->allPipesSlots[i].processTwoName);
+		print_int(kernelHeader->allPipesSlots[i].processTwoPID);
 		nextLine();
 	}
 	print_string("Slots de pipes libres: ");
@@ -106,10 +106,13 @@ void printHeaderInfo(){
 p_heapPage createHeapPage(){
 	int sizeNewHeapStruct;
 	void * kernelHeapPage;
+	char * processName = getProcessNameFromPid(getCurrentPid());
+	char information[60] = {0};
 	s_heapPage newHeap;
 	p_heapPage newHeapPointer;
 
-	newHeap.currentPage = allocPage(PAGE_SIZE);
+	getNodeInfo(information,processName,getCurrentPid(),"Heap of ");
+	newHeap.currentPage = allocPage(PAGE_SIZE,information);
 	newHeap.occupiedBytes = 0;
 	newHeap.nextHeapPage = NULL;
 	newHeap.freeBytes = PAGE_SIZE;

@@ -72,3 +72,32 @@ char charAtPos(char * str, int i){
 	return *aux;
 }
 
+char * strcat(char * dest, const char * source){
+	int i;
+	int j;
+	int destLengh = strlen(dest);
+	int sourceLength = strlen(source);
+
+	for(i = 0; i <  destLengh; i++){
+		if(dest[i] == '\0')
+			break;
+	}
+
+	for(j = 0; j <  sourceLength; j++){
+		dest[i] = source[j];
+		i++;
+	}
+
+	dest[i] = '\0';
+
+	return dest;
+}
+
+void getNodeInfo(char * vector, char * processName, int pid, char * processInfo){
+	char pidString[5] = {0};
+	intToString(pid,pidString);
+	strcat(vector,processInfo);
+	strcat(vector,processName);
+	strcat(vector," PID: ");
+	strcat(vector,pidString);
+}

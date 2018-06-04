@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 #define INITIALIZED 1
-#define BUFFER_SIZE 25
+#define BUFFER_SIZE 10
 
 static char * buffer = (void *) 0x700060;
 static int * index = (void *) 0x700050;
@@ -30,25 +30,25 @@ int main (void){
 	}
 
 	*consumers += 1;
+	printfColor(0x0000,"\n");
 
 	while(1){
-		/*printf("Estoy consumiendo buffer con consumer: %d\n", consumer);*/
+		printfColor(0xFE2E2E,"Consumiendo con consumer: %d", consumer);
         if (*index == 0 || *index < 0) 
         {
-        	/*printf("El buffer esta vacio\n");*/
+        	printfColor(0xFE2E2E,"\nEl buffer esta vacio\n");
+        	sleep(2);
             wait(mutexConsumer);
+            printfColor(0xFE2E2E,"Consumiendo con consumer: %d", consumer);
         }
-
+        *(buffer + (*index)) = 0;
         *index -= 1;
         iteration++;
 
-       	/*printf("Char obtenido de buffer: %c ", *(buffer + *index));
-        printf(" Iteracion:%d",iteration);
-        printf(" En el indice del buffer:%d\n",*index);*/
-
+       	printfColor(0xFE2E2E," BUFFER: [ %s ]\n", buffer);
+       	sleep(3);
         if (*index == BUFFER_SIZE - 1) 
         {
-        	/*printf("Levanto al productor\n");*/
             signal(mutexProducer);
         }
 	}

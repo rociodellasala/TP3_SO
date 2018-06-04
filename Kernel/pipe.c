@@ -12,7 +12,7 @@ extern kernelHeapHeader * kernelHeader;
 
 int pipePIDs = 0;
 
-p_pipe createPipe(int callingProcessPID, int connectingProcessPID, char * connectingProcessName){
+p_pipe createPipe(int callingProcessPID, int connectingProcessPID){
 		ProcessSlot * connectingProcessSlot = getProcessFromPid(connectingProcessPID);
 		ProcessSlot * callingProcessSlot = getProcessFromPid(callingProcessPID);
 		int sizeOfPipe;	
@@ -24,23 +24,25 @@ p_pipe createPipe(int callingProcessPID, int connectingProcessPID, char * connec
 			pipePointer = searchPipe(connectingProcessSlot,callingProcessSlot->process.processName,callingProcessPID);
 		}
 		if(pipePointer == NULL){
-			s_pipe pipeStruct = createPipeStruct(callingProcessPID,-1, connectingProcessName);
+			s_pipe pipeStruct = createPipeStruct(callingProcessPID,connectingProcessPID);
 			pipePointer = &pipeStruct;
 			sizeOfPipe = sizeof(s_pipe);
 			destination = findAvaiableHeapKernelPage(sizeOfPipe);
 			pipePointer = memcpy(destination, pipePointer, sizeOfPipe);
 		}
+		printPipeInfo(pipePointer);
 		return pipePointer;
 }
 
-s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID, char * connectingProcessName){
+s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID){
 	s_pipe pipeStruct;
 
 	pipeStruct.pipePID = pipePIDs++;
 
 	pipeStruct.processOnePID = callingProcessPID;
 	pipeStruct.processTwoPID = connectingProcessPID;
-	strcpy(pipeStruct.processTwoName,connectingProcessName);
+
+	pipeStruct.full = false;
 
 	pipeStruct.processOneRead = true;	
 	pipeStruct.processOneWrite = true;
@@ -49,7 +51,7 @@ s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID, char * 
 	pipeStruct.messageIndex = 0;
 	memset(pipeStruct.message,0,MAX_MESSAGE_LENGHT);
 
-	pipeStruct.mutex = getFreeMutex(connectingProcessName);
+	pipeStruct.mutex = getFreeMutex(getProcessFromPid(connectingProcessPID)->process.processName);
 	return pipeStruct;
 }
 
@@ -57,9 +59,8 @@ s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID, char * 
 p_pipe searchPipe(ProcessSlot * connectingProcessSlot,char * callingProcessName, int callingProcessPID){
 	int i;
 	for(i = 0; i < connectingProcessSlot->process.pipeIndex; i++){
-		if(connectingProcessSlot->process.pipes[i]->processTwoPID == INVALID_PID && 
-			strcmp(connectingProcessSlot->process.pipes[i]->processTwoName,callingProcessName)){
-			connectingProcessSlot->process.pipes[i]->processTwoPID = callingProcessPID;
+		if(connectingProcessSlot->process.pipes[i]->processTwoPID == callingProcessPID && connectingProcessSlot->process.pipes[i]->full == false){
+			connectingProcessSlot->process.pipes[i]->full = true;
 			return connectingProcessSlot->process.pipes[i];
 		}	
 	}
@@ -71,8 +72,9 @@ p_pipe searchPipeByPID(ProcessSlot * callingProcessSlot, int pipePID){
 	int i;
 
 	for(i = 0; i < pipeIndex; i++){
-		if(callingProcessSlot->process.pipes[i]->pipePID == pipePID)
+		if(callingProcessSlot->process.pipes[i]->pipePID == pipePID){
 			return callingProcessSlot->process.pipes[i];
+		}
 	}
 	return NULL;
 }
@@ -80,51 +82,57 @@ p_pipe searchPipeByPID(ProcessSlot * callingProcessSlot, int pipePID){
 
 void printPipeInfo(p_pipe pipe){
 	int pid2 = pipe->processTwoPID;
-	nextLine();
-	print_string("Pipe information:");
-	nextLine();
-	print_string("Pipe pointer: ");
-	printHex((qword)pipe);
-	nextLine();
-	print_string("PID 1: ");
-	print_int(pipe->processOnePID);
-	nextLine();
+	nextLineAnyway();
+	print_stringColor("Pipe information:","white");
+	nextLineAnyway();
+	print_stringColor("Pipe PID: ","white");
+	print_intColor(pipe->pipePID,"white");
+	nextLineAnyway();
+	print_stringColor("PID 1: ","white");
+	print_intColor(pipe->processOnePID,"white");
+	nextLineAnyway();
 	
-	print_string("PID 2: ");
+	print_stringColor("PID 2: ","white");
 	if(pid2 < 0){
-		print_string("-");
-		print_int(pid2 * -1);
-		nextLine();
+		print_stringColor("-","white");
+		print_intColor(pid2 * -1,"white");
+		nextLineAnyway();
 	}else{
 		print_int(pid2);
-		nextLine();
+		nextLineAnyway();
 	}
-	print_string("Expected process: ");
-	print_string(pipe->processTwoName);
-	nextLine();
+	print_stringColor("Expected process: ","white");
+	print_intColor(pipe->processTwoPID,"white");
+	nextLineAnyway();
+
+	if(pipe->full == false)
+		print_stringColor("STATUS: LIBRE","white");
+	else
+		print_stringColor("STATUS: FULL","white");
+	nextLineAnyway();
 	/*print_string("Process 1 permission to read: ");
 	print_int(pipe->processOneRead);
-	nextLine();
+	nextLineAnyway();
 	print_string("Process 2 permission to read: ");
 	print_int(pipe->processTwoRead);
-	nextLine();
+	nextLineAnyway();
 	print_string("Process 1 permission to write: ");
 	print_int(pipe->processOneWrite);
-	nextLine();
+	nextLineAnyway();
 	print_string("Process 2 permission to write: ");
 	print_int(pipe->processTwoWrite);
-	nextLine();*/
-	print_string("Actual message:");
-	print_string(pipe->message);
-	nextLine();
-	print_string("Actual message index:");
-	print_int(pipe->messageIndex);
-	nextLine();
-	print_string("MUTEX: ");
-	print_int(pipe->mutex);
-	nextLine();
-	nextLine();
-	nextLine();
+	nextLineAnyway();*/
+	print_stringColor("Actual message:","white");
+	print_stringColor(pipe->message,"white");
+	nextLineAnyway();
+	print_stringColor("Actual message index:","white");
+	print_intColor(pipe->messageIndex,"white");
+	nextLineAnyway();
+	print_stringColor("MUTEX: ","white");
+	print_intColor(pipe->mutex,"white");
+	nextLineAnyway();
+	nextLineAnyway();
+	nextLineAnyway();
 }
 
 int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID){

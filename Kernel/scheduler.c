@@ -107,7 +107,7 @@ void removeFinishedProcess() {
 		if(aux->process.status == FINISHED) {
 			if(lastProcess == aux)
 				lastProcess = prev;
-			
+			changeProcessTree(aux->process);
 			releasePage(aux->process);
 			releaseStructs(aux);
 			prev->next = aux->next;
@@ -116,6 +116,23 @@ void removeFinishedProcess() {
 		prev = aux;
 		aux = aux->next;
 	}
+}
+
+void changeProcessTree(Process process){
+	int i;int j;
+	ProcessSlot * father = getProcessFromPid(process.fatherPID);
+
+	for(i = 0; i < MAX_CHILDS; i++){
+		if(process.childsPID[i] != INVALID_PROCESS_PID)
+			addChild(process.childsPID[i],getProcessFromPid(0));
+	}
+
+	for(j = 0; j < MAX_CHILDS; j++){
+		if(father->process.childsPID[j] == process.PID){
+			father->process.childsPID[j] = INVALID_PROCESS_PID;
+		}
+	}
+
 }
 
 void exitMessage(){
@@ -271,4 +288,15 @@ void nextThread() {
 	currentProcess->process.currentThread = currentProcess->process.currentThread->next;
 	currentProcess->process.currentThread->thread.status = RUNNING;
 
+}
+
+void sleep(int segs){
+	int i;
+	int j;
+
+	disableTickInter();
+	for(i = 0; i < 6000 * segs; i++)
+		for(j = 0; j < 6000 * segs; j++);
+
+	enableTickInter();
 }

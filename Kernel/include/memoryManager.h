@@ -21,6 +21,7 @@ typedef struct s_node{
 	int size;
 	int state;
 	void * address;
+	char process[MAX_PROCESS_NAME];
 	p_node left;
 	p_node right;
 }s_node;
@@ -46,10 +47,10 @@ p_node addNode(void * address, int size);
 void moveFreeArrayNodes(int * array);
 
 /* Returns an unused partition */
-void * allocPage(int sizeToAlloc);
+void * allocPage(int sizeToAlloc,char * processName);
 
 /*Search for a free partition recursively*/
-void * recursiveAlloc(int sizeToAlloc, p_node currentNode);
+void * recursiveAlloc(int sizeToAlloc, p_node currentNode, char * processName);
 
 /*Return true if currentNode has sons, otherwise returns false*/
 boolean hasSons(p_node currentNode);
@@ -88,6 +89,8 @@ void printVerticalMemory();
 
 void verticalRecursivePrint(p_node currentNode);
 
-void printMemory(char * color);
+void printMemory(char * color,p_node node);
+
+void printBlocks(char * color);
 
 #endif

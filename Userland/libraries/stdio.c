@@ -85,7 +85,7 @@ void printfColor(int color, const char * str,...){
 					state = 0;
 					break;
 				default:	
-					putchar('%');
+					putcharColor(color,'%');
 					putcharColor(color, str[x]);
 					state = 0;
 					break;
@@ -199,6 +199,11 @@ int getNum(int * a){
 		}
 		return 0;
 	}
+}
+
+
+void sleep(int segs){
+	int80(32,segs,0,0,0,0);
 }
 
 

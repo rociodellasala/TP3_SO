@@ -8,8 +8,10 @@ int main (void){
 	int PID;
 	char * message;
 	char * message2;
+	int fatherPID;
 
-	PID = pipe("processRead");
+	fatherPID = getFatherPID();
+	PID = pipe(fatherPID);
 	message = "Hola llegue";
 	message2 = "hola mundillo";
 	

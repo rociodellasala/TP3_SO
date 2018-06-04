@@ -7,10 +7,10 @@
 #define READ_ACTION 0
 
 /*Creates a IPC structure pointer for 2 programs*/
-p_pipe createPipe(int callingProcessPID, int connectingProcessPID, char * connectingProcessName);
+p_pipe createPipe(int callingProcessPID, int connectingProcessPID);
 
 /*Creates a IPC structure for 2 programs*/
-s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID, char * connectingProcessName);
+s_pipe createPipeStruct(int callingProcessPID, int connectingProcessPID);
 
 /*Search for a pipe that is waiting for a program to start communication*/
 p_pipe searchPipe(ProcessSlot * connectingProcessSlot,char * callingProcessName, int callingProcessPID);

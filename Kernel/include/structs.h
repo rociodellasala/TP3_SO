@@ -7,7 +7,7 @@
 #define MAX_PROCESS_NAME 50
 #define PAGES_KERNEL_HEAP 96
 #define MAX_MESSAGE_LENGHT 100
-#define MAX_QUEUED_PROCESS 20
+#define MAX_QUEUED_PROCESS 10
 #define MAX_MUTEX_NAME 20
 
 #define FOREGROUND 0
@@ -25,6 +25,8 @@
 #define MAX_HEAP_SLOT 20
 #define MAX_FREE 10
 #define INVALID_LAST_FREE_SLOT -1
+#define INVALID_PROCESS_PID -1
+#define MAX_CHILDS 30
 
 typedef int (*EntryPoint)();
 
@@ -42,7 +44,7 @@ typedef struct s_pipe{
 
   int processOnePID;
   int processTwoPID;
-  char processTwoName[MAX_PROCESS_NAME];
+  boolean full;
 
   boolean processOneRead;
   boolean processOneWrite;
@@ -83,6 +85,8 @@ typedef struct ThreadSlot{
 
 typedef struct Process{
   int PID;
+  int fatherPID;
+  int childsPID[MAX_CHILDS];
   int status;
   int foreground;
   char processName[MAX_PROCESS_NAME];

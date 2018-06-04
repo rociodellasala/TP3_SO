@@ -14,7 +14,8 @@ int main (void){
 	char * firstString;
 	char * secondString;
 
-	int pid = pipe("processWrite");
+	int childPID = startProcess("processWrite");
+	int pid = pipe(childPID);
 	
 	clear_screen();
 	printStaringMessageTest();

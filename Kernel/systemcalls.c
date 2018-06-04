@@ -11,7 +11,7 @@
 #include "video_driver.h"
 #include "mutex.h"
 
-#define SYSCALLS 32
+#define SYSCALLS 34
 
 extern ProcessSlot * currentProcess;
 
@@ -74,39 +74,40 @@ void sys_printHex(qword pointer, qword rdx, qword rcx, qword r8, qword r9){
 
 int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r9){
 	char * process = (char *) processName;
+	int pid;
 	disableTickInter();
 	if(strcmp(process,"linearGraph&")){
-		createProcess(linearGraph, process);
+		pid = createProcess(linearGraph, process);
 	} else if(strcmp(process,"parabolicGraph&")){
-		createProcess(parabolicGraph, process);
+		pid = createProcess(parabolicGraph, process);
 	} else if(strcmp(process,"processRead&")){
-		createProcess(processRead, process);
+		pid = createProcess(processRead, process);
 	} else if(strcmp(process,"processRead")){
-		createProcess(processRead, process);
+		pid = createProcess(processRead, process);
 	} else if(strcmp(process,"testMemoryManager&")){
-		createProcess(testMemoryManager, process);
+		pid = createProcess(testMemoryManager, process);
 	} else if(strcmp(process,"processWrite")){
-		createProcess(processWrite, process);
+		pid = createProcess(processWrite, process);
 	} else if(strcmp(process,"background")){
-		createProcess(background, process);
+		pid = createProcess(background, process);
 	} else if(strcmp(process,"background&")){
-		createProcess(background, process);
+		pid = createProcess(background, process);
 	} else if(strcmp(process,"processReadAndWrite")){
-		createProcess(processReadAndWrite, process);
+		pid = createProcess(processReadAndWrite, process);
 	} else if(strcmp(process,"processWriteAndRead&")){
-		createProcess(processWriteAndRead, process);
+		pid = createProcess(processWriteAndRead, process);
 	} else if(strcmp(process,"processWriteAndRead")){
-		createProcess(processWriteAndRead, process);
+		pid = createProcess(processWriteAndRead, process);
 	} else if(strcmp(process,"producer")){
-		createProcess(producer, process);
+		pid = createProcess(producer, process);
 	} else if(strcmp(process,"consumer")){
-		createProcess(consumer, process);
+		pid = createProcess(consumer, process);
 	} else if(strcmp(process,"threadTest&")){
-		createProcess(threadTest, process);
+		pid = createProcess(threadTest, process);
 	} else
 		return -1;
 	enableTickInter();
-	return 0;
+	return pid;
 }
 
 void sys_ls(qword pointer, qword rdx, qword rcx, qword r8, qword r9){
@@ -119,12 +120,11 @@ void sys_pkill(qword pid, qword rdx, qword rcx, qword r8, qword r9){
 	nextLine();
 }
 
-qword sys_pipeCreate(qword connectingProcessName, qword rdx, qword rcx, qword r8, qword r9){
-	int connectingProcessPID = getProcessFromName((char *) connectingProcessName);
+qword sys_pipeCreate(qword connectingProcessPID, qword rdx, qword rcx, qword r8, qword r9){
 	int callingProcessPID = getCurrentPid();
 	ProcessSlot * callingProcess = getProcessFromPid(callingProcessPID);
 
-	callingProcess->process.pipes[callingProcess->process.pipeIndex] = createPipe(callingProcessPID,connectingProcessPID,(char *) connectingProcessName);
+	callingProcess->process.pipes[callingProcess->process.pipeIndex] = createPipe(callingProcessPID,connectingProcessPID);
 	callingProcess->process.pipeIndex++;
 	return (qword) callingProcess->process.pipes[callingProcess->process.pipeIndex - 1]->pipePID;
 }
@@ -234,6 +234,15 @@ void sys_writeColor(qword buffer, qword size, qword color, qword r8, qword r9) {
 	print_charColor(buffer,color);
 }
 
+void sys_sleep(qword segs, qword rdx, qword rcx, qword r8, qword r9) {
+	sleep(segs);
+}
+
+qword sys_getFatherPID(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
+	ProcessSlot * aux = getProcessFromPid(getCurrentPid());
+	return aux->process.fatherPID;
+}
+
 void load_systemcalls(){
 	sysCalls[1] = (sys) &sys_write;
 	sysCalls[2] = (sys) &sys_clear;
@@ -266,6 +275,8 @@ void load_systemcalls(){
 	sysCalls[29] = (sys) &sys_threadRemove;
 	sysCalls[30] = (sys) &sys_threadWait;
 	sysCalls[31] = (sys) &sys_writeColor;
+	sysCalls[32] = (sys) &sys_sleep;
+	sysCalls[33] = (sys) &sys_getFatherPID;
 
 	setup_IDT_entry(0x80, (qword) &_irq80Handler); 
 }

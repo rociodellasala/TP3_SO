@@ -50,15 +50,15 @@ void * initializeKernelBinary(){
 }
 
 void initializeKernelStack(){
-	kernelStack = (void *) allocPage(PAGE_SIZE * 2);
+	kernelStack = (void *) allocPage(PAGE_SIZE * 2,"Kernel stack");
 }
 
 void initializeKernelMemory(){
-	allocPage(20 * PAGE_SIZE);
+	allocPage(20 * PAGE_SIZE,"Kernel space");
 }
 
 void reserveMemoryForMemoryManager(){
-	allocPage(sizeof(memoryManager));
+	allocPage(sizeof(memoryManager),"Memory Manager");
 }
 
 int main(){

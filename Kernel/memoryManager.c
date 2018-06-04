@@ -4,6 +4,7 @@
 #include "types.h"
 #include "video_driver.h"
 #include "lib.h"
+#include "string.h"
 
 /*Address to storage memoryManagerStruct*/
 static void * memoryManagerAddress = (void *) 0x40000;
@@ -67,24 +68,24 @@ void moveFreeArrayNodes(int * array){
 	return;
 }
 
-void * allocPage(int sizeToAlloc){
+void * allocPage(int sizeToAlloc,char * processName){
 	void * addressToReturn = NULL;
 	sizeToAlloc = transformSize(sizeToAlloc);
 
-	addressToReturn = recursiveAlloc(sizeToAlloc, &memoryManagerPointer->nodes[0]);
+	addressToReturn = recursiveAlloc(sizeToAlloc, &memoryManagerPointer->nodes[0], processName);
 
 	return addressToReturn;
 }
 
-void * recursiveAlloc(int sizeToAlloc, p_node currentNode){
+void * recursiveAlloc(int sizeToAlloc, p_node currentNode, char * processName){
 	void * addressToReturn = NULL;
 	if(currentNode->state == FULL)
 		return NULL;
 
 	if(hasSons(currentNode)){
-		addressToReturn = recursiveAlloc(sizeToAlloc,currentNode->left);
+		addressToReturn = recursiveAlloc(sizeToAlloc,currentNode->left,processName);
 		if(addressToReturn == NULL)
-			addressToReturn = recursiveAlloc(sizeToAlloc,currentNode->right);
+			addressToReturn = recursiveAlloc(sizeToAlloc,currentNode->right,processName);
 		updateNodeState(currentNode);
 		return addressToReturn;
 	}else{
@@ -92,9 +93,10 @@ void * recursiveAlloc(int sizeToAlloc, p_node currentNode){
 			return NULL;
 		else if(currentNode->size / 2 >= sizeToAlloc){
 			splitBlock(currentNode);
-			return recursiveAlloc(sizeToAlloc,currentNode->left);
+			return recursiveAlloc(sizeToAlloc,currentNode->left,processName);
 		}else{
 			currentNode->state = FULL;
+			strcpy(currentNode->process,processName);
 			return currentNode->address;
 		}
 	}
@@ -265,20 +267,34 @@ void verticalRecursivePrint(p_node currentNode){
 	if(currentNode == NULL)
 		return;
 
-	if(! hasSons(currentNode)){
-		printMemory(getColorByState(currentNode));
-		print_string("0x");
-		printHex(currentNode->address);
-		print_string(" Process:");
-		nextLine();
-	}
-
+	if(! hasSons(currentNode))
+		printMemory(getColorByState(currentNode),currentNode);
+	
 	verticalRecursivePrint(currentNode->left);
 	verticalRecursivePrint(currentNode->right);
 }
 
 
-void printMemory(char * color){
+void printMemory(char * color,p_node node){
+	printBlocks(color);
+	print_string("0x");
+	printHex(node->address);
+	nextLine();
+	if(strcmp(color,"red")){
+		printBlocks(color);
+		print_string("Process: ");
+		print_string(node->process);
+		nextLine();
+		printBlocks(color);
+		print_string("0x");
+		printHex(node->address + node->size - 1);
+		nextLine();
+	}
+
+
+}
+
+void printBlocks(char * color){
 	int i;
 	int hexColor = getColorHex(color);
 	for(i = 0; i < 11; i++){
@@ -287,3 +303,6 @@ void printMemory(char * color){
 
 	print_string("  ");
 }
+
+
+

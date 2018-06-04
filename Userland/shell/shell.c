@@ -94,6 +94,7 @@ int get_command(char * buffer){
 
 
 int call_command(char * function, char * parameter){
+	int ret;
 	if(strcmp(function, "echo")){
 		echo(parameter);
 		return 0;
@@ -113,7 +114,11 @@ int call_command(char * function, char * parameter){
 	} else if(strcmp(function, "invalidOpcode")){
 		invalid_opcode();
 	} else if(strncmp(function, "./", 2)){
-		return startProcess(function + 2);
+		ret = startProcess(function + 2);
+		if(ret == -1)
+			return 1;
+		else 
+			return 3;
 	} else if(strcmp(function, "ps")){
 		ps();
 		return 0;	

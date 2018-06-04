@@ -56,4 +56,7 @@ void printMemoryInformation();
 /* Call sys call to print memory state */
 void printMemoryInformationVertical();
 
+/* Returns father's PID of a process */
+int getFatherPID();
+
 #endif

@@ -162,15 +162,37 @@ void removeFromQueue(int * queue){
 	for(i = 0; i < MAX_QUEUED_PROCESS - 1; i++){
 		queue[i] = queue[i + 1];
 	}
+
+	queue[i] = INVALID_PROCESS;
 }
 
 boolean isInQueue(int * queue){
 	int i;
 
-	for(i = 0; i < MAX_QUEUED_PROCESS - 1; i++){
+	for(i = 0; i < MAX_QUEUED_PROCESS; i++){
 		if(queue[i] == getCurrentPid())
 			return true;
 	}
 
 	return false;
+}
+
+void printQueue(int * queue, char * type){
+	int i;
+	print_stringColor("Queue ");
+	print_stringColor(type);
+	print_stringColor(": ");
+	for(i = 0; i < MAX_QUEUED_PROCESS; i++){
+		if(queue[i] > 0){
+			print_intColor(queue[i],"white");
+			print_stringColor(" ","white");
+		}
+		else{
+			print_stringColor(" - ","white");
+			print_intColor(queue[i] * -1,"white");
+		}
+
+	}
+
+	nextLineAnyway();
 }

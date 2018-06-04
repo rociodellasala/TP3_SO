@@ -44,4 +44,8 @@ void nextThread();
 
 Process deleteThreadFromProcess(Process);
 
+void sleep(int segs);
+
+void changeProcessTree(Process process);
+
 #endif

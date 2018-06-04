@@ -63,4 +63,10 @@ void draw_charColor(unsigned char c, int x, int y, int color);
 /* Puts pixel in the received coordinates with a specified color */
 void draw_pixelColor(int x, int y, int color);
 
+/* Ends the line and continue drawing characters in the bottom line even if it's a background process */
+void nextLineAnyway();
+
+/* Prints number in the next writing position with a specified color*/
+void print_intColor(qword n, char * color);
+
 #endif

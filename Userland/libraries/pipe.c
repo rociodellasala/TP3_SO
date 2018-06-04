@@ -3,8 +3,8 @@
 
 extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
-int pipe(char * connectingProcessName){
-	return int80(15,(qword) connectingProcessName,0,0,0,0);
+int pipe(char * connectingProcessPID){
+	return int80(15,(qword) connectingProcessPID,0,0,0,0);
 }
 
 int write(int pid,char * message, int messageLenght){

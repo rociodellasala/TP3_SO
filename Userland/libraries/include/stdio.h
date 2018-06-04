@@ -41,5 +41,7 @@ int changeFontColor(char *);
 /* Gets an int from stdin */
 int getNum(int *);
 
+/* Sleeps program for some segs */
+void sleep(int segs);
 
 #endif

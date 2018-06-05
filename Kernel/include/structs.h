@@ -94,9 +94,6 @@ typedef struct Process{
   int threadSize;
   ThreadSlot * threads;
   ThreadSlot * currentThread;
-  /*void * startingPoint;
-  void * userStack;
-  void * baseStack;*/
   p_heapPage heap;
   p_pipe pipes[MAX_PIPES];
   int pipeIndex;

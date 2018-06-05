@@ -223,20 +223,17 @@ void sys_threadCreate(qword entryPoint, qword rdx, qword rcx, qword r8, qword r9
 }
 
 void sys_threadRemove(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
-	disableTickInter();
-	
 	currentProcess->process = deleteThreadFromProcess(currentProcess->process);
-	
-	enableTickInter();
 	nextThread();
 	restoreContext();
 }
 
-qword sys_threadWait(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
-	if(currentProcess->process.threadSize == 1)
-		return -1;
-	else
-		return currentProcess->process.threadSize;
+void sys_threadWait(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
+	if(currentProcess->process.threadSize == 1) 
+		return;
+	else {
+		currentProcess->process.currentThread->thread = blockThread(currentProcess->process.currentThread->thread);
+	}	
 }
 
 void sys_writeColor(qword buffer, qword size, qword color, qword r8, qword r9) {

@@ -18,7 +18,7 @@ void function1(){
 
 void function2(){
 	int i, j=0;
-	for(i=0; i<30; i++){
+	for(i=0; i<20; i++){
 		while(j < 1000000){j++;}
 		printfColor(0x2E64FE," THREAD 2 - b: %d\n", i);
 	}
@@ -28,7 +28,7 @@ void function2(){
 
 void function3(){
 	int i, j=0;
-	for(i=0; i<35; i++){
+	for(i=0; i<30; i++){
 		while(j < 1000000){j++;}
 		printfColor(0x9AFE2E," THREAD 3 - c: %d\n", i);
 	}
@@ -37,8 +37,7 @@ void function3(){
 }
 
 int main(void){
-	int i = 0;
-	int threads, start = 0;
+	int threads, i = 0, start = 0;
 	clear_screen();
 	printf("--- THREAD TEST ---\n");
 	nextLine();
@@ -54,8 +53,6 @@ int main(void){
 		getNum(&start);
 		nextLine();
 	} while(start != 1);
-	
-
 
 	printfColor(0xFE2E2E,"Creating thread 1...\n");
 	printfColor(0x2E64FE,"Creating thread 2...\n");
@@ -65,12 +62,13 @@ int main(void){
  	thread(function2);
  	thread(function3);
 
-    while((threads = waitThread())!= -1){
-    	printf("--- MAIN THREAD : Waiting for %d threads to end\n", threads - 1);
-    	while(i < 10000000){i++;}
-    } 
+    waitThread();
+    printf(" --- MAIN THREAD STATUS: Locked. Main thread will wait until all threads finished\n");
+    while(i<60000000){
+    	i++;
+    }
 
-  	printf("--- MAIN THREAD : All threads are finished, so now main thread can finish too..\n");
+  	printf(" --- MAIN THREAD : All threads are finished, so now main thread can finish too..\n");
   	clear_buffer();
 	exitProcess();
 	return 0;

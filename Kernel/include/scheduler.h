@@ -38,6 +38,8 @@ void blockProcess(int pid);
 /* Unblocks a process */
 void unblockProcess(int pid);
 
+Thread blockThread(Thread thread);
+
 void checkIfThreadChange();
 
 void nextThread();

@@ -233,6 +233,12 @@ void unblockProcess(int pid){
 	return;
 }
 
+Thread blockThread(Thread thread){
+	thread.status = LOCKED;
+	thread.threadQuantum = 0;
+	return thread;
+}
+
 Process deleteThreadFromProcess(Process process){
 	ThreadSlot * thread = process.threads;
 	ThreadSlot * prev;
@@ -252,6 +258,10 @@ Process deleteThreadFromProcess(Process process){
 	
 	process.threadSize--;
 	
+	if(process.threadSize == 1 && process.threads->thread.status == LOCKED){
+		process.threads->thread.status = READY;
+	}
+
 	return process;
 }
 

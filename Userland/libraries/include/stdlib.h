@@ -59,4 +59,7 @@ void printMemoryInformationVertical();
 /* Returns father's PID of a process */
 int getFatherPID();
 
+/* Prints all process like a tree structure */
+void printProcessTree();
+
 #endif

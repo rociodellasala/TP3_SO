@@ -125,7 +125,10 @@ void ls(){
 	printf("      processRead       processWrite          background          processWriteAndRead");
 	nextLine();
 	nextLine();
-	printf("       producer           consumer            threadTest");
+	printf("       producer           consumer            threadTest          proA");
+	nextLine();
+	nextLine();
+	printf("       proB              proC");
 	nextLine();
 }
 
@@ -153,4 +156,8 @@ void printMemoryInformation(){
 
 void printMemoryInformationVertical(){
 	int80(27, 0, 0, 0, 0, 0);
+}
+
+void printProcessTree(){
+	int80(34, 0, 0, 0, 0, 0);
 }

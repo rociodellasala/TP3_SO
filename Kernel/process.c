@@ -91,8 +91,10 @@ void addChild(int childPID, ProcessSlot * slot){
 	int i;
 
 	for(i = 0; i < MAX_CHILDS; i++){
-		if(slot->process.childsPID[i] == INVALID_PROCESS_PID)
+		if(slot->process.childsPID[i] == INVALID_PROCESS_PID){
 			slot->process.childsPID[i] = childPID;
+			break;
+		}
 	}
 }
 
@@ -179,16 +181,19 @@ void printAllCurrentProcess(){
 
 void printProcessTree(ProcessSlot * currentSlot, int lines){
 	int i;int j;
-
+	nextLine();
 	for(i = 0; i < lines; i++)
 		print_stringColor(" ","white");
 	print_stringColor(currentSlot->process.processName,"white");
 	print_stringColor(": ","white");
 
-	for(j = 0; j < MAX_CHILDS; j++)
-		if(currentSlot->process.childsPID[j] != INVALID_PROCESS_PID)
-			printProcessTree(currentSlot->process.childsPID[j], lines + 8);
-
+	for(j = 0; j < MAX_CHILDS; j++){
+		if(currentSlot->process.childsPID[j] != INVALID_PROCESS_PID){
+			ProcessSlot * aux = getProcessFromPid(currentSlot->process.childsPID[j]);
+			printProcessTree(aux, lines + 8);
+		}
+	}
+	
 }
 
 int getProcessFromName(char * procesName){

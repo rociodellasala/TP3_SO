@@ -21,4 +21,7 @@ void intToString(int, char *);
 /* Converts a string into an int*/
 int stringToInt(char * str);
 
+/* Concatenates two strings */
+char * strcat(char * dest, const char * source);
+
 #endif

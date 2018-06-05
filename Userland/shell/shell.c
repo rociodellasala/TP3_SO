@@ -137,6 +137,9 @@ int call_command(char * function, char * parameter){
 	} else if(strcmp(function,"memInfo")){
 		printMemoryInformationVertical();
 		return 0;
+	} else if(strcmp(function,"processTree")){
+		printProcessTree();
+		return 0;
 	} else if(strcmp(function, "exit")){
 		return 2;
 	}
@@ -159,6 +162,7 @@ void printHelp(){
 	printf("kill [pid]:             Terminates a specific process by PID\n");
 	printf("buddyInfo               Prints buddy allocator tree\n");
 	printf("memInfo                 Prints memory state\n");
+	printf("processTree             Prints all process like a tree structure\n");
 }
 
 

@@ -49,6 +49,28 @@ char * strcpy(char * dest, char * source){
 	return dest;
 }
 
+char * strcat(char * dest, const char * source){
+	int i;
+	int j;
+	int destLengh = strlen(dest);
+	int sourceLength = strlen(source);
+
+	for(i = 0; i <  destLengh; i++){
+		if(dest[i] == '\0')
+			break;
+	}
+
+	for(j = 0; j <  sourceLength; j++){
+		dest[i] = source[j];
+		i++;
+	}
+
+	dest[i] = '\0';
+
+	return dest;
+}
+
+
 
 
 

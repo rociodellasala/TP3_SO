@@ -25,7 +25,7 @@ static void * processReadAndWrite = (void *) 0xE00000;
 static void * processWriteAndRead = (void *) 0xF00000;
 static void * producer = (void *) 0xF10000;
 static void * consumer = (void *) 0xF20000;
-static void * threadTest = (void *) 0xF30000;
+static void * multithread = (void *) 0xF30000;
 static void * proA = (void *) 0xF40000;
 static void * proB = (void *) 0xF50000;
 static void * proC = (void *) 0xF60000;
@@ -105,8 +105,8 @@ int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r
 		pid = createProcess(producer, process);
 	} else if(strcmp(process,"consumer")){
 		pid = createProcess(consumer, process);
-	} else if(strcmp(process,"threadTest&")){
-		pid = createProcess(threadTest, process);
+	} else if(strcmp(process,"multithread&")){
+		pid = createProcess(multithread, process);
 	} else if(strcmp(process,"proA&")){
 		pid = createProcess(proA, process);
 	} else if(strcmp(process,"proB")){

@@ -1,6 +1,6 @@
 include ../Makefile.inc
 
-MODULE=threadTest.bin
+MODULE=multithread.bin
 ASMSOURCES= $(wildcard ../libraries/asm/*.asm)
 SOURCES=$(wildcard [^_]*.c)
 LIBRARYSOURCES=$(wildcard ../libraries/[^_]*.c)
@@ -17,7 +17,7 @@ COBJECTS=$(SOURCES:.c=.o)
 all: $(MODULE)
 
 $(MODULE): $(ASMOBJECTS) $(COBJECTS) $(LIBRARYOBJECTS)
-	$(LD) -T threadTest.ld _loader.o $(COBJECTS) $(ASMOBJECTS) $(LIBRARYOBJECTS) -o ../$(MODULE)
+	$(LD) -T multithread.ld _loader.o $(COBJECTS) $(ASMOBJECTS) $(LIBRARYOBJECTS) -o ../$(MODULE)
 
 clean:
 	rm -rf *.o

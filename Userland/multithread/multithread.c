@@ -4,8 +4,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void (*ptr_fun) ();
-
 void function1(){
 	int i, j=0;
 	for(i=0; i<40; i++){
@@ -39,17 +37,24 @@ void function3(){
 int main(void){
 	int threads, i = 0, start = 0;
 	clear_screen();
-	printf("--- THREAD TEST ---\n");
+	printf("--- MULTITHREADING PROCESS ---\n");
 	nextLine();
-	printf("1 - First we're going to create 3 threads on this process.\n");
-	printf("2 - Then, each of them will print the value of a variable: a (THREAD 1, RED), b(THREAD 2, BLUE) or c (THREAD 3, GREEN). To do that the kernel will schedule between them and the main process.\n");
-	printf("3 - After, the main process will wait until all of them finish in order to finish too.\n");
+	printf("The aim of this process is to show that the scheduler alternates between all the threads correctly (respecting the order in which they were created and also their status).\n"); 
+	printf("In addition, the context of each thread is unique and it is restored correctly every time it returns to its execution. If the scheduler was running thread 1 (for ex: it was printing number 38) and it is interrupted, when the execution is restored, it will print the number 39.\n");
 	nextLine();
-	printf("NOTE: THREAD 1 will print 40 values, THREAD 2 will print 30 values and THREAD 3 will print 35 values.\n");
+	printfColor(0x045FB4," GUIDE:\n");
+	nextLine();
+	printf(" 1 - First we're going to create 3 threads on this process.\n");
+	printf(" 2 - Then, each thread will have a variable that will print until it reaches a certain stop value, where it will end. While this happens, each thread can be interrupted by the scheduler, which will run the next thread.\n");
+	printf(" 3 - After, the main process will wait until all of them finish in order to finish too.\n");
+	nextLine();
+	printf("NOTE 1: THREAD 1 will print variable a 40 times in RED, THREAD 2 will print variable b 20 times in BLUE and THREAD 3 will print variable c 30 times in GREEN\n");
+	nextLine();
+	printf("NOTE 2: If MAIN THREAD appears, it will print in WHITE color, in order to distinguish from the rest\n");
 	nextLine();
 	clear_buffer();
 	do{
-		printf("To start the test please press 1: ");
+		printf("To start please press 1 followed by ENTER: ");
 		getNum(&start);
 		nextLine();
 	} while(start != 1);
@@ -73,4 +78,3 @@ int main(void){
 	exitProcess();
 	return 0;
 }
-

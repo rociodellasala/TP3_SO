@@ -125,10 +125,10 @@ void ls(){
 	printf("      processRead       processWrite          background          processWriteAndRead");
 	nextLine();
 	nextLine();
-	printf("       producer           consumer            threadTest          proA");
+	printf("       producer           consumer            multithread          proA");
 	nextLine();
 	nextLine();
-	printf("       proB              proC");
+	printf("       proB                proC");
 	nextLine();
 }
 

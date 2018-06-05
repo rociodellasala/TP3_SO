@@ -2,7 +2,7 @@ include Makefile.inc
 
 SAMPLE_DATA=shell.bin
 
-all: lib terminal linearFDisp parabDisp testMem processR processW back processRW processWR prod cons thread pA pB pC
+all: lib terminal linearFDisp parabDisp testMem processR processW back processRW processWR prod cons mthread pA pB pC
 
 terminal:
 	cd shell; make all
@@ -37,8 +37,8 @@ prod:
 cons:
 	cd consumer; make all
 
-thread:
-	cd threadTest; make all
+mthread:
+	cd multithread; make all
 
 lib:
 	cd libraries; make all
@@ -65,7 +65,7 @@ clean:
 	cd background; make clean
 	cd producer; make clean
 	cd consumer; make clean
-	cd threadTest; make clean
+	cd multithread; make clean
 	cd proA; make clean
 	cd proB; make clean
 	cd proC; make clean

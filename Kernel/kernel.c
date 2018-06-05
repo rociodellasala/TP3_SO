@@ -27,7 +27,7 @@ static void * processReadAndWrite = (void *) 0xE00000;
 static void * processWriteAndRead = (void *) 0xF00000;
 static void * producer = (void *) 0xF10000;
 static void * consumer = (void *) 0xF20000;
-static void * threadTest = (void *) 0xF30000;
+static void * multithread = (void *) 0xF30000;
 static void * proA = (void *) 0xF40000;
 static void * proB = (void *) 0xF50000;
 static void * proC = (void *) 0xF60000;
@@ -46,7 +46,7 @@ void * getStackBase(){
 
 void * initializeKernelBinary(){
 	void * moduleAddresses[] = {shell, linearGraph, parabolicGraph, processRead, 
-		testMemoryManager, processWrite, background,processReadAndWrite,processWriteAndRead, producer, consumer, threadTest, proA, proB, proC,};
+		testMemoryManager, processWrite, background,processReadAndWrite,processWriteAndRead, producer, consumer, multithread, proA, proB, proC,};
 	loadModules(&endOfKernelBinary, moduleAddresses);
 	clearBSS(&bss, &endOfKernel - &bss);
 	return getStackBase();

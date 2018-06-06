@@ -47,8 +47,7 @@ void * getStackBase(){
 }
 
 void * initializeKernelBinary(){
-	void * moduleAddresses[] = {shell, linearGraph, parabolicGraph, processRead, 
-		testMemoryManager, processWrite, background,processReadAndWrite,processWriteAndRead, producer, consumer, multithread, proA, proB, proC, threadTest, bubbleSort,};
+	void * moduleAddresses[] = {shell, linearGraph, parabolicGraph, processRead, testMemoryManager, processWrite, background,processReadAndWrite,processWriteAndRead, producer, consumer, multithread, proA, proB, proC, threadTest, bubbleSort,};
 	loadModules(&endOfKernelBinary, moduleAddresses);
 	clearBSS(&bss, &endOfKernel - &bss);
 	return getStackBase();

@@ -39,9 +39,6 @@ void runScheduler(){
 		currentProcess->process.status = LOCKED;
 	}
 
-	if(currentProcess == NULL) 
-		return;
-
 	if(numberOfTicks < QUANTUM) {
 			
 		numberOfTicks++;

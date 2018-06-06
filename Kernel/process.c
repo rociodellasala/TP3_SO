@@ -153,13 +153,13 @@ void printAllCurrentProcess(){
 	while(aux != NULL && i < allProcess){
 		print_string("Process name: ");
 		print_string(aux->process.processName);
-		print_string("  -  PID: ");
+		print_string(" - PID: ");
 		print_int(aux->process.PID);
 		if(aux->process.heap == NULL)
-			print_string("  -  Heap: No heap avaiable");
+			print_string(" - Heap: No heap avaiable");
 		else
-			print_string("  -  Heap: There is a heap");
-		print_string(" -  Status: ");
+			print_string(" - Heap: There is a heap");
+		print_string(" - Status: ");
 		
 		if((aux->process.status) == RUNNING) 
 			print_string("RUNNING");
@@ -170,9 +170,11 @@ void printAllCurrentProcess(){
 		else
 			print_string("FINISHED");
 		if((aux->process.foreground) == FOREGROUND)
-		print_string("  -  FOREGROUND ");
+		print_string(" - FOREGROUND ");
 		else if((aux->process.foreground) == BACKGROUND)
-		print_string("  -  BACKGROUND");
+		print_string(" - BACKGROUND");
+		print_string(" - THREADS: ");
+		print_int(aux->process.threadSize);
 		nextLine();
 
 		i++;

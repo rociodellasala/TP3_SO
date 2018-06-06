@@ -172,7 +172,7 @@ int getNum(int * a){
 	int k;
 
 	while(state != exit) {
-		if ((c = getchar()) != EOF){
+		if (((int)(c = getchar())) != EOF){
     		if(c == '\n'){
 	      		if(index == 0){
 					return 1; 

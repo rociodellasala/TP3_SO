@@ -15,7 +15,7 @@ void start_shell(){
 	char buffer[MAX_SIZE];
   	int index;
   	char c;
-  	int state;
+  	int state = 0;
   	boolean isFirst = true;
   	
 	while(state != exit){
@@ -26,7 +26,7 @@ void start_shell(){
 			isFirst = false;
 		}
 
-		if ((c = getchar()) != EOF){
+		if (((int)(c = getchar())) != EOF){
 			
 			if(c == '\b'){
 				if(index != 0){

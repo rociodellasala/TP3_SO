@@ -66,7 +66,7 @@ int stringToInt(char * str){
 
 void clear_buffer(){
 	char c;
-	while((c = getchar()) != EOF );
+	while(((int)(c = getchar())) != EOF );
 }
 
 void exitProcess(){
@@ -133,10 +133,10 @@ void ls(){
 	printf("      processRead       processWrite          background          processWriteAndRead");
 	nextLine();
 	nextLine();
-	printf("       producer           consumer            multithread          proA");
+	printf("       producer           consumer            multithread                proA");
 	nextLine();
 	nextLine();
-	printf("       proB                proC");
+	printf("        proB               proC               threadTest              bubbleSort");
 	nextLine();
 }
 

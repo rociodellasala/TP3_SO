@@ -30,6 +30,6 @@ int stringToInt(char * str);
 char * strcat(char * dest, const char * source);
 
 /* Search for the position of a string in other string */
-char * strsch(const char * source, const char * strSearched);
+char * strsch(char * source, const char * strSearched);
 
 #endif

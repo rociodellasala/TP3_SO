@@ -7,9 +7,8 @@
 int main (void){
 	while(1){
 		putchar('a');
-		printfColor(0x9AFE2E,"\nProduced! ");
-		printfColor(0x9AFE2E," Buffer: [%s]	 Lenght: %d", getPipeBuffer(0,false,true) , strlen(getPipeBuffer(0,false,true)));
-		sleep(4);
+		printfColor(0x9AFE2E,"\nProduced! Buffer: [%s]	 Lenght: %d", getPipeBuffer(0,false,true) , strlen(getPipeBuffer(0,false,true)));
+		sleep(2);
 	}
 
 	exitProcess();

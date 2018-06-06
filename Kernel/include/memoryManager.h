@@ -64,6 +64,9 @@ void splitBlock(p_node currentNode);
 /*Transforms size into a multiple of 2*/
 int transformSize(int size);
 
+/* Free nodes left and right from a father node */
+void releaseSons(p_node currentNode);
+
 /*Release all pages reserved for a program's heap and stack*/
 void releasePage(Process process);
 

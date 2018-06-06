@@ -207,7 +207,7 @@ int getProcessFromName(char * procesName){
 			break;
 	}
 	
-	if(! strcmp(aux->process.processName,procesName)){
+	if(aux == NULL || ! strcmp(aux->process.processName,procesName)){
 		return -1;
 	}
 
@@ -226,7 +226,7 @@ ProcessSlot * getProcessFromPid(int pid){
 			break;
 	}
 
-	if(aux->process.PID != pid)
+	if(aux == NULL || aux->process.PID != pid)
 		return NULL;
 
 	return aux;

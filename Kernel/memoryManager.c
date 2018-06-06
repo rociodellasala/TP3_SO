@@ -69,7 +69,7 @@ void moveFreeArrayNodes(int * array){
 }
 
 void * allocPage(int sizeToAlloc,char * processName){
-	void * addressToReturn = NULL;
+	void * addressToReturn;
 	sizeToAlloc = transformSize(sizeToAlloc);
 
 	addressToReturn = recursiveAlloc(sizeToAlloc, &memoryManagerPointer->nodes[0], processName);
@@ -115,7 +115,7 @@ void updateNodeState(p_node currentNode){
 
 void splitBlock(p_node currentNode){
 	currentNode->left = addNode(currentNode->address,currentNode->size / 2);
-	currentNode->right = addNode(currentNode->address + currentNode->size / 2,currentNode->size / 2);
+	currentNode->right = addNode((char *) currentNode->address + currentNode->size / 2,currentNode->size / 2);
 	currentNode->state = PARTIALLY;
 }
 
@@ -196,10 +196,10 @@ void addToFreeNodes(p_node currentNode){
 
 
 void printTree(){
+	boolean doLines[18] = {0};
 	nextLine();
 	print_stringColor("                           ------------MEMORY INFORMATION STATE------------", "blue");
 	nextLine();
-	boolean doLines[18] = {0};
 	recursivePrint(&memoryManagerPointer->nodes[0],0,doLines,false);
 }
 
@@ -217,7 +217,7 @@ void recursivePrint(p_node currentNode,int level,boolean * doLines,boolean isLef
 	printLines(level,doLines,isLeft);
 	print_stringColor("STATE ", color);
 	print_string(" 0x");
-	printHex(currentNode->address);
+	printHex((qword) currentNode->address);
 	nextLine();
 	recursivePrint(currentNode->left,level + 1,doLines,true);
 	recursivePrint(currentNode->right,level + 1,doLines,false);
@@ -278,7 +278,7 @@ void verticalRecursivePrint(p_node currentNode){
 void printMemory(char * color,p_node node){
 	printBlocks(color);
 	print_string("0x");
-	printHex(node->address);
+	printHex((qword) node->address);
 	nextLine();
 	if(strcmp(color,"red")){
 		printBlocks(color);
@@ -287,7 +287,7 @@ void printMemory(char * color,p_node node){
 		nextLine();
 		printBlocks(color);
 		print_string("0x");
-		printHex(node->address + node->size - 1);
+		printHex((qword) node->address + node->size - 1);
 		nextLine();
 	}
 

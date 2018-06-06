@@ -59,17 +59,12 @@ void start_shell(){
 						isFirst = true;
 						break;
 				}
-  			} else if(c != ' '){
+  			} else{
 	      		buffer[index] = c;
 				putchar(buffer[index]);
 				index++;		      		
 	      		buffer[index] = 0;
-  			} else { 
-	      		buffer[index] = c; 
-				putchar(buffer[index]);
-				index++;		      		
-	      		buffer[index] = 0;
-  			} 
+  			}
 		}	
 	}
 

@@ -196,7 +196,7 @@ int removeProcessFromTerminal(int pid){
 		exitMessage();
 		currentProcess = lastProcess = tableProcess = NULL;
 		while(1);
-		return;
+		return -1;
 	}
 
 	if(slot == NULL){

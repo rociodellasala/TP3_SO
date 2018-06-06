@@ -109,7 +109,7 @@ void thenBothPointersAreNotEqual(void * firstPointer, void * secondPointer){
 }
 
 void thenSecondPointerStartsWhereItShould(int firstAmount, void * firstPointer, void * secondPointer){
-	if(assertEqualPointer(firstPointer + firstAmount, secondPointer)){
+	if(assertEqualPointer((char *) firstPointer + firstAmount, secondPointer)){
 		printf("\nSUCCESS!! -------- Second Pointer starts at: 0x");
 		printHexadecimal(secondPointer);
 	}else{
@@ -118,7 +118,7 @@ void thenSecondPointerStartsWhereItShould(int firstAmount, void * firstPointer, 
 		printf("The amount of memory reserved for first pointer was %d\n0x", firstAmount);
 		printHexadecimal(firstPointer);
 		printf(" + %d = 0x", firstAmount);
-		printHexadecimal(firstPointer + firstAmount);
+		printHexadecimal((char *)firstPointer + firstAmount);
 		printf("\nBut second pointer is: 0x");
 		printHexadecimal(secondPointer);
 	}
@@ -186,7 +186,7 @@ void thenAllTestPointersAreNotEqual(void * firstStringPointer, void * secondStri
 }
 
 void thenFourthPointerStartsWhereItShould(void * fourthStringPointer, int firstAmount, int secondAmount){
-	if(assertEqualPointer(fourthStringPointer,firstPage + firstAmount + secondAmount)){
+	if(assertEqualPointer(fourthStringPointer,(char *) firstPage + firstAmount + secondAmount)){
 		printf("\nSUCCESS!! -------- Our pointer address is: 0x");
 		printHexadecimal(fourthStringPointer);
 	}else{

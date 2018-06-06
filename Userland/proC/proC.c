@@ -2,6 +2,8 @@
 #include <mutex.h>
 #include <types.h>
 #include <stdio.h>
+#include <pipe.h>
+#include <string.h>
 
 
 int main (void){

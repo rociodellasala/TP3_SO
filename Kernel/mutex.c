@@ -4,6 +4,7 @@
 #include "lib.h"
 #include "string.h"
 #include "heap.h"
+#include "video_driver.h"
 
 extern kernelHeapHeader * kernelHeader;
 
@@ -112,6 +113,7 @@ int wait(int index){
 		}
 		return LOCK;
 	}
+	return LOCK;
 }
 
 int signal(int index){
@@ -133,8 +135,7 @@ int signal(int index){
 		return LOCK;
 		}
 	}
-
-	if(mutex->mutexValue == true){
+	else if(mutex->mutexValue == true){
 		if(isInQueue(mutex->pidQueueSignal)){
 			blockProcess(getCurrentPid());
 		}else{
@@ -143,6 +144,8 @@ int signal(int index){
 		}
 		return LOCK;
 	}
+
+	return LOCK;
 }
 
 void addToQueue(int * queue){
@@ -179,9 +182,9 @@ boolean isInQueue(int * queue){
 
 void printQueue(int * queue, char * type){
 	int i;
-	print_stringColor("Queue ");
-	print_stringColor(type);
-	print_stringColor(": ");
+	print_stringColor("Queue ","white");
+	print_stringColor(type,"white");
+	print_stringColor(": ","white");
 	for(i = 0; i < MAX_QUEUED_PROCESS; i++){
 		if(queue[i] > 0){
 			print_intColor(queue[i],"white");

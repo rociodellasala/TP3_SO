@@ -2,29 +2,23 @@
 #include <mutex.h>
 #include <types.h>
 #include <stdio.h>
+#include <pipe.h>
+#include <string.h>
 
 void getWord(unsigned char * vector,char * information);
 void getOption(int * option);
 void pipeProcess(char * process,char * first, char * second, char * result);
 
 int main (void){
-	unsigned char c;
 	int option = 0;
-	unsigned char wordOne[20];
-	unsigned char wordTwo[20];
 	char result[50] = {0};
 	char * one = "Hola";
 	char * two = "chau";
-	int i = 0; int j = 0;
 
 	clear_screen();
 	printf("In this program we are going to do some test over pipes using proA proB and proC\n");
 	printf("We are gonna need two words\n\n");
-	
-	/*
-	getWord(wordOne,"one");
-	getWord(wordTwo,"two");
-	*/
+
 
 	printf("Words chosen: %s  |||  %s \n", one,two);
 	

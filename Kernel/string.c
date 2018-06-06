@@ -1,5 +1,6 @@
 #include "types.h"
 #include "string.h"
+#include "converter.h"
 
 int strlen(const char * str){
 	int length = 0;

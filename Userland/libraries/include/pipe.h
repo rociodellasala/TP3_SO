@@ -4,7 +4,7 @@
 #define BLOCKPROCESS -1
 
 /* Call system call to create a pipe*/
-int pipe(char *);
+int pipe(int);
 
 /* Call system call to write through a pipe*/
 int write(int, char *, int);

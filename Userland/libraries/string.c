@@ -83,10 +83,9 @@ char * strcat(char * dest, const char * source){
 }
 
 
-char * strsch(const char * source, const char * strSearched){
+char * strsch(char * source, const char * strSearched){
 	int i;
 	int j = 0;
-	int flag = 0;
 	char * position = NULL;
 	int searchedLength = strlen(strSearched);
 	int sourceLength = strlen(source);
@@ -95,13 +94,11 @@ char * strsch(const char * source, const char * strSearched){
 		if(j == searchedLength)
 			break;
 		if(source[i] == strSearched[j]){
-			flag = 1;
 			j++;
 			if(position == NULL)
 				position = source + i;
 		}else{
 			j = 0;
-			flag = 0;
 			position = NULL;
 		}
 	}

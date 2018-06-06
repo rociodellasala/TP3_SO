@@ -7,6 +7,7 @@
 #include "video_driver.h"
 #include "mutex.h"
 #include "process.h"
+#include "string.h"
 
 extern ProcessSlot * tableProcess;
 
@@ -253,6 +254,9 @@ void releasePipeStruct(p_pipe pipe){
 	if(callingProcess != NULL && connectingProcess != NULL)
 		return;
 
+	if(pipe == NULL)
+		return;
+
 	for(i = 0; i < MAX_PIPES * MAX_PROCESS_SLOT; i++){
 		if(pipe == &kernelHeader->allPipesSlots[i]){
 			indexFree = i;
@@ -313,5 +317,5 @@ p_heapPage findAvaiableHeapPage(p_heapPage firstPage, int size){
 void * findFreePointer(p_heapPage heapPage){
 	int occupied = heapPage->occupiedBytes;
 	void * startingAddress = heapPage->currentPage;
-	return startingAddress + occupied;
+	return (char *) startingAddress + occupied;
 }

@@ -10,6 +10,7 @@
 #include "types.h"
 #include "video_driver.h"
 #include "mutex.h"
+#include "memoryManager.h"
 
 #define SYSCALLS 39
 
@@ -44,7 +45,7 @@ qword sys_write(qword buffer, qword size, qword rcx, qword r8, qword r9) {
 		return size;
 	}
 	else
-		return write(stdout,buffer,size,callingProcessPID);
+		return write(stdout,(char*) buffer,size,callingProcessPID);
 	
 }
 
@@ -61,7 +62,7 @@ qword sys_read(qword file, qword buffer, qword size, qword r8, qword r9){
 		return size;
 	}
 	else
-		return read(stdin,buffer,size - 1,callingProcessPID);
+		return read(stdin,(char *) buffer,size - 1,callingProcessPID);
 }
 
 void sys_fontColor(qword color, qword rdx, qword rcx, qword r8, qword r9){
@@ -227,11 +228,11 @@ int sys_killPID(qword pid, qword rdx, qword rcx, qword r8, qword r9){
 	return removeProcessFromTerminal(pid);
 }
 
-qword sys_printMemoryTree(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
+void sys_printMemoryTree(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
 	printTree();
 }
 
-qword sys_printMemoryVertical(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
+void sys_printMemoryVertical(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
 	printVerticalMemory();
 }
 
@@ -293,14 +294,14 @@ void sys_pipeStdoutStdin(qword stdoutPID, qword stdinPID, qword rcx, qword r8, q
 
 qword sys_getPipeBuffer(qword pipePID, qword stdin, qword stdout, qword r8, qword r9) {
 	ProcessSlot * aux = getProcessFromPid(getCurrentPid());
-	char * buffer;
+	char * buffer = NULL;
 	if(stdin != 0){
 		buffer = aux->process.stdin->message;
 	}else if(stdout != 0){
 		buffer = aux->process.stdout->message;
 	}
 
-	return buffer;
+	return (qword) buffer;
 }
 
 void load_systemcalls(){

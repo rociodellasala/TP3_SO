@@ -18,6 +18,8 @@ void exitProcess();
 
 void exitThread();
 
+int threadCount();
+
 /* Returns void * pointer to an amount of reserved memory */
 void * malloc(int);
 

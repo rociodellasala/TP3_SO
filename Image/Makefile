@@ -8,7 +8,7 @@ VMDK=$(OSIMAGENAME).vmdk
 QCOW2=$(OSIMAGENAME).qcow2
 IMG=$(OSIMAGENAME).img
 KERNEL=../Kernel/kernel.bin
-USERLAND=../Userland/shell.bin ../Userland/linearGraph.bin ../Userland/parabolicGraph.bin ../Userland/processRead.bin ../Userland/testMemoryManager.bin ../Userland/processWrite.bin ../Userland/background.bin  ../Userland/processReadAndWrite.bin  ../Userland/processWriteAndRead.bin  ../Userland/producer.bin  ../Userland/consumer.bin ../Userland/multithread.bin ../Userland/proA.bin ../Userland/proB.bin ../Userland/proC.bin
+USERLAND=../Userland/shell.bin ../Userland/linearGraph.bin ../Userland/parabolicGraph.bin ../Userland/processRead.bin ../Userland/testMemoryManager.bin ../Userland/processWrite.bin ../Userland/background.bin  ../Userland/processReadAndWrite.bin  ../Userland/processWriteAndRead.bin  ../Userland/producer.bin  ../Userland/consumer.bin ../Userland/multithread.bin ../Userland/proA.bin ../Userland/proB.bin ../Userland/proC.bin ../Userland/threadTest.bin
 
 PACKEDKERNEL=packedKernel.bin
 IMGSIZE=6291456

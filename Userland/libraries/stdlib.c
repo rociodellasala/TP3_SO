@@ -77,8 +77,16 @@ void exitThread(){
 	int80(29,0,0,0,0,0);
 }
 
+int threadCount(){
+	return int80(35,0,0,0,0,0);
+}
+
 void * malloc(int size){
 	return ((void *)int80(10,size,0,0,0,0));
+}
+
+void * heapStartingPoint(){
+	return ((void *)int80(36,0,0,0,0,0));
 }
 
 void printHexadecimal(void * pointer){

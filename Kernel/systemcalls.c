@@ -11,7 +11,7 @@
 #include "video_driver.h"
 #include "mutex.h"
 
-#define SYSCALLS 35
+#define SYSCALLS 37
 
 extern ProcessSlot * currentProcess;
 
@@ -29,6 +29,7 @@ static void * multithread = (void *) 0xF30000;
 static void * proA = (void *) 0xF40000;
 static void * proB = (void *) 0xF50000;
 static void * proC = (void *) 0xF60000;
+static void * threadTest = (void *) 0xF70000;
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
@@ -75,6 +76,7 @@ void sys_printHex(qword pointer, qword rdx, qword rcx, qword r8, qword r9){
 	printHex(pointer);
 }
 
+
 int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r9){
 	char * process = (char *) processName;
 	int pid;
@@ -113,6 +115,8 @@ int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r
 		pid = createProcess(proB, process);
 	} else if(strcmp(process,"proC")){
 		pid = createProcess(proC, process);
+	} else if(strcmp(process,"threadTest&")){
+		pid = createProcess(threadTest, process);
 	} else
 		return -1;
 	enableTickInter();
@@ -254,6 +258,15 @@ void sys_printProcessTree(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
 	printProcessTree(shell,0);
 }
 
+qword sys_threadCount(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
+	return currentProcess->process.threadSize;
+}
+
+qword sys_heapStartingPoint(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
+	void * pointer = currentProcess->process.heap->currentPage;
+	return pointer;
+}
+
 void load_systemcalls(){
 	sysCalls[1] = (sys) &sys_write;
 	sysCalls[2] = (sys) &sys_clear;
@@ -289,6 +302,8 @@ void load_systemcalls(){
 	sysCalls[32] = (sys) &sys_sleep;
 	sysCalls[33] = (sys) &sys_getFatherPID;
 	sysCalls[34] = (sys) &sys_printProcessTree;
+	sysCalls[35] = (sys) &sys_threadCount;
+	sysCalls[36] = (sys) &sys_heapStartingPoint;
 
 	setup_IDT_entry(0x80, (qword) &_irq80Handler); 
 }

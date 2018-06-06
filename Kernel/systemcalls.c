@@ -31,6 +31,7 @@ static void * proA = (void *) 0xF40000;
 static void * proB = (void *) 0xF50000;
 static void * proC = (void *) 0xF60000;
 static void * threadTest = (void *) 0xF70000;
+static void * bubbleSort = (void *) 0xF80000;
 
 typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
@@ -135,6 +136,8 @@ int sys_createProcess(qword processName, qword rdx, qword rcx, qword r8, qword r
 		pid = createProcess(proC, process);
 	} else if(strcmp(process,"threadTest&")){
 		pid = createProcess(threadTest, process);
+	} else if(strcmp(process,"bubbleSort&")){
+		pid = createProcess(bubbleSort, process);
 	} else
 		return -1;
 	enableTickInter();

@@ -2,7 +2,7 @@ include Makefile.inc
 
 SAMPLE_DATA=shell.bin
 
-all: lib terminal linearFDisp parabDisp testMem processR processW back processRW processWR prod cons mthread thread pA pB pC
+all: lib terminal linearFDisp parabDisp testMem processR processW back processRW processWR prod cons mthread thread pA pB pC bSort
 
 terminal:
 	cd shell; make all
@@ -55,6 +55,9 @@ pB:
 pC:
 	cd proC; make all
 
+bSort:
+	cd bubbleSort; make all
+
 clean:
 	cd libraries; make clean
 	cd shell; make clean
@@ -73,6 +76,7 @@ clean:
 	cd proA; make clean
 	cd proB; make clean
 	cd proC; make clean
+	cd bubbleSort; make clean
 	rm -rf *.bin
 
 

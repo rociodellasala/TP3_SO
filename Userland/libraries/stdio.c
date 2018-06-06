@@ -2,9 +2,11 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "mutex.h"
+#include "pipe.h"
 #include <stdarg.h>
 
-extern void int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
+extern qword int80(qword rdi, qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
 void printf(const char * str,...){
 	char num[12];
@@ -106,12 +108,18 @@ void draw_pixel(int x, int y){
 }
 
 void putchar(unsigned char c) {
-	int80(1, c, 1, 0, 0, 0);
+	int returnValue = 0;
+	do{
+		returnValue = int80(1, c, 1, 0, 0, 0);
+	}while(returnValue == BLOCKPROCESS);
 }
 
 char getchar() {
 	unsigned char c[2];
-	int80(3, 0, (qword)c, 2, 0, 0);
+	int returnValue = 0;
+	do{
+		returnValue = int80(3, 0, (qword)c, 2, 0, 0);
+	}while(returnValue == BLOCKPROCESS);
 	if(c[0] == 0 ) 
 		return EOF;
 	return c[0];

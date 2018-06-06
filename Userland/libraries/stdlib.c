@@ -169,3 +169,11 @@ void printMemoryInformationVertical(){
 void printProcessTree(){
 	int80(34, 0, 0, 0, 0, 0);
 }
+
+void pipeStdoutStdin(int stdoutPID, int stdinPID){
+	int80(37,stdoutPID,stdinPID,0,0,0);
+}
+
+char * getPipeBuffer(int pipePID, boolean stdin, boolean stdout){
+	return (char *) int80(38,pipePID,stdin,stdout,0,0);
+}

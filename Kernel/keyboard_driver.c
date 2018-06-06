@@ -91,7 +91,7 @@ void readBuffer(char * buff, int size){
 	int i = 0;
 	char c;
 
-	while (i < (size - 1) && (c = getBuffer()) != EOF) {
+	while (i < size - 1 && (c = getBuffer()) != EOF) {
 		buff[i] = (char) c;
 		i++;
 	}

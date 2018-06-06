@@ -8,7 +8,11 @@ int pipe(char * connectingProcessPID){
 }
 
 int write(int pid,char * message, int messageLenght){
-	return int80(16,pid,(qword) message,messageLenght,0,0);
+	int returnValue = 0;
+	do{
+		returnValue = int80(16,pid,(qword) message,messageLenght,0,0);
+	}while(returnValue == BLOCKPROCESS);
+	return returnValue;
 }
 
 int read(int pid,char * messageDestination, int charsToRead){

@@ -94,7 +94,7 @@ int get_command(char * buffer){
 
 
 int call_command(char * function, char * parameter){
-	int ret;
+	int ret = 0;int ret2 = 0;char processOne[20] = {0}; char processTwo[20] = {0};
 	if(strcmp(function, "echo")){
 		echo(parameter);
 		return 0;
@@ -114,8 +114,16 @@ int call_command(char * function, char * parameter){
 	} else if(strcmp(function, "invalidOpcode")){
 		invalid_opcode();
 	} else if(strncmp(function, "./", 2)){
-		ret = startProcess(function + 2);
-		if(ret == -1)
+		if(hasTwoProcess(function)){
+			getBothProcess(function + 2,processOne,processTwo);
+			ret = startProcess(processOne);
+			ret2 = startProcess(processTwo);
+			/*printf("\nLos pid son: %d , %d\n",ret,ret2);*/
+			pipeStdoutStdin(ret,ret2);
+		}else{
+			ret = startProcess(function + 2);
+		}
+		if(ret == -1 || ret2 == -1)
 			return 1;
 		else 
 			return 3;
@@ -164,6 +172,27 @@ void printHelp(){
 	printf("memInfo                 Prints memory state\n");
 	printf("processTree             Prints all process like a tree structure\n");
 }
+
+boolean hasTwoProcess(char * function){
+	if(strsch(function + 2,"|||./") != NULL)
+		return true;
+	else
+		return false;
+}
+
+
+void getBothProcess(char * function, char * processOne, char * processTwo){
+	int strlenght;
+	char * endOne;
+	char * beginTwo;
+	endOne = strsch(function,"|");
+	beginTwo = strsch(function,"|||./") + strlen("|||./");
+	strlenght = endOne - function - 1;
+
+	strncpy(processOne,function,strlenght);
+	strcpy(processTwo,beginTwo);
+}
+
 
 
 

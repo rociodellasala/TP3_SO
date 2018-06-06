@@ -238,6 +238,8 @@ void releasePipeSlot(ProcessSlot * slot){
 	for(i = 0; i < slot->process.pipeIndex; i++){
 		releasePipeStruct(slot->process.pipes[i]);
 	}
+	releasePipeStruct(slot->process.stdin);
+	releasePipeStruct(slot->process.stdout);
 }
 
 void releasePipeStruct(p_pipe pipe){

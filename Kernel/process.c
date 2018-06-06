@@ -79,6 +79,8 @@ int createProcess(void * entryPoint, char * nameProcess){
 		newProcess.pipes[i] = NULL;
 
 	newProcess.pipeIndex = 0;
+	newProcess.stdin = NULL;
+	newProcess.stdout = NULL;
 	
 	newProcess.threadSize = 1;
 	newProcess.threads = newProcess.currentThread = createThread(entryPoint, newProcess.threadSize,newProcess.processName,newProcess.PID);

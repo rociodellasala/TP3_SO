@@ -5,6 +5,8 @@
 #define MAX_COMMAND_SIZE 100
 #define exit 2
 
+#include "types.h"
+
 /* Start the shell */
 void start_shell();
 
@@ -16,5 +18,10 @@ int call_command(char *, char *);
 
 /* Displays help menu for the user */
 void printHelp();
+
+/* Looks if there are two process to execute */
+boolean hasTwoProcess(char * function);
+
+void getBothProcess(char * function, char * processOne, char * processTwo);
 
 #endif

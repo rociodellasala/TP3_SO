@@ -13,6 +13,7 @@ int main (void){
 	pidPipe1 = pipe(fatherPID);
 	message = malloc(20);
 	read(pidPipe1,message,17);
+	printfColor(0x9AFE2E,"Message from ProcessReadAndWrite: Read: %s",message);
 	pidPipe2 = pipe(fatherPID);
 	write(pidPipe2,message,17);
 	exitProcess();

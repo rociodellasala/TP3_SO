@@ -6,7 +6,7 @@
 #define MAX_PAGES 20
 #define MAX_PROCESS_NAME 50
 #define PAGES_KERNEL_HEAP 96
-#define MAX_MESSAGE_LENGHT 100
+#define MAX_MESSAGE_LENGHT 40
 #define MAX_QUEUED_PROCESS 10
 #define MAX_MUTEX_NAME 20
 
@@ -97,6 +97,8 @@ typedef struct Process{
   p_heapPage heap;
   p_pipe pipes[MAX_PIPES];
   int pipeIndex;
+  p_pipe stdin;
+  p_pipe stdout;
 }Process;
 
 typedef struct ProcessSlot{

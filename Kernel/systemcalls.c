@@ -11,7 +11,7 @@
 #include "video_driver.h"
 #include "mutex.h"
 
-#define SYSCALLS 37
+#define SYSCALLS 39
 
 extern ProcessSlot * currentProcess;
 
@@ -35,16 +35,33 @@ typedef qword (*sys)(qword rsi, qword rdx, qword rcx, qword r8, qword r9);
 
 static sys sysCalls[SYSCALLS]; 
 
-void sys_write(qword buffer, qword size, qword rcx, qword r8, qword r9) {
-	print_char(buffer);
+qword sys_write(qword buffer, qword size, qword rcx, qword r8, qword r9) {
+	int callingProcessPID = getCurrentPid();
+	ProcessSlot * aux = getProcessFromPid(callingProcessPID);
+	p_pipe stdout = aux->process.stdout;
+	if(stdout == NULL){
+		print_char(buffer);
+		return size;
+	}
+	else
+		return write(stdout,buffer,size,callingProcessPID);
+	
 }
 
 void sys_clear(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
 	clear_screen();
 }
 
-void sys_read(qword file, qword buffer, qword size, qword r8, qword r9){
-	readBuffer((char*) buffer,(int) size);   
+qword sys_read(qword file, qword buffer, qword size, qword r8, qword r9){
+	int callingProcessPID = getCurrentPid();
+	ProcessSlot * aux = getProcessFromPid(callingProcessPID);
+	p_pipe stdin = aux->process.stdin;
+	if(stdin == NULL){
+		readBuffer((char*) buffer,(int) size);
+		return size;
+	}
+	else
+		return read(stdin,buffer,size - 1,callingProcessPID);
 }
 
 void sys_fontColor(qword color, qword rdx, qword rcx, qword r8, qword r9){
@@ -264,6 +281,28 @@ qword sys_heapStartingPoint(qword rsi, qword rdx, qword rcx, qword r8, qword r9)
 	return (qword) currentProcess->process.heap->currentPage;
 }
 
+void sys_pipeStdoutStdin(qword stdoutPID, qword stdinPID, qword rcx, qword r8, qword r9) {
+	ProcessSlot * stdoutProcess = getProcessFromPid(stdoutPID);
+	ProcessSlot * stdinProcess = getProcessFromPid(stdinPID);
+	p_pipe pipeStdoutStdin;
+
+	pipeStdoutStdin = createPipe(stdoutPID,stdinPID);
+	stdoutProcess->process.stdout = pipeStdoutStdin;
+	stdinProcess->process.stdin = pipeStdoutStdin;
+}
+
+qword sys_getPipeBuffer(qword pipePID, qword stdin, qword stdout, qword r8, qword r9) {
+	ProcessSlot * aux = getProcessFromPid(getCurrentPid());
+	char * buffer;
+	if(stdin != 0){
+		buffer = aux->process.stdin->message;
+	}else if(stdout != 0){
+		buffer = aux->process.stdout->message;
+	}
+
+	return buffer;
+}
+
 void load_systemcalls(){
 	sysCalls[1] = (sys) &sys_write;
 	sysCalls[2] = (sys) &sys_clear;
@@ -301,6 +340,8 @@ void load_systemcalls(){
 	sysCalls[34] = (sys) &sys_printProcessTree;
 	sysCalls[35] = (sys) &sys_threadCount;
 	sysCalls[36] = (sys) &sys_heapStartingPoint;
+	sysCalls[37] = (sys) &sys_pipeStdoutStdin;
+	sysCalls[38] = (sys) &sys_getPipeBuffer;
 
 	setup_IDT_entry(0x80, (qword) &_irq80Handler); 
 }

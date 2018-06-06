@@ -1,6 +1,8 @@
 #ifndef STDLIB_H
 #define STDLIB_H
 
+#include "types.h"
+
 /* Turns an int into a string */
 void intToString(int num, char * str);
 
@@ -65,5 +67,11 @@ int getFatherPID();
 
 /* Prints all process like a tree structure */
 void printProcessTree();
+
+/* Pipes the stdout of stdoutPID process with stdin of stdinPID process */
+void pipeStdoutStdin(int stdoutPID, int stdinPID);
+
+/* Retuns buffer of the specified pipe */
+char * getPipeBuffer(int pipePID, boolean stdin, boolean stdout);
 
 #endif

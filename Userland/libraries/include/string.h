@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+#define NULL 0
+
 /* Returns the length of the specified string */
 int strlen(const char *);
 
@@ -15,6 +17,9 @@ boolean strncmp(char *, char *, int);
 /* Copy the string from source to dest*/
 char * strcpy(char *, char *);
 
+/* Copy n chars from source to dest*/
+char * strncpy(char * dest, char * source,int lenght);
+
 /* Converts an int into string */
 void intToString(int, char *);
 
@@ -23,5 +28,8 @@ int stringToInt(char * str);
 
 /* Concatenates two strings */
 char * strcat(char * dest, const char * source);
+
+/* Search for the position of a string in other string */
+char * strsch(const char * source, const char * strSearched);
 
 #endif

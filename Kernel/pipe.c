@@ -91,14 +91,13 @@ void printPipeInfo(p_pipe pipe){
 	print_stringColor("PID 1: ","white");
 	print_intColor(pipe->processOnePID,"white");
 	nextLineAnyway();
-	
 	print_stringColor("PID 2: ","white");
 	if(pid2 < 0){
 		print_stringColor("-","white");
 		print_intColor(pid2 * -1,"white");
 		nextLineAnyway();
 	}else{
-		print_int(pid2);
+		print_intColor(pid2,"white");
 		nextLineAnyway();
 	}
 	print_stringColor("Expected process: ","white");
@@ -139,8 +138,7 @@ int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID){
 	int messageSentLenght = strlen(messageSent);
 	int mutexLock;
 	if(messageSentLenght > MAX_MESSAGE_LENGHT - pipe->messageIndex)
-		return -1;
-
+		return LOCK;
 	if(pipe->processOnePID == callingProcessPID && pipe->processOneWrite == true){
 		mutexLock = wait(pipe->mutex);
 		if(mutexLock == LOCK)

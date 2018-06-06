@@ -49,13 +49,25 @@ char * strcpy(char * dest, char * source){
 	return dest;
 }
 
+char * strncpy(char * dest, char * source,int lenght){
+	int sourceLength = strlen(source);
+	int i;
+
+	for(i = 0; i <=  sourceLength && i <= lenght; i++){
+		*(dest + i) = *(source + i);
+	}
+
+	*(dest + i) = '\0';
+	return dest;
+}
+
 char * strcat(char * dest, const char * source){
 	int i;
 	int j;
-	int destLengh = strlen(dest);
+	int destLength = strlen(dest);
 	int sourceLength = strlen(source);
 
-	for(i = 0; i <  destLengh; i++){
+	for(i = 0; i <  destLength; i++){
 		if(dest[i] == '\0')
 			break;
 	}
@@ -68,6 +80,33 @@ char * strcat(char * dest, const char * source){
 	dest[i] = '\0';
 
 	return dest;
+}
+
+
+char * strsch(const char * source, const char * strSearched){
+	int i;
+	int j = 0;
+	int flag = 0;
+	char * position = NULL;
+	int searchedLength = strlen(strSearched);
+	int sourceLength = strlen(source);
+	
+	for(i = 0; i <  sourceLength; i++){
+		if(j == searchedLength)
+			break;
+		if(source[i] == strSearched[j]){
+			flag = 1;
+			j++;
+			if(position == NULL)
+				position = source + i;
+		}else{
+			j = 0;
+			flag = 0;
+			position = NULL;
+		}
+	}
+
+	return position;
 }
 
 

@@ -106,7 +106,7 @@ int getFatherPID(){
 }
 
 void thread(void * entryPoint){
-	int80(28,entryPoint,0,0,0,0);
+	int80(28, (qword) entryPoint,0,0,0,0);
 }
 
 int startProcess(char * program){

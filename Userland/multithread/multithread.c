@@ -35,7 +35,7 @@ void function3(){
 }
 
 int main(void){
-	int threads, i = 0, start = 0;
+	int i = 0, start = 0;
 	clear_screen();
 	printf("--- MULTITHREADING PROCESS ---\n");
 	nextLine();

@@ -115,9 +115,9 @@ ThreadSlot * createThreadSlot(Thread newThread){
 }
 
 ThreadSlot * createThread(void * entryPoint, int threadSize,char * nameProcess,int processPID){
+	Thread thread;	
 	char information[60] = {0};
-	getNodeInfo(information,nameProcess,processPID,"Stack of ");
-	Thread thread;
+	getNodeInfo(information,nameProcess,processPID,"Stack of ");	
 	thread.TID = threadSize;
 	thread.status = READY;
 	thread.threadQuantum = 0;
@@ -246,12 +246,14 @@ ThreadSlot * getLastThreadFromProcess(Process auxProcess){
 }
 
 Process addThreadToProcess(int pid, void * exec){
-	ProcessSlot * aux = getProcessFromPid(pid);
+	ThreadSlot * newThread, * lastThreadProcess;
+
+	ProcessSlot * aux = getProcessFromPid(pid);	
 	Process process = aux->process;
 
 	process.threadSize++;
-	ThreadSlot * newThread = createThread(exec, process.threadSize,process.processName,process.PID);
-	ThreadSlot * lastThreadProcess = getLastThreadFromProcess(process);
+	newThread = createThread(exec, process.threadSize,process.processName,process.PID);
+	lastThreadProcess = getLastThreadFromProcess(process);
 
 	lastThreadProcess->next = newThread;
 	return process;

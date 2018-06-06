@@ -34,6 +34,8 @@ int getPID();
 /* Creates a new thread on the calling process */
 void thread();
 
+void * heapStartingPoint();
+
 /* Prints a string in console */
 void echo(char * string);
 

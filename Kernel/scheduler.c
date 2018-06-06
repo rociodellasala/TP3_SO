@@ -242,12 +242,6 @@ Thread blockThread(Thread thread){
 Process deleteThreadFromProcess(Process process){
 	ThreadSlot * thread = process.threads;
 	ThreadSlot * prev;
-	
-	if(process.currentThread->thread.TID == thread->thread.TID){
-		process.threadSize--;
-		process.threads = thread->next;
-		return;
-	} 
 
 	while(thread->thread.TID != process.currentThread->thread.TID){
 		prev = thread;

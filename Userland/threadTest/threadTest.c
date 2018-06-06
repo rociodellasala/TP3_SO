@@ -49,7 +49,8 @@ void functionTask3(){
 
 int main(void){
 	int threads = 0, tCount, t = 0, i = 0;
-	int * varMain, * varAux;
+	int * varMain;
+	void * heapSP;
 	clear_screen();
 	printf("--- THREAD TEST ---\n");
 	nextLine();
@@ -113,12 +114,12 @@ int main(void){
 	} while(i != 1);
 	nextLine();
 	printf("I make the first malloc of the program in order to get given a heap. It size is of sizeof(int) = 4...\n");
-	varAux = malloc(sizeof(int));
+	malloc(sizeof(int));
 	nextLine();
 	
 	printf("Now I'll print heap starting point in two different threads...\n");
    	printf("- Main thread: Heap Starting Point: heapSP = ");
-   	void * heapSP = heapStartingPoint();
+   	heapSP = heapStartingPoint();
 	printHexadecimal(heapSP);
 	
    	thread(functionTask3);

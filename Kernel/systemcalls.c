@@ -220,10 +220,8 @@ qword sys_printMemoryVertical(qword rsi, qword rdx, qword rcx, qword r8, qword r
 
 
 void sys_threadCreate(qword entryPoint, qword rdx, qword rcx, qword r8, qword r9){
-	disableTickInter();	
 	int callingProcessPID = getCurrentPid();
-	currentProcess->process = addThreadToProcess(callingProcessPID, entryPoint);
-	enableTickInter();
+	currentProcess->process = addThreadToProcess(callingProcessPID, (void *) entryPoint);
 }
 
 void sys_threadRemove(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
@@ -263,8 +261,7 @@ qword sys_threadCount(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
 }
 
 qword sys_heapStartingPoint(qword rsi, qword rdx, qword rcx, qword r8, qword r9) {
-	void * pointer = currentProcess->process.heap->currentPage;
-	return pointer;
+	return (qword) currentProcess->process.heap->currentPage;
 }
 
 void load_systemcalls(){

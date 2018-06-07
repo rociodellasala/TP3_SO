@@ -56,15 +56,17 @@ void draw(int a, int b){
 int main(void){
 	int a = 0; 
 	int b = 0;
-	printf("\n");
+	printf("\n--- LINEAR GRAPH ---\n");
+	nextLine();
 	printf("f(x) = ax + b\n");
-	printf("Input 'a': ");
+	nextLine();
+	printf(" - Input 'a': ");
 	
 	while(getNum(&a) == 1)
 		printf("\nError: Incorrect parameter\n");
 	
 	printf("\n");
-	printf("Input 'b': ");
+	printf(" - Input 'b': ");
 	while(getNum(&b) == 1)
 		printf("\nError: Incorrect parameter\n");
 	

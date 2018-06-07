@@ -17,9 +17,9 @@ void getCharacterFromKeyboard(unsigned char *);
 void updateBuffer(unsigned char);
 
 /* Returns last character that was saved on buffer */
-char getBuffer();
+unsigned char getBuffer();
 
 /* Reads what was saved on buffer */
-void readBuffer(char *, int);
+void readBuffer(unsigned char *, int);
 
 #endif

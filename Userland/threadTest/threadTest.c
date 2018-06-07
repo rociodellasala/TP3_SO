@@ -57,8 +57,10 @@ int main(void){
 	printfColor(0x045FB4, "1 - Create N threads\n");
 	clear_buffer();
 	
-	do {
+	do {	
+		threads = 0;
 		printf("Enter how many threads you want to create followed by ENTER (2-10): ");
+		clear_buffer();
 		getNum(&threads);
 		nextLine();
 	} while(threads < 2 || threads > 10);
@@ -84,7 +86,9 @@ int main(void){
 	printfColor(0x045FB4, "\n2 - Deleting threads\n");
 	
 	do {
+		i=0;		
 		printf("To continue press 1 followed by ENTER: ");
+		clear_buffer();		
 		getNum(&i);
 		nextLine();
 	} while(i != 1);
@@ -108,7 +112,9 @@ int main(void){
 	i=0;
 	
 	do {
+		i=0;
 		printf("To continue press 1 followed by ENTER: ");
+		clear_buffer();
 		getNum(&i);
 		nextLine();
 	} while(i != 1);
@@ -138,7 +144,9 @@ int main(void){
 	printfColor(0x045FB4, "\n4 - Threads schedule in order\n");
    	i=0;
 	do {
+		i = 0;
 		printf("To continue press 1 followed by ENTER: ");
+		clear_buffer();
 		getNum(&i);
 		nextLine();
 	} while(i != 1);

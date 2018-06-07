@@ -52,9 +52,11 @@ int main(void){
 	nextLine();
 	printf("NOTE 2: If MAIN THREAD appears, it will print in WHITE color, in order to distinguish from the rest\n");
 	nextLine();
-	clear_buffer();
+	
 	do{
+		start = 0;
 		printf("To start please press 1 followed by ENTER: ");
+		clear_buffer();
 		getNum(&start);
 		nextLine();
 	} while(start != 1);

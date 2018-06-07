@@ -237,15 +237,15 @@ void printLines(int level,boolean * doLines, boolean isLeft){
     int doLinesIndex = 0;
     for(i = 1; i < level * 4 + 1; i++){
         if(i == level * 4 && ! isLeft){
-               print_char('└');
-               print_char('─');
+               print_char((unsigned char)'└');
+               print_char((unsigned char)'─');
         }
         else if(i == level * 4 && isLeft){
-               print_char('├');
-               print_char('─');	
+               print_char((unsigned char)'├');
+               print_char((unsigned char)'─');	
         }
         else if(i % 4 == 0 && doLines[doLinesIndex] == true){
-            print_char('│');
+            print_char((unsigned char)'│');
             doLinesIndex++;
         }
         else if(i % 4 == 0 && doLines[doLinesIndex] == false){
@@ -298,7 +298,7 @@ void printBlocks(char * color){
 	int i;
 	int hexColor = getColorHex(color);
 	for(i = 0; i < 11; i++){
-		print_charColor('█',hexColor);
+		print_charColor((unsigned char)'█',hexColor);
 	}
 
 	print_string("  ");

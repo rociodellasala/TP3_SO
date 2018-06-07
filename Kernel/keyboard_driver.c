@@ -32,7 +32,7 @@ void checkKeyPressed(unsigned char key){
    	if(ctrlPressed || altPressed)
    		return;
     
-    getCharacterFromKeyboard(&key);
+    	getCharacterFromKeyboard(&key);
 	updateBuffer(key);
 }
 
@@ -77,7 +77,7 @@ void updateBuffer(unsigned char key){
 	bufferIndex = (bufferIndex + 1) % BUFFER_SIZE;
 }
 
-char getBuffer(){
+unsigned char getBuffer(){
 	if(index != bufferIndex){
 		byte aux = buffer[index];
 		index = (index +  1) % BUFFER_SIZE;
@@ -87,12 +87,12 @@ char getBuffer(){
 	return EOF;
 }
 
-void readBuffer(char * buff, int size){
+void readBuffer(unsigned char * buff, int size){
 	int i = 0;
-	char c;
+	unsigned char c;
 
 	while (i < size - 1 && (c = getBuffer()) != EOF) {
-		buff[i] = (char) c;
+		buff[i] = (unsigned char) c;
 		i++;
 	}
 

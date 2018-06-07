@@ -34,7 +34,7 @@ void bubbleSort(){
               swap(&array[j], &array[j+1]);
        }
   	
-  	printfColor(0xB40404,"\n- Half of the array is already ordered .. Finishing thread\n", ARRAYLONG);
+  	printfColor(0xB40404,"\n- Half of the array is already ordered .. Finishing thread\n");
   	nextLine();
 	exitThread();
 }
@@ -43,24 +43,27 @@ void bubbleSort(){
 int main(void){
 	int start = 0, i;
 	clear_screen();
-	printf("--- BUBBLE SORT ORDER WITH THREADS ---\n");
+	printf("--- BUBBLE SORT WITH THREADS ---\n");
 	
 	nextLine();
 	
-	printfColor(0x045FB4, "We have an array of %d numbers ... Let's sort it through two threads\n");
+	printf("We have an array of %d numbers ... Let's sort it through two threads\n", ARRAYLONG);
 	nextLine();
-	printf("We have this array... \n Array={");
+	printf("We have this array... \n");
+	printfColor(0x2E2EFE,"\nArray={");
 	for(i = 0; i < ARRAYLONG; i++){
 		if(i == ARRAYLONG-1)
-			printf("%d}\n", array[i]);
+			printfColor(0x2E2EFE,"%d}\n", array[i]);
 		else
-			printf("%d,", array[i]);
+			printfColor(0x2E2EFE,"%d,", array[i]);
 	}
 	nextLine();
 	clear_buffer();
 
 	do{
+		start = 0;
 		printf("To start please press 1 followed by ENTER: ");
+		clear_buffer();
 		getNum(&start);
 		nextLine();
 	} while(start != 1);
@@ -68,9 +71,9 @@ int main(void){
 	
 	
 	thread(bubbleSort);
-	printf("Creating thread 1...\n");
+	printfColor(0x64FE2E,"Creating thread 1...\n");
 	thread(bubbleSort);
-	printf("Creating thread 2...\n");
+	printfColor(0xFE642E,"Creating thread 2...\n");
 	nextLine();
 
 	while(threadCount() != 1);

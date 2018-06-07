@@ -66,23 +66,26 @@ int main (void){
 	int q = 0; 
 
 	clear_screen();
-  
+	printf("\n--- PARABOLIC GRAPH ---\n");
+	nextLine();
+  	
 	printf("f(x) = ax^2 + bx + c\n");
-	printf("Input 'a':\n");
+	nextLine();
+	printf(" - Input 'a': ");
 
 	while(getNum(&a) == 1)
 		printf("\nError: Incorrect parameter\n");
 	
 	printf("\n");
-	printf("Input 'b':\n");
+	printf(" - Input 'b': ");
 	while(getNum(&b) == 1)
 		printf("\nError: Incorrect parameter\n");
 	
 	printf("\n");
-	printf("Input 'c':\n");
+	printf(" - Input 'c': ");
 	while(getNum(&q) == 1)
 		printf("\nError: Incorrect parameter\n");
-
+	
 	clear_screen();
 	coordinates();
 

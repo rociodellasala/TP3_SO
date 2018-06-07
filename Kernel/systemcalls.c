@@ -59,7 +59,7 @@ qword sys_read(qword file, qword buffer, qword size, qword r8, qword r9){
 	ProcessSlot * aux = getProcessFromPid(callingProcessPID);
 	p_pipe stdin = aux->process.stdin;
 	if(stdin == NULL){
-		readBuffer((char*) buffer,(int) size);
+		readBuffer((unsigned char*) buffer,(int) size);
 		return size;
 	}
 	else

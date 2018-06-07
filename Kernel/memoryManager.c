@@ -169,9 +169,8 @@ void recursiveSearchHeap(p_heapPage heap){
 		recursiveSearchHeap(heap->nextHeapPage);
 
 	recursiveRelease(&memoryManagerPointer->nodes[0],heap->currentPage,PAGE_SIZE);
-
-
 }
+
 
 void addToFreeNodes(p_node currentNode){
 	int i;

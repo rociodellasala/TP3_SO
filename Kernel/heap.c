@@ -202,8 +202,6 @@ void releaseProcessSlot(ProcessSlot * slot){
 	}
 }
 
-/* HACER RELEASE PARA THREADS */
-
 void releaseProcessHeap(ProcessSlot * slot){
 	p_heapPage currentHeapPage = slot->process.heap;
 

@@ -22,6 +22,7 @@ int allProcessForeground = 0;
 ProcessSlot * currentProcess;
 extern ProcessSlot * lastProcess;
 extern ProcessSlot * tableProcess;
+extern memoryManager * memoryManagerPointer;
 
 extern void * kernelStack;
 
@@ -237,22 +238,21 @@ Thread blockThread(Thread thread){
 }
 
 Process deleteThreadFromProcess(Process process){
-	ThreadSlot * thread = process.threads;
+	ThreadSlot * threadcurr = process.threads;
 	ThreadSlot * prev;
 
-	while(thread->thread.TID != process.currentThread->thread.TID){
-		prev = thread;
-		thread = thread->next;
+	while(threadcurr->thread.TID != process.currentThread->thread.TID){
+		prev = threadcurr;
+		threadcurr = threadcurr->next;
 	}
 	
-	prev->next = thread->next;
-	
+	prev->next = threadcurr->next;
 	process.threadSize--;
 	
 	if(process.threadSize == 1 && process.threads->thread.status == LOCKED){
 		process.threads->thread.status = READY;
 	}
-
+	/*recursiveRelease(&memoryManagerPointer->nodes[0],threadcurr->thread.baseStack,PAGE_SIZE);*/
 	return process;
 }
 

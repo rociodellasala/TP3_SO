@@ -83,14 +83,16 @@ p_pipe searchPipeByPID(ProcessSlot * callingProcessSlot, int pipePID){
 void printPipeInfo(p_pipe pipe){
 	int pid2 = pipe->processTwoPID;
 	nextLineAnyway();
-	print_stringColor("Pipe information:","white");
+	print_stringColor("*******************Kernel message*******************","yellow");
+	nextLineAnyway();
 	nextLineAnyway();
 	print_stringColor("Pipe PID: ","white");
 	print_intColor(pipe->pipePID,"white");
 	nextLineAnyway();
+	print_stringColor("Process connected:     ","white");
 	print_stringColor("PID 1: ","white");
 	print_intColor(pipe->processOnePID,"white");
-	nextLineAnyway();
+	print_stringColor("     ","white");
 	print_stringColor("PID 2: ","white");
 	if(pid2 < 0){
 		print_stringColor("-","white");
@@ -100,51 +102,27 @@ void printPipeInfo(p_pipe pipe){
 		print_intColor(pid2,"white");
 		nextLineAnyway();
 	}
-	print_stringColor("Expected process: ","white");
-	print_intColor(pipe->processTwoPID,"white");
-	nextLineAnyway();
-
 	if(pipe->full == false)
-		print_stringColor("STATUS: LIBRE","white");
+		print_stringColor("STATUS: LIBRE","green");
 	else
-		print_stringColor("STATUS: FULL","white");
+		print_stringColor("STATUS: FULL","red");
 	nextLineAnyway();
-	/*print_string("Process 1 permission to read: ");
-	print_int(pipe->processOneRead);
 	nextLineAnyway();
-	print_string("Process 2 permission to read: ");
-	print_int(pipe->processTwoRead);
-	nextLineAnyway();
-	print_string("Process 1 permission to write: ");
-	print_int(pipe->processOneWrite);
-	nextLineAnyway();
-	print_string("Process 2 permission to write: ");
-	print_int(pipe->processTwoWrite);
-	nextLineAnyway();*/
-	print_stringColor("Actual message:","white");
-	print_stringColor(pipe->message,"white");
-	nextLineAnyway();
-	print_stringColor("Actual message index:","white");
-	print_intColor(pipe->messageIndex,"white");
-	nextLineAnyway();
-	print_stringColor("MUTEX: ","white");
-	print_intColor(pipe->mutex,"white");
-	nextLineAnyway();
+	print_stringColor("*****************End kernel message*****************","yellow");
 	nextLineAnyway();
 	nextLineAnyway();
 }
 
 int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID){
-	int messageSentLenght = strlen(messageSent);
 	int mutexLock;
-	if(messageSentLenght > MAX_MESSAGE_LENGHT - pipe->messageIndex)
+	if(msgLenght > MAX_MESSAGE_LENGHT - pipe->messageIndex)
 		return LOCK;
 	if(pipe->processOnePID == callingProcessPID && pipe->processOneWrite == true){
 		mutexLock = wait(pipe->mutex);
 		if(mutexLock == LOCK)
 			return LOCK;
 		strcpy((pipe->message) + pipe->messageIndex,messageSent);
-		pipe->messageIndex += messageSentLenght;
+		pipe->messageIndex += msgLenght;
 		signal(pipe->mutex);
 		unblockProcess(pipe->processTwoPID);
 	} else if(pipe->processTwoPID == callingProcessPID && pipe->processTwoWrite == true){
@@ -152,11 +130,10 @@ int write(p_pipe pipe,char * messageSent,int msgLenght, int callingProcessPID){
 		if(mutexLock == LOCK)
 			return LOCK;
 		strcpy((pipe->message) + pipe->messageIndex,messageSent);
-		pipe->messageIndex += messageSentLenght;
+		pipe->messageIndex += msgLenght;
 		signal(pipe->mutex);
 		unblockProcess(pipe->processOnePID);
 	} 
-
 	return msgLenght;
 }
 

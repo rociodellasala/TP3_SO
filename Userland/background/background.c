@@ -12,7 +12,9 @@ void printMsg(int j){
 
 int main() {
 	int i;
+	char * msg = malloc(200);
 	nextLine();
+	strcpy(msg,"asd");
 	printf("\n--- BACKGROUND ---\n");
 	nextLine();
 
@@ -22,6 +24,7 @@ int main() {
 	nextLine();
 	
 	clear_buffer();
+	while(1);
 	exitProcess();
 	return 0;
 }

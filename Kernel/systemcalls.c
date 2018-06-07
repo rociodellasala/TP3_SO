@@ -39,15 +39,16 @@ static sys sysCalls[SYSCALLS];
 
 qword sys_write(qword buffer, qword size, qword rcx, qword r8, qword r9) {
 	int callingProcessPID = getCurrentPid();
+	char c[2] = {0};
 	ProcessSlot * aux = getProcessFromPid(callingProcessPID);
 	p_pipe stdout = aux->process.stdout;
+	c[0] = buffer;
 	if(stdout == NULL){
 		print_char(buffer);
 		return size;
 	}
 	else
-		return write(stdout,(char*) buffer,size,callingProcessPID);
-	
+		return write(stdout,c,size,callingProcessPID);
 }
 
 void sys_clear(qword rsi, qword rdx, qword rcx, qword r8, qword r9){

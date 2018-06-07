@@ -4,9 +4,6 @@
 /*Prints starting message of test */
 void printStaringMessageTest();
 
-/*Reserves memory for string */
-char * givenStringToStore(int);
-
 /*Use read function to read from a pipe */
 void whenStringIsReceived(char *, int, int);
 

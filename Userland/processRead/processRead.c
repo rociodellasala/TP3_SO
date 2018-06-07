@@ -10,14 +10,14 @@ char * string2 = "hola mundillo";
 
 int main (void){
 	int start = 0;
-
-	char * firstString;
-	char * secondString;
-
-	int childPID = startProcess("processWrite");
-	int pid = pipe(childPID);
-	
+	int childPID;
+	int pid;
+	char firstString[20];
+	char secondString[20];
 	clear_screen();
+	childPID = startProcess("processWrite");
+	pid = pipe(childPID);
+	
 	printStaringMessageTest();
 
 	do{
@@ -25,13 +25,11 @@ int main (void){
 		getNum(&start);
 	} while(start != 1);
 
-	firstString = givenStringToStore(strlen(string1));
 	whenStringIsReceived(firstString,strlen(string1),pid);
 	thenFirstStringIsReceived(firstString);
 
 	printf("\nNow we are gonna read another string to check if IPC supports multiple readings\n");
 
-	secondString = givenStringToStore(strlen(string2));
 	whenStringIsReceived(secondString,strlen(string2),pid);
 	thenSecondStringIsReceived(secondString);
 
@@ -49,10 +47,6 @@ void printStaringMessageTest(){
 	printf("			---------------IPC TEST---------------\n\n");
 	printf("The test consists in read 2 times from a pipe\n");
 	printf("The test will succed only if both strings are the expected ones\n\n");
-}
-
-char * givenStringToStore(int size){
-	return malloc(size);
 }
 
 void whenStringIsReceived(char * firstString, int charsToRead, int pid){

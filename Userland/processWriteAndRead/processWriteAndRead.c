@@ -6,7 +6,7 @@
 
 int main (void){
 	char * messageToSend;
-	char * messageToReceive;
+	char messageToReceive[30];
 
 	int exits = 0;
 
@@ -14,19 +14,18 @@ int main (void){
 	int childPID;
 	clear_screen();
 	
-	printf("Comenzando processWriteAndRead\n");
+	printf("Starting processWriteAndRead\n");
 	childPID = startProcess("processReadAndWrite");
 	printf("PID processWriteAndRead: %d\n\n",childPID);
 	messageToSend = "Hola mundo alegre";
-	messageToReceive = malloc(strlen(messageToSend) + 1);
 
-	printf("Escribiendo...\n");
+	printf("Writing...\n");
 	pidPipe1 = pipe(childPID);
 	write(pidPipe1,messageToSend,strlen(messageToSend));
-	printf("Leyendo...\n");
+	printf("Reading...\n");
 	pidPipe2 = pipe(childPID);
 	read(pidPipe2,messageToReceive,strlen(messageToSend));
-	printf("El mensaje que llego es: %s\n",messageToReceive);
+	printf("The message read is: %s\n",messageToReceive);
 	
 	do{
 		printf("Press 1 to exit: ");

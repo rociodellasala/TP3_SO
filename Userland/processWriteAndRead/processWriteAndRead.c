@@ -28,7 +28,8 @@ int main (void){
 	printf("The message read is: %s\n",messageToReceive);
 	
 	do{
-		printf("Press 1 to exit: ");
+		exits = 0;
+		printf("\nPress 1 to exit: ");
 		getNum(&exits);
 	}while(exits != 1);
 

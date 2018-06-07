@@ -21,6 +21,7 @@ int main (void){
 	printStaringMessageTest();
 
 	do{
+		start = 0;
 		printf("To start the test please press 1 : ");
 		getNum(&start);
 	} while(start != 1);
@@ -33,8 +34,8 @@ int main (void){
 	whenStringIsReceived(secondString,strlen(string2),pid);
 	thenSecondStringIsReceived(secondString);
 
-	start = 0;
 	do{
+		start = 0;
 		printf("\nTo finilize the test please press 1 : ");
 		getNum(&start);
 	}while(start != 1);

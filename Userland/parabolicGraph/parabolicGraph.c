@@ -73,19 +73,24 @@ int main (void){
 	nextLine();
 	printf(" - Input 'a': ");
 
-	while(getNum(&a) == 1)
-		printf("\nError: Incorrect parameter\n");
-	
+	while(getNum(&a) == 1){
+		printf("\nError: Incorrect parameter");
+		printf("\n - Input 'a': ");
+	}
+
 	printf("\n");
 	printf(" - Input 'b': ");
-	while(getNum(&b) == 1)
-		printf("\nError: Incorrect parameter\n");
-	
+	while(getNum(&b) == 1){
+		printf("\nError: Incorrect parameter");
+		printf("\n - Input 'b': ");	
+	}
 	printf("\n");
 	printf(" - Input 'c': ");
-	while(getNum(&q) == 1)
-		printf("\nError: Incorrect parameter\n");
-	
+	while(getNum(&q) == 1){
+		printf("\nError: Incorrect parameter");
+		printf("\n - Input 'c': ");	
+	}
+
 	clear_screen();
 	coordinates();
 

@@ -198,7 +198,8 @@ void thenFourthPointerStartsWhereItShould(void * fourthStringPointer, int firstA
 void exitTest(){
 	int buttonPressed;
 	printf("\n\nTo exit test press 0");
-	do{
+	do{	
+		buttonPressed = 0;
 		printf("\nButton pressed: ");
 		getNum(&buttonPressed);
 	}while(buttonPressed != 0);

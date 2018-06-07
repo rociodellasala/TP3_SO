@@ -86,7 +86,8 @@ void getWord(unsigned char * vector,char * information){
 
 void getOption(int * option){
 	do{
-		printf("Please enter an option: ");
+		*option = 0;
+		printf("\nPlease enter an option: ");
 		getNum(option);
 	}while(*option != 1 && *option != 2);
 	return;

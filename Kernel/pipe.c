@@ -103,7 +103,7 @@ void printPipeInfo(p_pipe pipe){
 		nextLineAnyway();
 	}
 	if(pipe->full == false)
-		print_stringColor("STATUS: LIBRE","green");
+		print_stringColor("STATUS: FREE","green");
 	else
 		print_stringColor("STATUS: FULL","red");
 	nextLineAnyway();

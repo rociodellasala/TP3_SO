@@ -179,9 +179,10 @@ void removeProcess(int pid){
 	currentProcess->process.status = RUNNING;
 
 	enableTickInter();
-	if(slot->process.foreground == FOREGROUND)
-	print_string("Restoring SHELL - Press ENTER to continue");
-	
+	if(slot->process.foreground == FOREGROUND){
+		print_stringColor("Restoring SHELL - Press ENTER to continue","white");
+		nextLineAnyway();
+	}
 	
 	restoreContext();
 }

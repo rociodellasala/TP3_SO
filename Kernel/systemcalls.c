@@ -15,6 +15,7 @@
 #define SYSCALLS 39
 
 extern ProcessSlot * currentProcess;
+extern memoryManager * memoryManagerPointer;
 
 static void * linearGraph = (void *) 0x800000;
 static void * parabolicGraph = (void *) 0x900000;
@@ -247,8 +248,10 @@ void sys_threadCreate(qword entryPoint, qword rdx, qword rcx, qword r8, qword r9
 }
 
 void sys_threadRemove(qword rsi, qword rdx, qword rcx, qword r8, qword r9){
+	ThreadSlot * threadToRelease = currentProcess->process.currentThread;
 	currentProcess->process = deleteThreadFromProcess(currentProcess->process);
 	nextThread();
+	recursiveRelease(&memoryManagerPointer->nodes[0],threadToRelease->thread.baseStack,PAGE_SIZE);
 	restoreContext();
 }
 

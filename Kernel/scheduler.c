@@ -247,12 +247,13 @@ Process deleteThreadFromProcess(Process process){
 	}
 	
 	prev->next = threadcurr->next;
+	
 	process.threadSize--;
 	
 	if(process.threadSize == 1 && process.threads->thread.status == LOCKED){
 		process.threads->thread.status = READY;
 	}
-	/*recursiveRelease(&memoryManagerPointer->nodes[0],threadcurr->thread.baseStack,PAGE_SIZE);*/
+	
 	return process;
 }
 
